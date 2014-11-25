@@ -4,12 +4,10 @@ use Moose;
 extends 'Zonemaster::Exception';
 
 # The actual interesting module.
-package Zonemaster::CLI;
+package Zonemaster::CLI v0.1.2;
 
 use 5.014002;
 use warnings;
-
-our $VERSION = v0.1.2;
 
 use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
