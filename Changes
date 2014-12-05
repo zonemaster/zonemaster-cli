@@ -1,5 +1,13 @@
-Revision history for Zonemaster-CLI
+Release history for Perl module Zonemaster::CLI
 
-0.01    Date/time
-        First version, released on an unsuspecting world.
+0.001002 2014-11-26
 
+0.001001 2014-11-19
+
+0.001000 2014-11-17
+
+0.03     2014-10-30
+         
+0.01     2014-05-25
+
+ - initial CPAN release
