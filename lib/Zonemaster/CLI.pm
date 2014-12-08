@@ -559,3 +559,12 @@ sub do_dump_config {
 }
 
 1;
+
+__END__
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+Zonemaster::CLI - run Zonemaster tests from the command line

@@ -14,8 +14,8 @@ tests_recursive('t');
 
 resources (
    license    => 'http://www.opensource.org/licenses/BSD-3-Clause',
-   repository => 'git@github.com:dotse/zonemaster.git',
-   bugtracker => 'https://github.com/dotse/zonemaster/issues',
+   repository => 'https://github.com/dotse/zonemaster-cli',
+   bugtracker => 'https://github.com/dotse/zonemaster-cli/issues',
 );
 
 configure_requires (
