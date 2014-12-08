@@ -1,5 +1,5 @@
 # Brief help module to define the exception we use for early exits.
-package NormalExit;
+package Zonemaster::Exception::NormalExit;
 use Moose;
 extends 'Zonemaster::Exception';
 
@@ -323,7 +323,7 @@ sub run {
                 }
             } ## end if ( $numeric{ uc $entry...})
             if ( $self->stop_level and $numeric{ uc $entry->level } >= $numeric{ uc $self->stop_level } ) {
-                die( NormalExit->new( { message => "Saw message at level " . $entry->level } ) );
+                die( Zonemaster::Exception::NormalExit->new( { message => "Saw message at level " . $entry->level } ) );
             }
         }
     );
@@ -396,7 +396,7 @@ sub run {
 
     if ( $@ ) {
         my $err = $@;
-        if ( blessed $err and $err->isa( "NormalExit" ) ) {
+        if ( blessed $err and $err->isa( "Zonemaster::Exception::NormalExit" ) ) {
             say STDERR "Exited early: " . $err->message;
         }
         else {
