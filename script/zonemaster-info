@@ -1,0 +1,156 @@
+#!/usr/bin/env perl
+
+use 5.14.4;
+use warnings;
+
+use Zonemaster;
+use POSIX qw[strftime];
+
+my %algo = %Zonemaster::Test::DNSSEC::algo_properties;
+
+my %digest = (
+    1 => 'SHA-1',
+    2 => 'SHA-256',
+    3 => 'GOST R 34.11-94',
+    4 => 'SHA-384',
+);
+
+my $name = shift @ARGV;
+
+if ( not $name ) {
+    say "Need a zone name to work with.";
+    exit;
+}
+
+my $zone = Zonemaster->zone( $name );
+
+say "Zone:        " . $zone->name->string;
+say "Parent zone: " . $zone->parent->name->string;
+
+say "";
+
+say "Glue nameserver list: ";
+foreach my $ns ( @{ $zone->glue } ) {
+    say "\t$ns";
+}
+
+say "";
+
+say "Authoritative nameserver list: ";
+foreach my $ns ( @{ $zone->ns } ) {
+    say "\t$ns";
+}
+
+my $ds_p = $zone->parent->query_one( $zone->name->string, 'DS' );
+my @ds = $ds_p->get_records( 'DS' );
+
+say '';
+if ( @ds ) {
+    say "Parent has DS record(s) for " . $zone->name->string . ".";
+    foreach my $ds ( @ds ) {
+        printf "\tKey tag: %d\tDigest algorithm: %s\n", $ds->keytag, $digest{ $ds->digtype };
+    }
+}
+else {
+    say "Parent does not have DS records for " . $zone->name->string . ".";
+}
+
+my $dnskey_p = $zone->query_one( $zone->name->string, 'DNSKEY' );
+my @dnskey;
+@dnskey = $dnskey_p->get_records_for_name( 'DNSKEY', $zone->name->string ) if $dnskey_p;
+
+say '';
+if ( @dnskey ) {
+    say "DNSKEY records:";
+    foreach my $key ( @dnskey ) {
+        printf "\tTag: %d\tAlgorithm: %s\n", $key->keytag, $algo{ $key->algorithm }{description};
+    }
+}
+else {
+    say "No DNSKEY records returned.";
+}
+
+my $soa_p = $zone->query_auth( $zone->name->string, 'SOA', { dnssec => 1 } );
+
+if ( $soa_p ) {
+    my ( $soa ) = $soa_p->get_records_for_name( 'SOA', $zone->name->string );
+    my @rrsig = grep { $_->typecovered eq 'SOA' } $soa_p->get_records_for_name( 'RRSIG', $zone->name->string );
+
+    say '';
+    say "SOA record:";
+    say "\tMNAME:   " . $soa->mname;
+    say "\tRNAME:   " . $soa->rname;
+    say "\tSerial:  " . $soa->serial;
+    say "\tRefresh: " . $soa->refresh;
+    say "\tRetry:   " . $soa->retry;
+    say "\tExpire:  " . $soa->expire;
+    say "\tMinimum: " . $soa->minimum;
+
+    if ( @rrsig ) {
+        say "\nSOA record signature(s):";
+        foreach my $sig ( @rrsig ) {
+            say "\tKeytag:     " . $sig->keytag;
+            say "\tAlgorithm:  " . $algo{ $sig->algorithm }{description};
+            say "\tLabels:     " . $sig->labels;
+            say "\tSigner:     " . $sig->signer;
+            say "\tInception:  " . strftime( "%F %T", localtime $sig->inception );
+            say "\tExpiration: " . strftime( "%F %T", localtime $sig->expiration );
+            say '';
+        }
+    }
+}
+else {
+    say "No SOA record.";
+}
+
+=head1 NAME
+
+zonemaster-info - print some information about a zone's DNS info
+
+=head1 SYNOPSIS
+
+   zonemaster-info example.org
+
+=head1 DESCRIPTION
+
+For the given domain, it prints the following pieces of information.
+
+=over
+
+=item *
+
+The name of the parent zone.
+
+=item *
+
+The names and IP addresses of the nameservers listed at the parent side.
+
+=item *
+
+The names and IP addresses of the nameservers listed at the child side.
+
+=item *
+
+Information about the domain's DS records, if any.
+
+=item *
+
+Information about the domain's DNSKEY records, if any.
+
+=item *
+
+Information about the domain's SOA record.
+
+=item *
+
+Information about the domain's SOA record's RRSIG records, if any.
+
+=back
+
+=head1 SEE ALSO
+
+L<Zonemaster>
+
+=head1 AUTHOR
+
+Calle Dybedahl <calle@init.se>
