@@ -513,7 +513,7 @@ sub to_idn {
         return Net::LDNS::to_idn( encode( 'utf8', decode( $self->encoding, $str ) ) );
     }
     else {
-        say __( "Warning: Net::LDNS not compiled with libidn, cannot handle non-ASCII names correctly." );
+        say STDERR __( "Warning: Net::LDNS not compiled with libidn, cannot handle non-ASCII names correctly." );
         return $str;
     }
 }
