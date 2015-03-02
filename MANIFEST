@@ -17,6 +17,7 @@ MANIFEST			This list of files
 META.yml
 README
 script/zonemaster-cli
+script/zonemaster-info
 share/en.po
 share/fr.po
 share/locale/en/LC_MESSAGES/Zonemaster-CLI.mo
