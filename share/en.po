@@ -156,3 +156,6 @@ msgstr "Print the effective configuration used in JSON format, then exit."
 msgid  "Print the effective policy used in JSON format, then exit."
 msgstr "Print the effective policy used in JSON format, then exit."
 
+msgid  "Local IP address that the test engine should try to send its requests from."
+msgstr "Local IP address that the test engine should try to send its requests from."
+
