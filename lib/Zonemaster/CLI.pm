@@ -221,6 +221,14 @@ has 'dump_policy' => (
     documentation => __( 'Print the effective policy used in JSON format, then exit.' ),
 );
 
+has 'sourceaddr' => (
+    is => 'ro',
+    isa => 'Str',
+    required => 0,
+    default => undef,
+    documentation => __( 'Local IP address that the test engine should try to send its requests from.' ),
+);
+
 sub run {
     my ( $self ) = @_;
     my @accumulator;
@@ -244,8 +252,12 @@ sub run {
         print_test_list();
     }
 
-    Zonemaster->config->get->{net}{ipv4} = 0+$self->ipv4;
-    Zonemaster->config->get->{net}{ipv6} = 0+$self->ipv6;
+    Zonemaster->config->ipv4_ok(0+$self->ipv4);
+    Zonemaster->config->ipv6_ok(0+$self->ipv6);
+
+    if ($self->sourceaddr) {
+        Zonemaster->config->resolver_source($self->sourceaddr);
+    }
 
     if ( $self->policy ) {
         say __( "Loading policy from " ) . $self->policy . '.' if not ($self->dump_config or $self->dump_policy);

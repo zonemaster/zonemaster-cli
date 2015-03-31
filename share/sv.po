@@ -155,3 +155,7 @@ msgstr "Skriv ut den effektiva konfigurationen i JSON-format, sedan avsluta."
 
 msgid  "Print the effective policy used in JSON format, then exit."
 msgstr "Skriv ut den effektiva policyn i JSON-format, sedan avsluta."
+
+msgid  "Local IP address that the test engine should try to send its requests from."
+msgstr "Lokal IP adress som testmotorn skall skicka sin trafik från."
+
