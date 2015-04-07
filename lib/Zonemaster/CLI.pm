@@ -223,7 +223,7 @@ has 'dump_policy' => (
 
 has 'sourceaddr' => (
     is => 'ro',
-    isa => 'Str',
+    isa => 'Maybe[Str]',
     required => 0,
     default => undef,
     documentation => __( 'Local IP address that the test engine should try to send its requests from.' ),
