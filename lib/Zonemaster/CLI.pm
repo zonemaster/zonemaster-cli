@@ -229,6 +229,14 @@ has 'sourceaddr' => (
     documentation => __( 'Local IP address that the test engine should try to send its requests from.' ),
 );
 
+has 'elapsed' => (
+    is => 'ro',
+    isa => 'Bool',
+    required => 0,
+    default => 0,
+    documentation => 'Print elapsed time at end of run.',
+);
+
 sub run {
     my ( $self ) = @_;
     my @accumulator;
@@ -441,6 +449,11 @@ sub run {
             printf "%8.2f ",    1000 * $ns->median_time;
             printf "%9.2f\n",   1000 * $ns->sum_time;
         }
+    }
+
+    if ($self->elapsed) {
+        my $last = Zonemaster->logger->entries->[-1];
+        printf "Total test run time: %0.1f seconds.\n", $last->timestamp;
     }
 
     if ( $self->json ) {
