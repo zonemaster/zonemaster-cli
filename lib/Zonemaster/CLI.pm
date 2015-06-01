@@ -535,7 +535,7 @@ sub to_idn {
     }
 
     if ( Net::LDNS::has_idn() ) {
-        return Net::LDNS::to_idn( encode( 'utf8', decode( $self->encoding, $str ) ) );
+        return Net::LDNS::to_idn( decode( $self->encoding, $str ) );
     }
     else {
         say STDERR __( "Warning: Net::LDNS not compiled with libidn, cannot handle non-ASCII names correctly." );
