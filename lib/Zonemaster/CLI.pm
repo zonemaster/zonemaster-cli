@@ -92,7 +92,7 @@ has 'show_module' => (
 has 'ns' => (
     is            => 'ro',
     isa           => 'ArrayRef',
-    documentation => __( 'A name/ip string giving a nameserver for undelegated tests. Can be given multiple times.' ),
+    documentation => __( 'A name/ip string giving a nameserver for undelegated tests, or just a name which will be looked up for IP addresses. Can be given multiple times.' ),
 );
 
 has 'save' => (
@@ -474,12 +474,19 @@ sub add_fake_delegation {
     foreach my $pair ( @{ $self->ns } ) {
         my ( $name, $ip ) = split( '/', $pair, 2 );
 
-        if ( not $name or not $ip ) {
-            say STDERR "Malformed --ns switch, need name and IP separated by a /.";
+        if ( not $name ) {
+            say STDERR "--ns must have be a name or a name/ip pair.";
             exit( 1 );
         }
 
-        push @{ $data{ $self->to_idn( $name ) } }, $ip;
+        if ($ip) {
+            push @{ $data{ $self->to_idn( $name ) } }, $ip;
+        }
+        else {
+            my $n = $self->to_idn( $name );
+            my @ips = Net::LDNS->new->name2addr($n);
+            push @{ $data{$n} }, $_ for @ips;
+        }
     }
 
     Zonemaster->add_fake_delegation( $domain => \%data );
