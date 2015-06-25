@@ -1,5 +1,16 @@
 Release history for Perl module Zonemaster::CLI
 
+1.0.2    2015-06-25
+ - Allow lookup of nameservers for undelegated tests
+ - Net::LDNS::to_idn() takes Perl characters, not octets with utf-8 data
+ - Fixed display bug when using --nstimes with --no-ipv6 or --no-ipv4
+
+1.0.1    2015-04-07
+ - State clearly that a given name is not a domain when it is not a domain
+ - Send "Net::LDNS not compiled with libidn" to STDERR, not STDOUT
+
+1.0.0    2014-12-11 Release version
+
 1.000000 2014-12-11 Public beta release.
 
 0.001002 2014-11-26
