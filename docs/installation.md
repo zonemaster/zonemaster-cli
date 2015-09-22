@@ -16,7 +16,7 @@ The documentation covers the following operating systems:
 
 Before you install the Zonemaster CLI utility, you need the
 Zonemaster Engine test framework installed. Please see the
-[Zonemaster Engine installation instructions](https://github.com/dotse/zonemaster-engine/blob/master/doc/installation.md).
+[Zonemaster Engine installation instructions](https://github.com/dotse/zonemaster-engine/blob/master/docs/installation.md).
 
 
 ## Instructions for Debian 7, Ubuntu 14.04 and Ubuntu 12.04
