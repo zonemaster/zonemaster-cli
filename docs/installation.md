@@ -1,4 +1,4 @@
-# Zonemaster Engine installation guide
+# Zonemaster CLI installation guide
 
 This is the installation instructions for the Zonemaster CLI utility.
 For an overview of the Zonemaster components, please see the
