@@ -17,7 +17,7 @@ Installation
 ============
 
 Installation instructions for the Engine is provided in the
-(docs/installation.md)[docs/installation.md] document.
+[installation](docs/installation.md) document.
 
 
 License
