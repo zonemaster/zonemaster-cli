@@ -27,6 +27,7 @@ use Text::Reflow qw[reflow_string];
 use JSON::XS;
 
 our %numeric = Zonemaster::Logger::Entry->levels;
+our $JSON    = JSON::XS->new->allow_blessed->convert_blessed->canonical;
 
 STDOUT->autoflush( 1 );
 
@@ -59,6 +60,20 @@ has 'json' => (
     isa           => 'Bool',
     default       => 0,
     documentation => __( 'Flag indicating if output should be in JSON or not.' ),
+);
+
+has 'json_stream' => (
+    is            => 'ro',
+    isa           => 'Bool',
+    default       => 0,
+    documentation => __( 'Flag indicating if output should be streaming JSON or not.' ),
+);
+
+has 'json_translate' => (
+    is            => 'ro',
+    isa           => 'Bool',
+    default       => 0,
+    documentation => __( 'Flag indicating if streaming JSON output should include the translated message of the tag or not.' ),
 );
 
 has 'raw' => (
@@ -297,9 +312,16 @@ sub run {
     }
 
     my $translator;
-    $translator = Zonemaster::Translator->new unless ( $self->raw or $self->json );
+    $translator = Zonemaster::Translator->new unless ( $self->raw or $self->json or $self->json_stream );
     $translator->locale( $self->locale ) if $translator and $self->locale;
     eval { $translator->data } if $translator;    # Provoke lazy loading of translation data
+
+    my $json_translator;
+    if ( $self->json_translate ) {
+        $json_translator = Zonemaster::Translator->new;
+        $json_translator->( $self->locale ) if $self->locale;
+        eval { $json_translator->data };
+    }
 
     if ( $self->restore ) {
         Zonemaster->preload_cache( $self->restore );
@@ -310,7 +332,7 @@ sub run {
         sub {
             my ( $entry ) = @_;
 
-            $self->print_spinner();
+            $self->print_spinner() unless $self->json_stream;
 
             $counter{ uc $entry->level } += 1;
 
@@ -331,6 +353,18 @@ sub run {
                     }
 
                     say $translator->translate_tag( $entry );
+                }
+                elsif ( $self->json_stream ) {
+                    my %r;
+
+                    $r{timestamp} = $entry->timestamp;
+                    $r{module}    = $entry->module;
+                    $r{tag}       = $entry->tag;
+                    $r{level}     = $entry->level;
+                    $r{args}      = $entry->args if $entry->args;
+                    $r{message}   = $json_translator->translate_tag( $entry ) if $json_translator;
+
+                    say $JSON->encode( \%r );
                 }
                 elsif ( $self->json ) {
                     # Don't do anything
