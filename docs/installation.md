@@ -1,16 +1,14 @@
 # Zonemaster CLI installation guide
 
 This is the installation instructions for the Zonemaster CLI utility.
-For an overview of the Zonemaster components, please see the
-[Zonemaster repository](https://github.com/dotse/zonemaster).
 
 The documentation covers the following operating systems:
 
- * Ubuntu 12.04 (LTS)
- * Ubuntu 14.04 (LTS)
- * Debian Wheezy (version 7)
- * FreeBSD 10.1
- * CentOS 7
+ * [1] <a href="#Debian">Ubuntu 12.04 (LTS)</a>
+ * [2] <a href="#Debian">Ubuntu 14.04 (LTS)</a>
+ * [3] <a href="#Debian">Debian Wheezy (version 7)</a>
+ * [4] <a href="#FreeBSD">FreeBSD 10.1</a>
+ * [5] <a href="#CentOS">CentOS 7 </a>
 
 ## Prerequisite
 
@@ -19,9 +17,7 @@ Zonemaster Engine test framework installed. Please see the
 [Zonemaster Engine installation instructions](https://github.com/dotse/zonemaster-engine/blob/master/docs/installation.md).
 
 
-## Instructions for Debian 7, Ubuntu 14.04 and Ubuntu 12.04
-
-First install the Zonemaster Engine, following the instructions above.
+### <a name="Debian"></a> Instructions for Ubuntu 12.04, Ubuntu 14.04 and Debian 7
 
 1) Install necessary packages.
 
@@ -36,7 +32,7 @@ First install the Zonemaster Engine, following the instructions above.
 `zonemaster-cli example.com`
 
 
-## Instructions for FreeBSD 10.1
+## <a name="FreeBSD"></a> Instructions for FreeBSD 10.1
 
 1) First install the Zonemaster Engine, following the instructions above.
 
@@ -53,7 +49,7 @@ First install the Zonemaster Engine, following the instructions above.
     $ zonemaster-cli example.com
 
 
-## Instructions for CentOS 7
+## <a name="CentOS"></a> Instructions for CentOS 7
 
 First install the Zonemaster Engine, following the instructions above.
 
