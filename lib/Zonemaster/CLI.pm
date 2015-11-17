@@ -319,7 +319,7 @@ sub run {
     my $json_translator;
     if ( $self->json_translate ) {
         $json_translator = Zonemaster::Translator->new;
-        $json_translator->( $self->locale ) if $self->locale;
+        $json_translator->locale( $self->locale ) if $self->locale;
         eval { $json_translator->data };
     }
 
