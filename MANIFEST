@@ -1,5 +1,6 @@
 .perltidyrc
 Changes
+docs/installation.md
 inc/Module/Install.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
@@ -16,6 +17,7 @@ Makefile.PL
 MANIFEST			This list of files
 META.yml
 README
+README.md
 script/zonemaster-cli
 script/zonemaster-info
 share/en.po
@@ -25,4 +27,4 @@ share/locale/fr/LC_MESSAGES/Zonemaster-CLI.mo
 share/locale/sv/LC_MESSAGES/Zonemaster-CLI.mo
 share/sv.po
 t/00-load.t
-share/Makefile
+USING.md

@@ -1,5 +1,9 @@
 Release history for Perl module Zonemaster::CLI
 
+1.0.3	 2015-12-22
+ - Added JSON streaming
+ - Changed all instances from .SE to IIS
+
 1.0.2    2015-06-25
  - Allow lookup of nameservers for undelegated tests
  - Net::LDNS::to_idn() takes Perl characters, not octets with utf-8 data
