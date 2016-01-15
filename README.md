@@ -31,7 +31,7 @@ This repository does not need any specific configuration.
 ### Documentation
 
 Other than the installation documentation, no specific documentation is needed.
-The [using](https://github.com/dotse/zonemaster/blob/master/docs/using.md)
+The [using](https://github.com/dotse/zonemaster-cli/blob/master/USING.md)
 document provides an overview on how to use the CLI. 
 
 
