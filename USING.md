@@ -105,7 +105,7 @@ the parent will instead be answered by the data you entered.
 
 Any number of NS records and DS records can be given multiple times.
 The syntax of the NS records is name/address, and the address can be
-both IPv4 and IPv6. The DS syntax is keytag/algorithm/type/digest.
+both IPv4 and IPv6. The DS syntax is keytag,algorithm,type,digest.
 
 You can also choose to do a Pre-delegation test using only the new DS
 record, but keep the NS records from the parent by only specifying the
