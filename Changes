@@ -1,5 +1,8 @@
 Release history for Perl module Zonemaster::CLI
 
+1.0.5 2016-10-14
+- Correcting version in CLI.pm. Update missing in 1.0.4.
+
 1.0.4 2016-10-14
 - Updating README.md and USING.md 
 - Better way to check ExtUtils::MakeMaker version
