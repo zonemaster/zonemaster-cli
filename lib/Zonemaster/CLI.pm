@@ -4,7 +4,7 @@ use Moose;
 extends 'Zonemaster::Exception';
 
 # The actual interesting module.
-package Zonemaster::CLI v1.0.3;
+package Zonemaster::CLI v1.0.5;
 
 use 5.014002;
 use warnings;
