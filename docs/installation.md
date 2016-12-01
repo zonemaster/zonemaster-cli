@@ -42,17 +42,15 @@ for the chosen OS and then finally install the CLI itself.
 
 ## <a name="FreeBSD"></a> Install dependencies for FreeBSD
 
-1) First install the Zonemaster Engine, following the instructions above.
-
-2) Still as root, install necessary packages.
+1) Still as root, install necessary packages.
 
 `pkg install p5-MooseX-Getopt p5-Text-Reflow p5-Module-Install`
 
-3) Still as root, install non-packaged software.
+2) Still as root, install non-packaged software.
 
 `cpan -i Zonemaster::CLI`
 
-4) The CLI tool is now installed and can be run by any user.
+3) The CLI tool is now installed and can be run by any user.
 
     $ zonemaster-cli example.com
 
