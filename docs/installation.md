@@ -37,7 +37,7 @@ for the chosen OS and then finally install the CLI itself.
 
 3) Now you are ready to run the zonemaster-cli command:
 
-`zonemaster-cli example.com`
+`zonemaster-cli zonemaster.net`
 
 
 ## <a name="FreeBSD"></a> Install dependencies for FreeBSD
