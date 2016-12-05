@@ -52,7 +52,7 @@ for the chosen OS and then finally install the CLI itself.
 
 3) The CLI tool is now installed and can be run by any user.
 
-    $ zonemaster-cli example.com
+`$ zonemaster-cli zonemaster.net`
 
 
 ## <a name="CentOS"></a> Install dependencies for CentOS 7
@@ -75,8 +75,8 @@ you will have to install the *Backend*.
 
 -------
 
-Copyright (c) 2013, 2014, 2015, IIS (The Internet Infrastructure Foundation)  
-Copyright (c) 2013, 2014, 2015, AFNIC  
+Copyright (c) 2013 - 2016, IIS (The Internet Foundation in Sweden)  
+Copyright (c) 2013 - 2016, AFNIC  
 Creative Commons Attribution 4.0 International License
 
 You should have received a copy of the license along with this
