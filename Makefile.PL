@@ -34,6 +34,7 @@ else {
 }
 
 requires(
+    'version'                   => 0.77,
     'MooseX::Getopt'            => 0,
     'Getopt::Long::Descriptive' => 0,
     'Net::LDNS'                 => 0.65,
