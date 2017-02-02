@@ -525,10 +525,17 @@ sub add_fake_delegation {
         else {
             my $n = $self->to_idn( $name );
             my @ips = Net::LDNS->new->name2addr($n);
-            push @{ $data{$n} }, $_ for @ips;
+            if ( @ips ) {
+                push @{ $data{$n} }, $_ for @ips;
+            }
+            else {
+                say STDERR "--ns ${name} nameserver has no IP address.";
+                exit( 1 );
+            }
         }
     }
-
+use Data::Dumper;
+print Data::Dumper::Dumper(%data);
     Zonemaster->add_fake_delegation( $domain => \%data );
 
     return;
