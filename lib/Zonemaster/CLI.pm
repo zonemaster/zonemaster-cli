@@ -20,6 +20,7 @@ use Zonemaster::Logger::Entry;
 use Zonemaster::Translator;
 use Zonemaster::Util qw[pod_extract_for];
 use Zonemaster::Exception;
+use Zonemaster::Zone;
 use Scalar::Util qw[blessed];
 use Encode;
 use Net::LDNS;
@@ -516,6 +517,10 @@ sub add_fake_delegation {
 
         if ($ip) {
             push @{ $data{ $self->to_idn( $name ) } }, $ip;
+        }
+        elsif (Zonemaster::Zone->new( { name => $domain } )->is_in_zone( $name )) {
+            say STDERR "--ns in zone nameservers must be a name/ip pair.";
+            exit( 1 );
         }
         else {
             my $n = $self->to_idn( $name );
