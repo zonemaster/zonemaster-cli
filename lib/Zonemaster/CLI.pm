@@ -534,8 +534,7 @@ sub add_fake_delegation {
             }
         }
     }
-use Data::Dumper;
-print Data::Dumper::Dumper(%data);
+
     Zonemaster->add_fake_delegation( $domain => \%data );
 
     return;
