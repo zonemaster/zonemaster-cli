@@ -505,6 +505,7 @@ sub run {
 
 sub add_fake_delegation {
     my ( $self, $domain ) = @_;
+    my @ns_with_no_ip;
     my %data;
 
     foreach my $pair ( @{ $self->ns } ) {
@@ -518,20 +519,13 @@ sub add_fake_delegation {
         if ($ip) {
             push @{ $data{ $self->to_idn( $name ) } }, $ip;
         }
-        elsif (Zonemaster::Zone->new( { name => $domain } )->is_in_zone( $name )) {
-            say STDERR "--ns in zone nameservers must be a name/ip pair.";
-            exit( 1 );
-        }
         else {
-            my $n = $self->to_idn( $name );
-            my @ips = Net::LDNS->new->name2addr($n);
-            if ( @ips ) {
-                push @{ $data{$n} }, $_ for @ips;
-            }
-            else {
-                say STDERR "--ns ${name} nameserver has no IP address.";
-                exit( 1 );
-            }
+            push @ns_with_no_ip, $self->to_idn($name);
+        }
+    }
+    foreach my $ns ( @ns_with_no_ip ) {
+        if ( not exists $data{ $ns } ) {
+            $data{ $ns } = undef;
         }
     }
 
