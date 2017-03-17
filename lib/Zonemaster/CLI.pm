@@ -6,7 +6,7 @@ extends 'Zonemaster::Exception';
 # The actual interesting module.
 package Zonemaster::CLI;
 
-use version; our $VERSION = version->declare("v1.0.6");
+use version; our $VERSION = version->declare("v1.0.8");
 
 use 5.014002;
 use warnings;
@@ -20,6 +20,7 @@ use Zonemaster::Logger::Entry;
 use Zonemaster::Translator;
 use Zonemaster::Util qw[pod_extract_for];
 use Zonemaster::Exception;
+use Zonemaster::Zone;
 use Scalar::Util qw[blessed];
 use Encode;
 use Net::LDNS;
@@ -504,6 +505,7 @@ sub run {
 
 sub add_fake_delegation {
     my ( $self, $domain ) = @_;
+    my @ns_with_no_ip;
     my %data;
 
     foreach my $pair ( @{ $self->ns } ) {
@@ -518,9 +520,12 @@ sub add_fake_delegation {
             push @{ $data{ $self->to_idn( $name ) } }, $ip;
         }
         else {
-            my $n = $self->to_idn( $name );
-            my @ips = Net::LDNS->new->name2addr($n);
-            push @{ $data{$n} }, $_ for @ips;
+            push @ns_with_no_ip, $self->to_idn($name);
+        }
+    }
+    foreach my $ns ( @ns_with_no_ip ) {
+        if ( not exists $data{ $ns } ) {
+            $data{ $ns } = undef;
         }
     }
 
