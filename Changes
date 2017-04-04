@@ -1,5 +1,13 @@
 Release history for Perl module Zonemaster::CLI
 
+v1.1.0 2017-04-04 Public pre-release
+- This release will not be published on CPAN since it contains updates that have
+  not been fully tested. Do not update production systems without verification.
+- Update install instructions (#34)
+- Fixes packaging issue with version numbering (#35)
+- Solved --sourceaddr is not correctly implemented (#36)
+- Updates so that "fake delegation" is tested correctly (#42)
+
 1.0.5 2016-10-14
 - Correcting version in CLI.pm. Update missing in 1.0.4.
 
