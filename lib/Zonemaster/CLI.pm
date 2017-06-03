@@ -1,12 +1,12 @@
 # Brief help module to define the exception we use for early exits.
-package Zonemaster::Exception::NormalExit;
+package Zonemaster::Engine::Exception::NormalExit;
 use Moose;
-extends 'Zonemaster::Exception';
+extends 'Zonemaster::Engine::Exception';
 
 # The actual interesting module.
 package Zonemaster::CLI;
 
-use version; our $VERSION = version->declare("v1.1.0");
+use version; our $VERSION = version->declare("v1.1.1");
 
 use 5.014002;
 use warnings;
@@ -15,12 +15,12 @@ use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
 with 'MooseX::Getopt';
 
-use Zonemaster;
-use Zonemaster::Logger::Entry;
-use Zonemaster::Translator;
-use Zonemaster::Util qw[pod_extract_for];
-use Zonemaster::Exception;
-use Zonemaster::Zone;
+use Zonemaster::Engine;
+use Zonemaster::Engine::Logger::Entry;
+use Zonemaster::Engine::Translator;
+use Zonemaster::Engine::Util qw[pod_extract_for];
+use Zonemaster::Engine::Exception;
+use Zonemaster::Engine::Zone;
 use Scalar::Util qw[blessed];
 use Encode;
 use Net::LDNS;
@@ -29,7 +29,7 @@ use List::Util qw[max];
 use Text::Reflow qw[reflow_string];
 use JSON::XS;
 
-our %numeric = Zonemaster::Logger::Entry->levels;
+our %numeric = Zonemaster::Engine::Logger::Entry->levels;
 our $JSON    = JSON::XS->new->allow_blessed->convert_blessed->canonical;
 
 STDOUT->autoflush( 1 );
@@ -277,21 +277,21 @@ sub run {
         print_test_list();
     }
 
-    Zonemaster->config->ipv4_ok(0+$self->ipv4);
-    Zonemaster->config->ipv6_ok(0+$self->ipv6);
+    Zonemaster::Engine->config->ipv4_ok(0+$self->ipv4);
+    Zonemaster::Engine->config->ipv6_ok(0+$self->ipv6);
 
     if ($self->sourceaddr) {
-        Zonemaster->config->resolver_source($self->sourceaddr);
+        Zonemaster::Engine->config->resolver_source($self->sourceaddr);
     }
 
     if ( $self->policy ) {
         say __( "Loading policy from " ) . $self->policy . '.' if not ($self->dump_config or $self->dump_policy);
-        Zonemaster->config->load_policy_file( $self->policy );
+        Zonemaster::Engine->config->load_policy_file( $self->policy );
     }
 
     if ( $self->config ) {
         say __( "Loading configuration from " ) . $self->config . '.' if not ($self->dump_config or $self->dump_policy);
-        Zonemaster->config->load_config_file( $self->config );
+        Zonemaster::Engine->config->load_config_file( $self->config );
     }
 
     if ( $self->dump_config ) {
@@ -299,8 +299,8 @@ sub run {
     }
 
     if ( $self->dump_policy ) {
-        foreach my $mod (Zonemaster->modules) {
-            Zonemaster->config->load_module_policy($mod)
+        foreach my $mod (Zonemaster::Engine->modules) {
+            Zonemaster::Engine->config->load_module_policy($mod)
         }
         do_dump_policy();
     }
@@ -314,23 +314,23 @@ sub run {
     }
 
     my $translator;
-    $translator = Zonemaster::Translator->new unless ( $self->raw or $self->json or $self->json_stream );
+    $translator = Zonemaster::Engine::Translator->new unless ( $self->raw or $self->json or $self->json_stream );
     $translator->locale( $self->locale ) if $translator and $self->locale;
     eval { $translator->data } if $translator;    # Provoke lazy loading of translation data
 
     my $json_translator;
     if ( $self->json_translate ) {
-        $json_translator = Zonemaster::Translator->new;
+        $json_translator = Zonemaster::Engine::Translator->new;
         $json_translator->locale( $self->locale ) if $self->locale;
         eval { $json_translator->data };
     }
 
     if ( $self->restore ) {
-        Zonemaster->preload_cache( $self->restore );
+        Zonemaster::Engine->preload_cache( $self->restore );
     }
 
     # Callback defined here so it closes over the setup above.
-    Zonemaster->logger->callback(
+    Zonemaster::Engine->logger->callback(
         sub {
             my ( $entry ) = @_;
 
@@ -379,7 +379,7 @@ sub run {
                 }
             } ## end if ( $numeric{ uc $entry...})
             if ( $self->stop_level and $numeric{ uc $entry->level } >= $numeric{ uc $self->stop_level } ) {
-                die( Zonemaster::Exception::NormalExit->new( { message => "Saw message at level " . $entry->level } ) );
+                die( Zonemaster::Engine::Exception::NormalExit->new( { message => "Saw message at level " . $entry->level } ) );
             }
         }
     );
@@ -433,15 +433,15 @@ sub run {
             foreach my $t ( @{ $self->test } ) {
                 my ( $module, $method ) = split( '/', $t, 2 );
                 if ( $method ) {
-                    Zonemaster->test_method( $module, $method, Zonemaster->zone( $domain ) );
+                    Zonemaster::Engine->test_method( $module, $method, Zonemaster::Engine->zone( $domain ) );
                 }
                 else {
-                    Zonemaster->test_module( $module, $domain );
+                    Zonemaster::Engine->test_module( $module, $domain );
                 }
             }
         }
         else {
-            Zonemaster->test_zone( $domain );
+            Zonemaster::Engine->test_zone( $domain );
         }
     };
     if ( $translator ) {
@@ -452,7 +452,7 @@ sub run {
 
     if ( $@ ) {
         my $err = $@;
-        if ( blessed $err and $err->isa( "Zonemaster::Exception::NormalExit" ) ) {
+        if ( blessed $err and $err->isa( "Zonemaster::Engine::Exception::NormalExit" ) ) {
             say STDERR "Exited early: " . $err->message;
         }
         else {
@@ -469,7 +469,7 @@ sub run {
     }
 
     if ( $self->nstimes ) {
-        my $zone = Zonemaster->zone( $domain );
+        my $zone = Zonemaster::Engine->zone( $domain );
         my $max = max map { length( "$_" ) } @{ $zone->ns };
 
         print "\n";
@@ -488,16 +488,16 @@ sub run {
     }
 
     if ($self->elapsed) {
-        my $last = Zonemaster->logger->entries->[-1];
+        my $last = Zonemaster::Engine->logger->entries->[-1];
         printf "Total test run time: %0.1f seconds.\n", $last->timestamp;
     }
 
     if ( $self->json ) {
-        say Zonemaster->logger->json( $self->level );
+        say Zonemaster::Engine->logger->json( $self->level );
     }
 
     if ( $self->save ) {
-        Zonemaster->save_cache( $self->save );
+        Zonemaster::Engine->save_cache( $self->save );
     }
 
     return;
@@ -529,7 +529,7 @@ sub add_fake_delegation {
         }
     }
 
-    Zonemaster->add_fake_delegation( $domain => \%data );
+    Zonemaster::Engine->add_fake_delegation( $domain => \%data );
 
     return;
 }
@@ -543,19 +543,19 @@ sub add_fake_ds {
         push @data, { keytag => $tag, algorithm => $algo, type => $type, digest => $digest };
     }
 
-    Zonemaster->add_fake_ds( $domain => \@data );
+    Zonemaster::Engine->add_fake_ds( $domain => \@data );
 
     return;
 }
 
 sub print_versions {
     say 'CLI version:    ' . __PACKAGE__->VERSION;
-    say 'Engine version: ' . $Zonemaster::VERSION;
+    say 'Engine version: ' . $Zonemaster::Engine::VERSION;
     say "\nTest module versions:";
 
-    my %methods = Zonemaster->all_methods;
+    my %methods = Zonemaster::Engine->all_methods;
     foreach my $module ( sort keys %methods ) {
-        my $mod = "Zonemaster::Test::$module";
+        my $mod = "Zonemaster::Engine::Test::$module";
         say "\t$module: " . $mod->version;
     }
 
@@ -591,7 +591,7 @@ sub to_idn {
 }
 
 sub print_test_list {
-    my %methods = Zonemaster->all_methods;
+    my %methods = Zonemaster::Engine->all_methods;
     my $maxlen  = max map {
         map { length( $_ ) }
           @$_
@@ -620,13 +620,13 @@ sub print_test_list {
 
 sub do_dump_policy {
     my $json = JSON::XS->new->canonical->pretty;
-    print $json->encode(Zonemaster->config->policy);
+    print $json->encode(Zonemaster::Engine->config->policy);
     exit;
 }
 
 sub do_dump_config {
     my $json = JSON::XS->new->canonical->pretty;
-    print $json->encode(Zonemaster->config->get);
+    print $json->encode(Zonemaster::Engine->config->get);
     exit;
 }
 

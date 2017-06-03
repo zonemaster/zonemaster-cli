@@ -27,10 +27,10 @@ build_requires( 'Test::More' => 0, );
 # Dirty hack to avoid complaints about unparsable version number from
 # old versions of ExtUtils::MakeMaker.
 if ( eval { ExtUtils::MakeMaker->VERSION(6.68) } ) {
-    requires 'Zonemaster' => 'v1.0.4';
+    requires 'Zonemaster::Engine' => 'v1.0.4';
 }
 else {
-    requires 'Zonemaster' => 0;
+    requires 'Zonemaster::Engine' => 0;
 }
 
 requires(
