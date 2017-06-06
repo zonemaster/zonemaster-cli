@@ -3,10 +3,10 @@
 use 5.14.4;
 use warnings;
 
-use Zonemaster;
+use Zonemaster::Engine;
 use POSIX qw[strftime];
 
-my %algo = %Zonemaster::Test::DNSSEC::algo_properties;
+my %algo = %Zonemaster::Engine::Test::DNSSEC::algo_properties;
 
 my %digest = (
     1 => 'SHA-1',
@@ -22,7 +22,7 @@ if ( not $name ) {
     exit;
 }
 
-my $zone = Zonemaster->zone( $name );
+my $zone = Zonemaster::Engine->zone( $name );
 
 say "Zone:        " . $zone->name->string;
 say "Parent zone: " . $zone->parent->name->string;
@@ -149,7 +149,7 @@ Information about the domain's SOA record's RRSIG records, if any.
 
 =head1 SEE ALSO
 
-L<Zonemaster>
+L<Zonemaster::Engine>
 
 =head1 AUTHOR
 

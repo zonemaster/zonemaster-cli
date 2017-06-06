@@ -24,16 +24,8 @@ configure_requires( 'Module::Install' => 0, );
 
 build_requires( 'Test::More' => 0, );
 
-# Dirty hack to avoid complaints about unparsable version number from
-# old versions of ExtUtils::MakeMaker.
-if ( eval { ExtUtils::MakeMaker->VERSION(6.68) } ) {
-    requires 'Zonemaster::Engine' => 'v1.0.4';
-}
-else {
-    requires 'Zonemaster::Engine' => 0;
-}
-
 requires(
+    'Zonemaster::Engine'        => 0,
     'version'                   => 0.77,
     'MooseX::Getopt'            => 0,
     'Getopt::Long::Descriptive' => 0,
