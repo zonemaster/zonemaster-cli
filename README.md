@@ -28,7 +28,7 @@ Installation instructions for the CLI
 
 This repository does not need any specific configuration.
 
-### Documentation
+### Documentation
 
 Other than the installation documentation, no specific documentation is needed.
 The [using](https://github.com/dotse/zonemaster-cli/blob/master/USING.md)
@@ -45,7 +45,7 @@ You can follow the project in these two mailinglists:
  * [zonemaster-users](http://lists.iis.se/cgi-bin/mailman/listinfo/zonemaster-users)
  * [zonemaster-devel](http://lists.iis.se/cgi-bin/mailman/listinfo/zonemaster-devel)
 
-### Contact or Bug reporting 
+### Contact or Bug reporting
 
 For any contacts or bug reporting, please send a mail to
 "contact@zonemaster.net".

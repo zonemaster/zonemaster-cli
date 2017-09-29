@@ -25,7 +25,7 @@ Zonemaster Engine test framework installed. Please see the
 To install the CLI, one installs the dependecies
 for the chosen OS and then finally install the CLI itself.
 
-### <a name="Debian"></a> Install dependencies for Debian & Ubuntu
+### <a name="Debian"></a> Install dependencies for Debian & Ubuntu
 
 1) Install necessary packages.
 
