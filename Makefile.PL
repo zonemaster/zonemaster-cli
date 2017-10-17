@@ -29,7 +29,7 @@ requires(
     'version'                   => 0.77,
     'MooseX::Getopt'            => 0,
     'Getopt::Long::Descriptive' => 0,
-    'Net::LDNS'                 => 0.65,
+    'Zonemaster::LDNS'          => 0.65,
     'Locale::TextDomain'        => 0,
     'Text::Reflow'              => 0,
     'JSON::XS'                  => 0,
