@@ -640,3 +640,11 @@ __END__
 =head1 NAME
 
 Zonemaster::CLI - run Zonemaster tests from the command line
+
+=head1 AUTHORS
+
+Vincent Levigneron <vincent.levigneron at nic.fr>
+- Current maintainer
+
+Calle Dybedahl <calle at init.se>
+- Original author
