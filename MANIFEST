@@ -19,11 +19,9 @@ META.yml
 README.md
 script/zonemaster-cli
 script/zonemaster-info
-share/en.po
-share/fr.po
+share/Makefile
 share/locale/en/LC_MESSAGES/Zonemaster-CLI.mo
 share/locale/fr/LC_MESSAGES/Zonemaster-CLI.mo
 share/locale/sv/LC_MESSAGES/Zonemaster-CLI.mo
-share/sv.po
 t/00-load.t
 USING.md

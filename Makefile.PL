@@ -35,6 +35,13 @@ requires(
     'JSON::XS'                  => 0,
 );
 
+sub MY::postamble {
+        return <<'MAKE_FRAG';
+	$(MYEXTLIB): share/Makefile
+	cd share && $(MAKE) all
+MAKE_FRAG
+};
+
 install_script 'zonemaster-cli';
 install_share;
 

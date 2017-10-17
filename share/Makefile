@@ -4,12 +4,8 @@ MOFILES := $(POFILES:.po=.mo)
 MSGFMT  = msgfmt --check
 
 %.mo: %.po
+	@echo Generating locale/$*/LC_MESSAGES/Zonemaster-CLI.mo
 	@mkdir -p locale/$*/LC_MESSAGES
 	@${MSGFMT} -o locale/$*/LC_MESSAGES/Zonemaster-CLI.mo $<
-	@echo locale/$*/LC_MESSAGES/Zonemaster-CLI.mo
 
 all: ${MOFILES}
-	@echo
-	@echo Remember to make sure all of the above names are in the
-	@echo MANIFEST file, or they will not be installed.
-	@echo

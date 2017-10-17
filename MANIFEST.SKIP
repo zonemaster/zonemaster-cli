@@ -9,4 +9,5 @@ MYMETA.yml
 ^blib
 .tar.gz$
 .bak$
+\.po$
 ~$
