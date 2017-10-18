@@ -37,44 +37,53 @@ This instruction covers the following operating systems:
 
 First install the Zonemaster Engine, following the instructions above.
 
-1) Install the CPAN packages.
+Install Zonemaster::CLI and dependencies:
 
 `sudo cpan -i Zonemaster::CLI`
 
 
 ### 2. Debian
 
-1) Install necessary packages.
+Install dependencies:
 
 `sudo apt-get install libmoosex-getopt-perl libtext-reflow-perl libmodule-install-perl`
 
-2) Install non-packaged software
+Install Zonemaster::CLI:
 
 `sudo cpan -i Zonemaster::CLI`
-
-3) Now you are ready to run the zonemaster-cli command:
-
-`zonemaster-cli zonemaster.net`
 
 
 ### 3. FreeBSD
 
-1) Still as root, install necessary packages.
+Become root:
 
-`pkg install p5-MooseX-Getopt p5-Text-Reflow p5-Module-Install`
+```sh
+su
+```
 
-2) Still as root, install non-packaged software.
+Install dependencies available from binary packages:
 
-`cpan -i Zonemaster::CLI`
+```sh
+pkg install p5-JSON-XS p5-Locale-libintl p5-MooseX-Getopt p5-Text-Reflow
+```
 
-3) The CLI tool is now installed and can be run by any user.
+Install Zonemaster::CLI:
 
-`$ zonemaster-cli zonemaster.net`
+```sh
+cpan -i Zonemaster::CLI
+```
 
 
 ### 4. Ubuntu
 
 Use the procedure for installation on [Debian](#2-debian).
+
+
+## Post-installation sanity check
+
+Run the zonemaster-cli command:
+
+`zonemaster-cli zonemaster.net`
 
 
 ## What to do next?
