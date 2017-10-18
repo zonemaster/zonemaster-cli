@@ -17,7 +17,7 @@ resources(
     bugtracker => 'https://github.com/dotse/zonemaster-cli/issues',
 );
 
-configure_requires( 'Module::Install' => 0, );
+configure_requires( 'Locale::Msgfmt' => 0.15, );
 
 build_requires( 'Test::More' => 0, );
 
