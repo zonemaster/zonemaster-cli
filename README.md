@@ -15,7 +15,7 @@ For an overview of the Zonemaster software, please see the
 Before you install the Zonemaster CLI utility, you need the
 Zonemaster Engine test framework installed. Please see the
 [Zonemaster Engine installation
-instructions](https://github.com/dotse/zonemaster-engine/blob/master/docs/installation.md).
+instructions](https://github.com/dotse/zonemaster-engine/blob/master/docs/Installation.md).
 
 Installation
 ============

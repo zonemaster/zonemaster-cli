@@ -1,31 +1,48 @@
-# Zonemaster CLI installation guide
+# Installation
 
-This is the installation instructions for the Zonemaster CLI utility.
+## Overview
 
-The documentation covers the following operating systems:
-
- * [1] <a href="#Debian">Ubuntu 12.04 (LTS)</a>
- * [2] <a href="#Debian">Debian Jessie (version 8) - 64 bits</a>
- * [3] <a href="#FreeBSD">FreeBSD 10.1</a>
- * [4] <a href="#CentOS">CentOS 7 </a>
-
->
-> Note: We assume the installation instructions will work for earlier OS
-> versions too. If you have any issue in installing the Zonemaster engine with
-> earlier versions, please send a mail with details to contact@zonemaster.net
->
+This document describes prerequisites, installation and post-install sanity
+checking for Zonemaster::CLI. The final section wraps up with a few pointer to
+other interfaces to Zonemaster. For an overview of the Zonemaster product,
+please see the [main Zonemaster Repository].
 
 
-## Prerequisite
+## Prerequisites
 
-Before you install the Zonemaster CLI utility, you need the
-Zonemaster Engine test framework installed. Please see the
-[Zonemaster Engine installation instructions](https://github.com/dotse/zonemaster-engine/blob/master/docs/installation.md).
+Before installing Zonemaster::CLI, you should [install Zonemaster::Engine][
+Zonemaster::Engine installation].
 
-To install the CLI, one installs the dependecies
-for the chosen OS and then finally install the CLI itself.
+> **Note:** [Zonemaster::Engine] and [Zonemaster::LDNS] are dependencies of
+> Zonemaster::CLI. Zonemaster::LDNS has a special installation requirement,
+> and Zonemaster::Engine has a list of dependencies that you may prefer to
+> install from your operating system distribution (rather than CPAN).
+> We recommend following the Zonemaster::Engine installation instruction.
 
-### <a name="Debian"></a> Install dependencies for Debian & Ubuntu
+For details on supported versions of Perl and operating system for
+Zonemaster::CLI, see the [declaration of prerequisites].
+
+
+## Installation
+
+This instruction covers the following operating systems:
+
+ * [CentOS](#1-centos)
+ * [Debian](#2-debian)
+ * [FreeBSD](#3-freebsd)
+ * [Ubuntu](#4-ubuntu)
+
+
+### 1. CentOS
+
+First install the Zonemaster Engine, following the instructions above.
+
+1) Install the CPAN packages.
+
+`sudo cpan -i Zonemaster::CLI`
+
+
+### 2. Debian
 
 1) Install necessary packages.
 
@@ -40,7 +57,7 @@ for the chosen OS and then finally install the CLI itself.
 `zonemaster-cli zonemaster.net`
 
 
-## <a name="FreeBSD"></a> Install dependencies for FreeBSD
+### 3. FreeBSD
 
 1) Still as root, install necessary packages.
 
@@ -55,28 +72,31 @@ for the chosen OS and then finally install the CLI itself.
 `$ zonemaster-cli zonemaster.net`
 
 
-## <a name="CentOS"></a> Install dependencies for CentOS 7
+### 4. Ubuntu
 
-First install the Zonemaster Engine, following the instructions above.
-
-1) Install the CPAN packages.
-
-`sudo cpan -i Zonemaster::CLI`
+Use the procedure for installation on [Debian](#2-debian).
 
 
 ## What to do next?
 
-In case if you want to use the engine from a web interface, you will have to install the
-*[Backend](https://github.com/dotse/zonemaster-backend/blob/master/docs/installation.md)*
-and the *[GUI](https://github.com/dotse/zonemaster-gui/blob/master/docs/installation.md)*.
-To use the engine from the *[API](https://github.com/dotse/zonemaster-backend/blob/master/docs/API.md)*,
-you will have to install the *Backend*.
-
+ * For a web GUI, follow the [Zonemaster::Backend][Zonemaster::Backend
+   installation] and [Zonemaster::GUI installation] instructions.
+ * For a [JSON-RPC][JSON-RPC API] frontend, follow the [Zonemaster::Backend
+   installation] instruction.
 
 -------
 
-Copyright (c) 2013 - 2016, IIS (The Internet Foundation in Sweden)  
-Copyright (c) 2013 - 2016, AFNIC  
+[Declaration of prerequisites]: https://github.com/dotse/zonemaster/blob/master/README.md#prerequisites
+[JSON-RPC API]: https://github.com/dotse/zonemaster-backend/blob/master/docs/API.md
+[Main Zonemaster repository]: https://github.com/dotse/zonemaster/blob/master/README.md
+[Zonemaster::Backend installation]: https://github.com/dotse/zonemaster-backend/blob/master/docs/Installation.md
+[Zonemaster::Engine installation]: https://github.com/dotse/zonemaster-engine/blob/master/docs/Installation.md
+[Zonemaster::Engine]: https://github.com/dotse/zonemaster-engine/blob/master/README.md
+[Zonemaster::GUI installation]: https://github.com/dotse/zonemaster-gui/blob/master/docs/installation.md
+[Zonemaster::LDNS]: https://github.com/dotse/zonemaster-ldns/blob/master/README.md
+
+Copyright (c) 2013 - 2017, IIS (The Internet Foundation in Sweden) \
+Copyright (c) 2013 - 2017, AFNIC \
 Creative Commons Attribution 4.0 International License
 
 You should have received a copy of the license along with this
