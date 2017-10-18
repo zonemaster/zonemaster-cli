@@ -21,7 +21,7 @@ Installation
 ============
 
 Installation instructions for the CLI
-[installation](docs/installation.md) document.
+[installation](docs/Installation.md) document.
 
 
 ### Configuration 
