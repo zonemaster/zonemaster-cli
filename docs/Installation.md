@@ -87,7 +87,11 @@ Use the procedure for installation on [Debian](#2-debian).
 
 Run the zonemaster-cli command:
 
-`zonemaster-cli zonemaster.net`
+```sh
+zonemaster-cli --test basic zonemaster.net
+```
+
+The command is expected to take a few seconds and print some results about the delegation of zonemaster.net.
 
 
 ## What to do next?
