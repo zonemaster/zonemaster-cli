@@ -35,22 +35,26 @@ This instruction covers the following operating systems:
 
 ### 1. CentOS
 
-First install the Zonemaster Engine, following the instructions above.
-
 Install Zonemaster::CLI and dependencies:
 
-`sudo cpan -i Zonemaster::CLI`
+```sh
+sudo cpan -i Zonemaster::CLI
+```
 
 
 ### 2. Debian
 
 Install dependencies:
 
-`sudo apt-get install libmoosex-getopt-perl libtext-reflow-perl libmodule-install-perl`
+```sh
+sudo apt-get install libmoosex-getopt-perl libtext-reflow-perl libmodule-install-perl
+```
 
 Install Zonemaster::CLI:
 
-`sudo cpan -i Zonemaster::CLI`
+```sh
+sudo cpan -i Zonemaster::CLI
+```
 
 
 ### 3. FreeBSD
