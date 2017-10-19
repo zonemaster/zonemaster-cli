@@ -108,8 +108,8 @@ msgstr "\n\n   Niveau\tOccurences dans le log"
 msgid  "%8s\t%5d entries.\n"
 msgstr "%8s\t%5d entrées.\n"
 
-msgid  "Warning: Net::LDNS not compiled with libidn, cannot handle non-ASCII names correctly."
-msgstr "Attention: Net::LDNS n'est pas compilé avec libidn, impossible de traiter correctement les noms non ASCII."
+msgid  "Warning: Zonemaster::LDNS not compiled with libidn, cannot handle non-ASCII names correctly."
+msgstr "Attention: Zonemaster::LDNS n'est pas compilé avec libidn, impossible de traiter correctement les noms non ASCII."
 
 msgid  "Warning: setting locale %s failed (is it installed on this system?).\n\n"
 msgstr "Attention: La \"locale\" positionnée %s n'est pas correctement prise en compte (Est-elle installée sur votre système ?).\n\n"
