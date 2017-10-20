@@ -6,11 +6,8 @@ use inc::Module::Install;
 use ExtUtils::MakeMaker ();
 
 name 'Zonemaster-CLI';
-author q{Calle Dybedahl <calle@init.se>};
 license 'bsd';
 all_from 'lib/Zonemaster/CLI.pm';
-
-perl_version 5.014002;
 
 tests_recursive( 't' );
 
@@ -20,20 +17,25 @@ resources(
     bugtracker => 'https://github.com/dotse/zonemaster-cli/issues',
 );
 
-configure_requires( 'Module::Install' => 0, );
+configure_requires( 'Locale::Msgfmt' => 0.15, );
 
 build_requires( 'Test::More' => 0, );
 
 requires(
-    'Zonemaster::Engine'        => 0,
-    'version'                   => 0.77,
-    'MooseX::Getopt'            => 0,
-    'Getopt::Long::Descriptive' => 0,
-    'Zonemaster::LDNS'          => 0.65,
-    'Locale::TextDomain'        => 0,
-    'Text::Reflow'              => 0,
-    'JSON::XS'                  => 0,
+    'JSON::XS'           => 0,
+    'Locale::TextDomain' => 0,
+    'MooseX::Getopt'     => 0,
+    'Text::Reflow'       => 0,
+    'Zonemaster::Engine' => 2.0,
+    'Zonemaster::LDNS'   => 1.0,
 );
+
+sub MY::postamble {
+        return <<'MAKE_FRAG';
+	$(MYEXTLIB): share/Makefile
+	cd share && $(MAKE) all
+MAKE_FRAG
+};
 
 install_script 'zonemaster-cli';
 install_share;
