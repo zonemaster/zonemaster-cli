@@ -62,7 +62,7 @@ sudo cpan -i Zonemaster::CLI
 Become root:
 
 ```sh
-su
+su -l
 ```
 
 Install dependencies available from binary packages:
