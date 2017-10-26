@@ -109,7 +109,7 @@ The command is expected to take a few seconds and print some results about the d
 [Zonemaster::Backend installation]: https://github.com/dotse/zonemaster-backend/blob/master/docs/Installation.md
 [Zonemaster::Engine installation]: https://github.com/dotse/zonemaster-engine/blob/master/docs/Installation.md
 [Zonemaster::Engine]: https://github.com/dotse/zonemaster-engine/blob/master/README.md
-[Zonemaster::GUI installation]: https://github.com/dotse/zonemaster-gui/blob/master/docs/installation.md
+[Zonemaster::GUI installation]: https://github.com/dotse/zonemaster-gui/blob/master/docs/Installation.md
 [Zonemaster::LDNS]: https://github.com/dotse/zonemaster-ldns/blob/master/README.md
 
 Copyright (c) 2013 - 2017, IIS (The Internet Foundation in Sweden) \
