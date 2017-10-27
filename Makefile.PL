@@ -23,7 +23,7 @@ build_requires( 'Test::More' => 0, );
 
 requires(
     'JSON::XS'           => 0,
-    'Locale::TextDomain' => 0,
+    'Locale::TextDomain' => 1.23,
     'MooseX::Getopt'     => 0,
     'Text::Reflow'       => 0,
     'Zonemaster::Engine' => 2.0,
