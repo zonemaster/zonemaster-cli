@@ -1,16 +1,17 @@
-Release history for Zonemaster Component Zonemaster-CLI 
-(Perl module Zonemaster::CLI).
+Release history for Zonemaster component Zonemaster-CLI 
 
 v1.1.1 2017-11-02 Public release
-- Changed dependency from Zonemaster to Zonemaster::Engine due
-  to name space change (#43)
-- Fix Commonmark rendering on Github. Replace NBSP with SPACE. (#49)
-- Various updates to packaging (#52) 
+
+Fixed:
+- Update licensing (#58) 
+- Specify smallest version of Locale::TextDomain i Makefile.PL. (#57)
+- Updated installation instruction (#53) 
 - Changed dependency from Net::LDNS to Zonemaster::LDNS due to
   name space change (#51) 
-- Updated installation instruction (#53) 
-- Specify smallest version of Locale::TextDomain i Makefile.PL. (#57)
-- Update licensing (#58) 
+- Various updates to packaging (#52) 
+- Fix Commonmark rendering on Github. Replace NBSP with SPACE. (#49)
+- Changed dependency from Zonemaster to Zonemaster::Engine due
+  to name space change (#43)
 
 
 v1.1.0 2017-04-04 Public pre-release
