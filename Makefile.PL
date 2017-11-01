@@ -12,7 +12,6 @@ all_from 'lib/Zonemaster/CLI.pm';
 tests_recursive( 't' );
 
 resources(
-    license    => 'http://www.opensource.org/licenses/BSD-3-Clause',
     repository => 'https://github.com/dotse/zonemaster-cli',
     bugtracker => 'https://github.com/dotse/zonemaster-cli/issues',
 );
