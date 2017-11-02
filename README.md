@@ -15,20 +15,20 @@ For an overview of the Zonemaster software, please see the
 Before you install the Zonemaster CLI utility, you need the
 Zonemaster Engine test framework installed. Please see the
 [Zonemaster Engine installation
-instructions](https://github.com/dotse/zonemaster-engine/blob/master/docs/installation.md).
+instructions](https://github.com/dotse/zonemaster-engine/blob/master/docs/Installation.md).
 
 Installation
 ============
 
 Installation instructions for the CLI
-[installation](docs/installation.md) document.
+[installation](docs/Installation.md) document.
 
 
 ### Configuration 
 
 This repository does not need any specific configuration.
 
-### Documentation
+### Documentation
 
 Other than the installation documentation, no specific documentation is needed.
 The [using](https://github.com/dotse/zonemaster-cli/blob/master/USING.md)
@@ -45,7 +45,7 @@ You can follow the project in these two mailinglists:
  * [zonemaster-users](http://lists.iis.se/cgi-bin/mailman/listinfo/zonemaster-users)
  * [zonemaster-devel](http://lists.iis.se/cgi-bin/mailman/listinfo/zonemaster-devel)
 
-### Contact or Bug reporting 
+### Contact or Bug reporting
 
 For any contacts or bug reporting, please send a mail to
 "contact@zonemaster.net".

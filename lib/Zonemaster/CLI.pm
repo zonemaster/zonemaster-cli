@@ -23,7 +23,7 @@ use Zonemaster::Engine::Exception;
 use Zonemaster::Engine::Zone;
 use Scalar::Util qw[blessed];
 use Encode;
-use Net::LDNS;
+use Zonemaster::LDNS;
 use POSIX qw[setlocale LC_MESSAGES];
 use List::Util qw[max];
 use Text::Reflow qw[reflow_string];
@@ -581,11 +581,11 @@ sub to_idn {
         return $str;
     }
 
-    if ( Net::LDNS::has_idn() ) {
-        return Net::LDNS::to_idn( decode( $self->encoding, $str ) );
+    if ( Zonemaster::LDNS::has_idn() ) {
+        return Zonemaster::LDNS::to_idn( decode( $self->encoding, $str ) );
     }
     else {
-        say STDERR __( "Warning: Net::LDNS not compiled with libidn, cannot handle non-ASCII names correctly." );
+        say STDERR __( "Warning: Zonemaster::LDNS not compiled with libidn, cannot handle non-ASCII names correctly." );
         return $str;
     }
 }
@@ -640,3 +640,11 @@ __END__
 =head1 NAME
 
 Zonemaster::CLI - run Zonemaster tests from the command line
+
+=head1 AUTHORS
+
+Vincent Levigneron <vincent.levigneron at nic.fr>
+- Current maintainer
+
+Calle Dybedahl <calle at init.se>
+- Original author
