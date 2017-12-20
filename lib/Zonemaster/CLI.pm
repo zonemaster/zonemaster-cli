@@ -6,7 +6,7 @@ extends 'Zonemaster::Engine::Exception';
 # The actual interesting module.
 package Zonemaster::CLI;
 
-use version; our $VERSION = version->declare("v1.1.1");
+use version; our $VERSION = version->declare("v1.1.2");
 
 use 5.014002;
 use warnings;
@@ -529,9 +529,8 @@ sub add_fake_delegation {
         }
     }
 
-    Zonemaster::Engine->add_fake_delegation( $domain => \%data );
+    return Zonemaster::Engine->add_fake_delegation( $domain => \%data );
 
-    return;
 }
 
 sub add_fake_ds {
