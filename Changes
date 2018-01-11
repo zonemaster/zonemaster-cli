@@ -1,5 +1,14 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
+v1.1.2 2018-01-12
+
+Natural Language support:
+- Adding support for Danish translation. (#62) 
+
+Fixed:
+- Fixes issues with pre-delegation testing ("fake delegation") (#63)
+
+
 v1.1.1 2017-11-02 Public release
 
 Fixed:
