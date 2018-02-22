@@ -146,13 +146,10 @@ the method expects.
 As soon as a message of the given level or higher is logged, terminate the
 testing process.
 
-=item --config=FILE
+=item --profile=FILE
 
-Load configuration from the file with the given name.
-
-=item --policy=FILE
-
-Load policy information from the file with the given name.
+Override the Zonemaster Engine default profile data with values from
+the given profile JSON file.
 
 =item --ds=KEYTAG,ALGORITHM,TYPE,DIGEST
 
@@ -182,6 +179,16 @@ The default value will be taken from the C<LC_CTYPE> environment variable if
 possible, and set to UTF-8 if not.
 
 =back
+
+=head1 PROFILES
+
+The testing and result analysis performed by Zonemaster Engine is always
+guided by a profile.
+Zonemaster Engine has a default profile with sensible defaults.
+Zonemaster CLI allows users to override the default profile data with
+values from a profile JSON file with the C<--profile> option.
+For details on profiles and how they're respresented in files, see
+L<Zonemaster::Engine::Profile>.
 
 =head1 CONFIGURATION
 
