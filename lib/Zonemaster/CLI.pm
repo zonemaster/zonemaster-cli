@@ -24,7 +24,7 @@ use Zonemaster::Engine::Zone;
 use Scalar::Util qw[blessed];
 use Encode;
 use Zonemaster::LDNS;
-use POSIX qw[setlocale LC_MESSAGES];
+use POSIX qw[setlocale LC_MESSAGES LC_CTYPE];
 use List::Util qw[max];
 use Text::Reflow qw[reflow_string];
 use JSON::XS;
@@ -261,11 +261,18 @@ sub run {
     my $printed_something;
 
     if ( $self->locale ) {
-        my $loc = setlocale( LC_MESSAGES, $self->locale );
-        if ( not defined $loc ) {
-            printf STDERR __( "Warning: setting locale %s failed (is it installed on this system?).\n\n" ),
-              $self->locale;
-        }
+        undef $ENV{LANGUAGE};
+        $ENV{LC_ALL} = $self->locale;
+    }
+
+    # Set LC_MESSAGES and LC_CTYPE separately (https://www.gnu.org/software/gettext/manual/html_node/Triggering.html#Triggering)
+    if ( not defined setlocale( LC_MESSAGES, "" ) ) {
+        printf STDERR __( "Warning: setting locale category LC_MESSAGES to %s failed (is it installed on this system?).\n\n" ),
+        $ENV{LANGUAGE} || $ENV{LC_ALL} || $ENV{LC_MESSAGES};
+    }
+    if ( not defined setlocale( LC_CTYPE, "" ) ) {
+        printf STDERR __( "Warning: setting locale category LC_CTYPE to %s failed (is it installed on this system?).\n\n" ),
+        $ENV{LC_ALL} || $ENV{LC_CTYPE};
     }
 
     if ( $self->version ) {
