@@ -35,10 +35,10 @@ This instruction covers the following operating systems:
 
 ### 1. CentOS
 
-Install Zonemaster::CLI and dependencies:
+Install Zonemaster::CLI 
 
 ```sh
-sudo cpan -i Zonemaster::CLI
+sudo cpanm Zonemaster::CLI
 ```
 
 
@@ -53,7 +53,7 @@ sudo apt-get install libmoosex-getopt-perl libtext-reflow-perl libmodule-install
 Install Zonemaster::CLI:
 
 ```sh
-sudo cpan -i Zonemaster::CLI
+sudo cpanm Zonemaster::CLI
 ```
 
 
