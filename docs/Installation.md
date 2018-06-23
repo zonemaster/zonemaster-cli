@@ -74,7 +74,7 @@ pkg install p5-JSON-XS p5-Locale-libintl p5-MooseX-Getopt p5-Text-Reflow
 Install Zonemaster::CLI:
 
 ```sh
-cpan -i Zonemaster::CLI
+cpanm Zonemaster::CLI
 ```
 
 
