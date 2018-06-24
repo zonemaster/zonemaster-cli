@@ -1,5 +1,15 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
+v1.1.3 2018-06-25
+
+Fixed:
+- Move license from Makefile.PL to main module (#67)
+- Initialize gettext according to gettext documentation (#71), which
+  solves issues with translations in Linux (#46) and FreeBSD (#64) 
+- Updated the install instructions for debian and centos (#75)
+- Update Installation.md for FreeBSD (uses cpan instead of cpanm) (#78)
+
+
 v1.1.2 2018-01-12
 
 Natural Language support:
