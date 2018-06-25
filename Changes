@@ -9,7 +9,6 @@ Fixed:
 - Updated the install instructions for debian and centos (#75)
 - Update Installation.md for FreeBSD (uses cpan instead of cpanm) (#78)
 
-
 v1.1.2 2018-01-12
 
 Natural Language support:
