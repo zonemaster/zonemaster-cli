@@ -6,15 +6,13 @@ use inc::Module::Install;
 use ExtUtils::MakeMaker ();
 
 name 'Zonemaster-CLI';
-license 'bsd';
 all_from 'lib/Zonemaster/CLI.pm';
-
-tests_recursive( 't' );
-
 resources(
     repository => 'https://github.com/dotse/zonemaster-cli',
     bugtracker => 'https://github.com/dotse/zonemaster-cli/issues',
 );
+
+tests_recursive( 't' );
 
 configure_requires( 'Locale::Msgfmt' => 0.15, );
 

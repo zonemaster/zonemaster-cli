@@ -6,7 +6,7 @@ extends 'Zonemaster::Engine::Exception';
 # The actual interesting module.
 package Zonemaster::CLI;
 
-use version; our $VERSION = version->declare("v1.1.2");
+use version; our $VERSION = version->declare("v1.1.3");
 
 use 5.014002;
 use warnings;
@@ -24,7 +24,7 @@ use Zonemaster::Engine::Zone;
 use Scalar::Util qw[blessed];
 use Encode;
 use Zonemaster::LDNS;
-use POSIX qw[setlocale LC_MESSAGES];
+use POSIX qw[setlocale LC_MESSAGES LC_CTYPE];
 use List::Util qw[max];
 use Text::Reflow qw[reflow_string];
 use JSON::XS;
@@ -261,11 +261,18 @@ sub run {
     my $printed_something;
 
     if ( $self->locale ) {
-        my $loc = setlocale( LC_MESSAGES, $self->locale );
-        if ( not defined $loc ) {
-            printf STDERR __( "Warning: setting locale %s failed (is it installed on this system?).\n\n" ),
-              $self->locale;
-        }
+        undef $ENV{LANGUAGE};
+        $ENV{LC_ALL} = $self->locale;
+    }
+
+    # Set LC_MESSAGES and LC_CTYPE separately (https://www.gnu.org/software/gettext/manual/html_node/Triggering.html#Triggering)
+    if ( not defined setlocale( LC_MESSAGES, "" ) ) {
+        printf STDERR __( "Warning: setting locale category LC_MESSAGES to %s failed (is it installed on this system?).\n\n" ),
+        $ENV{LANGUAGE} || $ENV{LC_ALL} || $ENV{LC_MESSAGES};
+    }
+    if ( not defined setlocale( LC_CTYPE, "" ) ) {
+        printf STDERR __( "Warning: setting locale category LC_CTYPE to %s failed (is it installed on this system?).\n\n" ),
+        $ENV{LC_ALL} || $ENV{LC_CTYPE};
     }
 
     if ( $self->version ) {
@@ -647,3 +654,14 @@ Vincent Levigneron <vincent.levigneron at nic.fr>
 
 Calle Dybedahl <calle at init.se>
 - Original author
+
+=head1 LICENSE
+
+This is free software, licensed under:
+
+The (three-clause) BSD License
+
+The full text of the license can be found in the
+F<LICENSE> file included with this distribution.
+
+=cut
