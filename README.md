@@ -1,6 +1,6 @@
 Zonemaster CLI
 ==============
-[![Build Status](https://travis-ci.org/dotse/zonemaster-engine.svg?branch=master)](https://travis-ci.org/dotse/zonemaster-engine)
+[![Build Status](https://travis-ci.org/zonemaster/zonemaster-engine.svg?branch=master)](https://travis-ci.org/zonemaster/zonemaster-engine)
 [![CPAN version](https://badge.fury.io/pl/Zonemaster-CLI.svg)](https://metacpan.org/pod/Zonemaster::CLI)
 
 ### Purpose
@@ -8,14 +8,14 @@ Zonemaster CLI
 This Git repository is one of the components of the Zonemaster software and contains the source for the Zonemaster CLI utility.
 
 For an overview of the Zonemaster software, please see the
-[Zonemaster repository](https://github.com/dotse/zonemaster).
+[Zonemaster repository](https://github.com/zonemaster/zonemaster).
 
 ## Prerequisite
 
 Before you install the Zonemaster CLI utility, you need the
 Zonemaster Engine test framework installed. Please see the
 [Zonemaster Engine installation
-instructions](https://github.com/dotse/zonemaster-engine/blob/master/docs/Installation.md).
+instructions](https://github.com/zonemaster/zonemaster-engine/blob/master/docs/Installation.md).
 
 Installation
 ============
@@ -31,7 +31,7 @@ This repository does not need any specific configuration.
 ### Documentation
 
 Other than the installation documentation, no specific documentation is needed.
-The [using](https://github.com/dotse/zonemaster-cli/blob/master/USING.md)
+The [using](https://github.com/zonemaster/zonemaster-cli/blob/master/USING.md)
 document provides an overview on how to use the CLI. 
 
 
