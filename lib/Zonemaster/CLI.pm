@@ -292,12 +292,14 @@ sub run {
     }
 
     if ( $self->policy ) {
-        say __( "Loading policy from " ) . $self->policy . '.' if not ($self->dump_config or $self->dump_policy);
+        say  __( "Loading policy from " ) . $self->policy . '.'   if not ($self->dump_config or $self->dump_policy or $self->json);
+        warn __( "Loading policy from " ) . $self->policy . ".\n" if $self->json or $self->dump_policy;
         Zonemaster::Engine->config->load_policy_file( $self->policy );
     }
 
     if ( $self->config ) {
-        say __( "Loading configuration from " ) . $self->config . '.' if not ($self->dump_config or $self->dump_policy);
+        say  __( "Loading configuration from " ) . $self->config . '.'   if not ($self->dump_config or $self->dump_policy or $self->json);
+        warn __( "Loading configuration from " ) . $self->config . ".\n" if $self->json or $self->dump_config;
         Zonemaster::Engine->config->load_config_file( $self->config );
     }
 
