@@ -297,12 +297,12 @@ sub run {
       : *STDOUT;    # Human readable output mode
 
     if ( $self->policy ) {
-        say $fh_diag __( "Loading policy from " ) . $self->policy . '.';
+        say $fh_diag __x( "Loading policy from {path}.", path => $self->policy );
         Zonemaster::Engine->config->load_policy_file( $self->policy );
     }
 
     if ( $self->config ) {
-        say $fh_diag __( "Loading configuaration from " ) . $self->config . '.';
+        say $fh_diag __x( "Loading configuaration from {path}.", path => $self->config );
         Zonemaster::Engine->config->load_config_file( $self->config );
     }
 

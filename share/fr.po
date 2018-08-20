@@ -84,11 +84,11 @@ msgstr "Impossible de reconnaître le niveau de gravité provoquant l'arrêt de 
 msgid  "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 or DEBUG3.\n"
 msgstr "--level doit avoir pour valeur CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 ou DEBUG3.\n"
 
-msgid  "Loading policy from "
-msgstr "Chargement de la politique de tests depuis le fichier "
+msgid  "Loading policy from {path}."
+msgstr "Chargement de la politique de tests depuis le fichier {path}."
 
-msgid  "Loading configuration from "
-msgstr "Chargement de la configuration depuis le fichier "
+msgid  "Loading configuration from %s."
+msgstr "Chargement de la configuration depuis le fichier {path}."
 
 msgid  "Seconds "
 msgstr "Durée   "
