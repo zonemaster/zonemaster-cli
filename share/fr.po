@@ -87,7 +87,7 @@ msgstr "--level doit avoir pour valeur CRITICAL, ERROR, WARNING, NOTICE, INFO, D
 msgid  "Loading policy from {path}."
 msgstr "Chargement de la politique de tests depuis le fichier {path}."
 
-msgid  "Loading configuration from %s."
+msgid  "Loading configuration from {path}."
 msgstr "Chargement de la configuration depuis le fichier {path}."
 
 msgid  "Seconds "
