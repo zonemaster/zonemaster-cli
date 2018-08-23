@@ -84,11 +84,11 @@ msgstr "Failed to recognize stop level '"
 msgid "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 or DEBUG3.\n"
 msgstr "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 or DEBUG3.\n"
 
-msgid "Loading policy from "
-msgstr "Loading policy from "
+msgid "Loading policy from {path}."
+msgstr "Loading policy from {path}."
 
-msgid "Loading configuration from "
-msgstr "Loading configuration from "
+msgid "Loading configuration from {path}."
+msgstr "Loading configuration from {path}."
 
 msgid "Seconds "
 msgstr "Seconds "

@@ -291,15 +291,18 @@ sub run {
         Zonemaster::Engine->config->resolver_source($self->sourceaddr);
     }
 
+    # Filehandle for diagnostics output
+    my $fh_diag = ( $self->json or $self->json_stream or $self->raw or $self->dump_config or $self->dump_policy )
+      ? *STDERR     # Structured output mode (e.g. JSON)
+      : *STDOUT;    # Human readable output mode
+
     if ( $self->policy ) {
-        say  __( "Loading policy from " ) . $self->policy . '.'   if not ($self->dump_config or $self->dump_policy or $self->json);
-        warn __( "Loading policy from " ) . $self->policy . ".\n" if $self->json or $self->dump_policy;
+        say $fh_diag __x( "Loading policy from {path}.", path => $self->policy );
         Zonemaster::Engine->config->load_policy_file( $self->policy );
     }
 
     if ( $self->config ) {
-        say  __( "Loading configuration from " ) . $self->config . '.'   if not ($self->dump_config or $self->dump_policy or $self->json);
-        warn __( "Loading configuration from " ) . $self->config . ".\n" if $self->json or $self->dump_config;
+        say $fh_diag __x( "Loading configuaration from {path}.", path => $self->config );
         Zonemaster::Engine->config->load_config_file( $self->config );
     }
 
@@ -394,7 +397,8 @@ sub run {
     );
 
     if ( $self->config or $self->policy ) {
-        print "\n";    # Cosmetic
+        # Separate initialization from main output in human readable output mode
+        print "\n" if $fh_diag eq *STDOUT;
     }
 
     my ( $domain ) = @{ $self->extra_argv };
