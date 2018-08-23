@@ -346,7 +346,7 @@ sub run {
         sub {
             my ( $entry ) = @_;
 
-            $self->print_spinner() unless $self->json_stream;
+            $self->print_spinner() if $fh_diag eq *STDOUT;
 
             $counter{ uc $entry->level } += 1;
 
