@@ -43,10 +43,14 @@ has 'version' => (
 );
 
 has 'level' => (
-    is       => 'ro',
-    isa      => 'Str',
-    required => 0,
-    default  => 'NOTICE',
+    is          => 'ro',
+    isa         => 'Str',
+    required    => 0,
+    default     => 'NOTICE',
+    initializer => sub {
+        my ( $self, $value, $set, $attr ) = @_;
+        $set->( uc $value );
+    },
     documentation =>
       __( 'The minimum severity level to display. Must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO or DEBUG.' ),
 );
@@ -160,9 +164,13 @@ has 'test' => (
 );
 
 has 'stop_level' => (
-    is            => 'ro',
-    isa           => 'Str',
-    required      => 0,
+    is          => 'ro',
+    isa         => 'Str',
+    required    => 0,
+    initializer => sub {
+        my ( $self, $value, $set, $attr ) = @_;
+        $set->( uc $value );
+    },
     documentation => __(
 'As soon as a message at this level or higher is logged, execution will stop. Must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO or DEBUG.'
     )
@@ -350,7 +358,7 @@ sub run {
 
             $counter{ uc $entry->level } += 1;
 
-            if ( $numeric{ uc $entry->level } >= $numeric{ uc $self->level } ) {
+            if ( $numeric{ uc $entry->level } >= $numeric{ $self->level } ) {
                 $printed_something = 1;
 
                 if ( $translator ) {
@@ -390,7 +398,7 @@ sub run {
                     printf "%7.2f %-9s %s\n", $entry->timestamp, $entry->level, $entry->string;
                 }
             } ## end if ( $numeric{ uc $entry...})
-            if ( $self->stop_level and $numeric{ uc $entry->level } >= $numeric{ uc $self->stop_level } ) {
+            if ( $self->stop_level and $numeric{ uc $entry->level } >= $numeric{ $self->stop_level } ) {
                 die( Zonemaster::Engine::Exception::NormalExit->new( { message => "Saw message at level " . $entry->level } ) );
             }
         }
