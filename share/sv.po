@@ -84,11 +84,11 @@ msgstr "Kände inte igen avslutsnivån '"
 msgid "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 or DEBUG3.\n"
 msgstr "--level måste vara en av CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 eller DEBUG3.\n"
 
-msgid "Loading policy from "
-msgstr "Laddar policy från "
+msgid "Loading policy from {path}."
+msgstr "Laddar policy från {path}."
 
-msgid "Loading configuration from "
-msgstr "Laddar konfiguration från "
+msgid "Loading configuration from {path}."
+msgstr "Laddar konfiguration från {path}."
 
 msgid  "Seconds "
 msgstr " Sekund "

@@ -6,7 +6,7 @@ extends 'Zonemaster::Engine::Exception';
 # The actual interesting module.
 package Zonemaster::CLI;
 
-use version; our $VERSION = version->declare("v1.1.2");
+use version; our $VERSION = version->declare("v1.1.3");
 
 use 5.014002;
 use warnings;
@@ -43,10 +43,14 @@ has 'version' => (
 );
 
 has 'level' => (
-    is       => 'ro',
-    isa      => 'Str',
-    required => 0,
-    default  => 'NOTICE',
+    is          => 'ro',
+    isa         => 'Str',
+    required    => 0,
+    default     => 'NOTICE',
+    initializer => sub {
+        my ( $self, $value, $set, $attr ) = @_;
+        $set->( uc $value );
+    },
     documentation =>
       __( 'The minimum severity level to display. Must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO or DEBUG.' ),
 );
@@ -160,9 +164,13 @@ has 'test' => (
 );
 
 has 'stop_level' => (
-    is            => 'ro',
-    isa           => 'Str',
-    required      => 0,
+    is          => 'ro',
+    isa         => 'Str',
+    required    => 0,
+    initializer => sub {
+        my ( $self, $value, $set, $attr ) = @_;
+        $set->( uc $value );
+    },
     documentation => __(
 'As soon as a message at this level or higher is logged, execution will stop. Must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO or DEBUG.'
     )
@@ -200,7 +208,7 @@ has 'progress' => (
     is            => 'ro',
     isa           => 'Bool',
     default       => !!( -t STDOUT ),
-    documentation => __( 'Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off if it is not.' ),
+    documentation => __( 'Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off if it is not. Disable with --noprogress.' ),
 );
 
 has 'encoding' => (
@@ -291,13 +299,18 @@ sub run {
         Zonemaster::Engine->config->resolver_source($self->sourceaddr);
     }
 
+    # Filehandle for diagnostics output
+    my $fh_diag = ( $self->json or $self->json_stream or $self->raw or $self->dump_config or $self->dump_policy )
+      ? *STDERR     # Structured output mode (e.g. JSON)
+      : *STDOUT;    # Human readable output mode
+
     if ( $self->policy ) {
-        say __( "Loading policy from " ) . $self->policy . '.' if not ($self->dump_config or $self->dump_policy);
+        say $fh_diag __x( "Loading policy from {path}.", path => $self->policy );
         Zonemaster::Engine->config->load_policy_file( $self->policy );
     }
 
     if ( $self->config ) {
-        say __( "Loading configuration from " ) . $self->config . '.' if not ($self->dump_config or $self->dump_policy);
+        say $fh_diag __x( "Loading configuaration from {path}.", path => $self->config );
         Zonemaster::Engine->config->load_config_file( $self->config );
     }
 
@@ -341,11 +354,11 @@ sub run {
         sub {
             my ( $entry ) = @_;
 
-            $self->print_spinner() unless $self->json_stream;
+            $self->print_spinner() if $fh_diag eq *STDOUT;
 
             $counter{ uc $entry->level } += 1;
 
-            if ( $numeric{ uc $entry->level } >= $numeric{ uc $self->level } ) {
+            if ( $numeric{ uc $entry->level } >= $numeric{ $self->level } ) {
                 $printed_something = 1;
 
                 if ( $translator ) {
@@ -385,14 +398,15 @@ sub run {
                     printf "%7.2f %-9s %s\n", $entry->timestamp, $entry->level, $entry->string;
                 }
             } ## end if ( $numeric{ uc $entry...})
-            if ( $self->stop_level and $numeric{ uc $entry->level } >= $numeric{ uc $self->stop_level } ) {
+            if ( $self->stop_level and $numeric{ uc $entry->level } >= $numeric{ $self->stop_level } ) {
                 die( Zonemaster::Engine::Exception::NormalExit->new( { message => "Saw message at level " . $entry->level } ) );
             }
         }
     );
 
     if ( $self->config or $self->policy ) {
-        print "\n";    # Cosmetic
+        # Separate initialization from main output in human readable output mode
+        print "\n" if $fh_diag eq *STDOUT;
     }
 
     my ( $domain ) = @{ $self->extra_argv };
