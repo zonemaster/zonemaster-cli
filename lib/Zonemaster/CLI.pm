@@ -6,7 +6,7 @@ extends 'Zonemaster::Engine::Exception';
 # The actual interesting module.
 package Zonemaster::CLI;
 
-use version; our $VERSION = version->declare("v1.1.3");
+use version; our $VERSION = version->declare("v1.2.0");
 
 use 5.014002;
 use warnings;
@@ -176,18 +176,25 @@ has 'stop_level' => (
     )
 );
 
+has 'profile' => (
+    is            => 'ro',
+    isa           => 'Str',
+    required      => 0,
+    documentation => __( 'Name of profile file to load. (DEFAULT)' ),
+);
+
 has 'config' => (
     is            => 'ro',
     isa           => 'Str',
     required      => 0,
-    documentation => __( 'Name of configuration file to load.' ),
+    documentation => __( 'Name of configuration file to load. (DEPRECATED)' ),
 );
 
 has 'policy' => (
     is            => 'ro',
     isa           => 'Str',
     required      => 0,
-    documentation => __( 'Name of policy file to load.' ),
+    documentation => __( 'Name of policy file to load. (DEPRECATED)' ),
 );
 
 has 'ds' => (
@@ -231,12 +238,20 @@ has 'nstimes' => (
     documentation => __('At the end of a run, print a summary of the times the zone\'s name servers took to answer.'),
 );
 
+has 'dump_profile' => (
+    is => 'ro',
+    isa => 'Bool',
+    required => 0,
+    default => 0,
+    documentation => __( 'Print the effective profile used in JSON format, then exit.' ),
+);
+
 has 'dump_config' => (
     is => 'ro',
     isa => 'Bool',
     required => 0,
     default => 0,
-    documentation => __( 'Print the effective configuration used in JSON format, then exit.' ),
+    documentation => __( 'Print the effective configuration used in JSON format, then exit. (DEPRECATED)' ),
 );
 
 has 'dump_policy' => (
@@ -244,7 +259,7 @@ has 'dump_policy' => (
     isa => 'Bool',
     required => 0,
     default => 0,
-    documentation => __( 'Print the effective policy used in JSON format, then exit.' ),
+    documentation => __( 'Print the effective policy used in JSON format, then exit. (DEPRECATED)' ),
 );
 
 has 'sourceaddr' => (
@@ -292,11 +307,11 @@ sub run {
         print_test_list();
     }
 
-    Zonemaster::Engine->config->ipv4_ok(0+$self->ipv4);
-    Zonemaster::Engine->config->ipv6_ok(0+$self->ipv6);
+    Zonemaster::Engine->profile->ipv4_ok(0+$self->ipv4);
+    Zonemaster::Engine->profile->ipv6_ok(0+$self->ipv6);
 
     if ($self->sourceaddr) {
-        Zonemaster::Engine->config->resolver_source($self->sourceaddr);
+        Zonemaster::Engine->profile->resolver_source($self->sourceaddr);
     }
 
     # Filehandle for diagnostics output
@@ -304,25 +319,35 @@ sub run {
       ? *STDERR     # Structured output mode (e.g. JSON)
       : *STDOUT;    # Human readable output mode
 
-    if ( $self->policy ) {
-        say $fh_diag __x( "Loading policy from {path}.", path => $self->policy );
-        Zonemaster::Engine->config->load_policy_file( $self->policy );
+    if ( $self->profile ) {
+        say $fh_diag __x( "Loading profile from {path}.", path => $self->profile );
+        Zonemaster::Engine->profile->load_profile_file( $self->profile );
     }
+    else {
 
-    if ( $self->config ) {
-        say $fh_diag __x( "Loading configuaration from {path}.", path => $self->config );
-        Zonemaster::Engine->config->load_config_file( $self->config );
-    }
-
-    if ( $self->dump_config ) {
-        do_dump_config();
-    }
-
-    if ( $self->dump_policy ) {
-        foreach my $mod (Zonemaster::Engine->modules) {
-            Zonemaster::Engine->config->load_module_policy($mod)
+        if ( $self->policy ) {
+            say $fh_diag __x( "Loading policy from {path}.", path => $self->policy );
+            say $fh_diag __x( "DEPRECATED, use profile instead." );
+            exit( 1 );
         }
-        do_dump_policy();
+
+        if ( $self->config ) {
+            say $fh_diag __x( "Loading configuaration from {path}.", path => $self->config );
+            say $fh_diag __x( "DEPRECATED, use profile instead." );
+            exit( 1 );
+        }
+    }
+
+    if ( $self->dump_profile ) {
+        do_dump_profile();
+    }
+    else {
+
+        if ( $self->dump_config or $self->dump_policy ) {
+            say $fh_diag __x( "DEPRECATED, use dump_profile instead." );
+            exit( 1 );
+        }
+
     }
 
     if ( $self->stop_level and not defined( $numeric{ $self->stop_level } ) ) {
@@ -404,7 +429,7 @@ sub run {
         }
     );
 
-    if ( $self->config or $self->policy ) {
+    if ( $self->profile or $self->config or $self->policy ) {
         # Separate initialization from main output in human readable output mode
         print "\n" if $fh_diag eq *STDOUT;
     }
@@ -638,15 +663,9 @@ sub print_test_list {
     exit( 0 );
 } ## end sub print_test_list
 
-sub do_dump_policy {
+sub do_dump_profile {
     my $json = JSON::XS->new->canonical->pretty;
-    print $json->encode(Zonemaster::Engine->config->policy);
-    exit;
-}
-
-sub do_dump_config {
-    my $json = JSON::XS->new->canonical->pretty;
-    print $json->encode(Zonemaster::Engine->config->get);
+    print $json->encode(Zonemaster::Engine->profile->get);
     exit;
 }
 
