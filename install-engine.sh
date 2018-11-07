@@ -2,9 +2,9 @@
 set -ex
 
 sudo apt update
-#sudo apt install libdevel-checklib-perl
+sudo apt install libdevel-checklib-perl
 sudo apt install libldns2
-cpanm Devel::CheckLib
+#cpanm Devel::CheckLib
 
 cd /tmp
 git clone https://github.com/zonemaster/zonemaster-ldns/archive
