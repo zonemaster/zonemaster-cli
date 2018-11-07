@@ -1,8 +1,9 @@
 #!/bin/sh
 set -ex
 
-sudo apt update
-sudo apt install libdevel-checklib-perl
+#sudo apt update
+#sudo apt install libdevel-checklib-perl
+cpanm Devel::CheckLib
 
 cd /tmp
 wget -O zonemaster-ldns.zip https://github.com/zonemaster/zonemaster-ldns/archive/develop.zip
