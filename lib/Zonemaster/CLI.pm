@@ -6,7 +6,7 @@ extends 'Zonemaster::Engine::Exception';
 # The actual interesting module.
 package Zonemaster::CLI;
 
-use version; our $VERSION = version->declare("v1.2.0");
+use version; our $VERSION = version->declare("v1.2.1");
 
 use 5.014002;
 use warnings;
@@ -321,7 +321,7 @@ sub run {
 
     if ( $self->profile ) {
         say $fh_diag __x( "Loading profile from {path}.", path => $self->profile );
-        Zonemaster::Engine->profile->load_profile_file( $self->profile );
+        Zonemaster::Engine->profile->load( $self->profile );
     }
     else {
 
