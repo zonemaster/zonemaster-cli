@@ -188,14 +188,14 @@ has 'config' => (
     is            => 'ro',
     isa           => 'Str',
     required      => 0,
-    documentation => __( 'Name of configuration file to load. (DEPRECATED)' ),
+    documentation => __( 'Name of configuration file to load. (TERMINATED)' ),
 );
 
 has 'policy' => (
     is            => 'ro',
     isa           => 'Str',
     required      => 0,
-    documentation => __( 'Name of policy file to load. (DEPRECATED)' ),
+    documentation => __( 'Name of policy file to load. (TERMINATED)' ),
 );
 
 has 'ds' => (
@@ -252,7 +252,7 @@ has 'dump_config' => (
     isa => 'Bool',
     required => 0,
     default => 0,
-    documentation => __( 'Print the effective configuration used in JSON format, then exit. (DEPRECATED)' ),
+    documentation => __( 'Print the effective configuration used in JSON format, then exit. (TERMINATED)' ),
 );
 
 has 'dump_policy' => (
@@ -260,7 +260,7 @@ has 'dump_policy' => (
     isa => 'Bool',
     required => 0,
     default => 0,
-    documentation => __( 'Print the effective policy used in JSON format, then exit. (DEPRECATED)' ),
+    documentation => __( 'Print the effective policy used in JSON format, then exit. (TERMINATED)' ),
 );
 
 has 'sourceaddr' => (
@@ -349,7 +349,7 @@ sub run {
     else {
 
         if ( $self->dump_config or $self->dump_policy ) {
-            say $fh_diag __x( "DEPRECATED, use dump_profile instead." );
+            say $fh_diag __x( "TERMINATED, use dump_profile instead." );
             exit( 1 );
         }
 
@@ -670,8 +670,9 @@ sub print_test_list {
 
 sub do_dump_profile {
     my $json = JSON::XS->new->canonical->pretty;
-    #print Zonemaster::Engine::Profile->effective->to_json;
+    
     print $json->encode( Zonemaster::Engine::Profile->effective->{ q{profile} } );
+
     exit;
 }
 
