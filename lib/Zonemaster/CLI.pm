@@ -6,7 +6,7 @@ extends 'Zonemaster::Engine::Exception';
 # The actual interesting module.
 package Zonemaster::CLI;
 
-use version; our $VERSION = version->declare("v1.2.1");
+use version; our $VERSION = version->declare("v1.2.2");
 
 use 5.014002;
 use warnings;
@@ -28,6 +28,7 @@ use POSIX qw[setlocale LC_MESSAGES LC_CTYPE];
 use List::Util qw[max];
 use Text::Reflow qw[reflow_string];
 use JSON::XS;
+use File::Slurp;
 
 our %numeric = Zonemaster::Engine::Logger::Entry->levels;
 our $JSON    = JSON::XS->new->allow_blessed->convert_blessed->canonical;
@@ -307,11 +308,11 @@ sub run {
         print_test_list();
     }
 
-    Zonemaster::Engine->profile->ipv4_ok(0+$self->ipv4);
-    Zonemaster::Engine->profile->ipv6_ok(0+$self->ipv6);
+    Zonemaster::Engine::Profile->effective->set( q{net.ipv4}, 0+$self->ipv4 );
+    Zonemaster::Engine::Profile->effective->set( q{net.ipv6}, 0+$self->ipv6 );
 
     if ($self->sourceaddr) {
-        Zonemaster::Engine->profile->resolver_source($self->sourceaddr);
+        Zonemaster::Engine::Profile->effective->set( q{resolver.source}, $self->sourceaddr );
     }
 
     # Filehandle for diagnostics output
@@ -321,19 +322,23 @@ sub run {
 
     if ( $self->profile ) {
         say $fh_diag __x( "Loading profile from {path}.", path => $self->profile );
-        Zonemaster::Engine->profile->load( $self->profile );
+	my $json    = read_file( $self->profile );
+	my $foo     = Zonemaster::Engine::Profile->from_json( $json );
+	my $profile = Zonemaster::Engine::Profile->default;
+	$profile->merge( $foo );
+	Zonemaster::Engine::Profile->effective->merge( $profile );
     }
     else {
 
         if ( $self->policy ) {
             say $fh_diag __x( "Loading policy from {path}.", path => $self->policy );
-            say $fh_diag __x( "DEPRECATED, use profile instead." );
+            say $fh_diag __x( "Use of config and policy have been TERMINATED, use profile instead." );
             exit( 1 );
         }
 
         if ( $self->config ) {
             say $fh_diag __x( "Loading configuaration from {path}.", path => $self->config );
-            say $fh_diag __x( "DEPRECATED, use profile instead." );
+            say $fh_diag __x( "Use of config and policy have been TERMINATED, use profile instead." );
             exit( 1 );
         }
     }
@@ -665,7 +670,8 @@ sub print_test_list {
 
 sub do_dump_profile {
     my $json = JSON::XS->new->canonical->pretty;
-    print $json->encode(Zonemaster::Engine->profile->get);
+    #print Zonemaster::Engine::Profile->effective->to_json;
+    print $json->encode( Zonemaster::Engine::Profile->effective->{ q{profile} } );
     exit;
 }
 
