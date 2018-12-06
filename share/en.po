@@ -57,11 +57,17 @@ msgstr "Specify test to run. Should be either the name of a module, or the name 
 msgid "As soon as a message at this level or higher is logged, execution will stop"
 msgstr "As soon as a message at this level or higher is logged, execution will stop"
 
-msgid "Name of configuration file to load."
-msgstr "Name of configuration file to load."
+msgid "DEPRECATED, use profile instead."
+msgstr "DEPRECATED, use profile instead."
 
-msgid "Name of policy file to load."
-msgstr "Name of policy file to load."
+msgid "Name of profile file to load. (DEFAULT)"
+msgstr "Name of profile file to load. (DEFAULT)"
+
+msgid "Name of configuration file to load. (DEPRECATED)"
+msgstr "Name of configuration file to load. (DEPRECATED)"
+
+msgid "Name of policy file to load. (DEPRECATED)"
+msgstr "Name of policy file to load. (DEPRECATED)"
 
 msgid "Strings with DS data on the form \"keytag,algorithm,type,digest\""
 msgstr "Strings with DS data on the form \"keytag,algorithm,type,digest\""
@@ -150,12 +156,15 @@ msgstr "Looks OK."
 msgid "At the end of a run, print a summary of the times the zone's name servers took to answer."
 msgstr "At the end of a run, print a summary of the times the zone's name servers took to answer."
 
-msgid  "Print the effective configuration used in JSON format, then exit."
-msgstr "Print the effective configuration used in JSON format, then exit."
+msgid "Print the effective profile used in JSON format, then exit."
+msgstr "Print the effective profile used in JSON format, then exit."
 
-msgid  "Print the effective policy used in JSON format, then exit."
-msgstr "Print the effective policy used in JSON format, then exit."
+msgid "Print the effective configuration used in JSON format, then exit. (DEPRECATED)"
+msgstr "Print the effective configuration used in JSON format, then exit. (DEPRECATED)"
 
-msgid  "Local IP address that the test engine should try to send its requests from."
+msgid "Print the effective policy used in JSON format, then exit. (DEPRECATED)"
+msgstr "Print the effective policy used in JSON format, then exit. (DEPRECATED)"
+
+msgid "Local IP address that the test engine should try to send its requests from."
 msgstr "Local IP address that the test engine should try to send its requests from."
 
