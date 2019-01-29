@@ -8,8 +8,8 @@ use ExtUtils::MakeMaker ();
 name 'Zonemaster-CLI';
 all_from 'lib/Zonemaster/CLI.pm';
 resources(
-    repository => 'https://github.com/dotse/zonemaster-cli',
-    bugtracker => 'https://github.com/dotse/zonemaster-cli/issues',
+    repository => 'https://github.com/zonemaster/zonemaster-cli',
+    bugtracker => 'https://github.com/zonemaster/zonemaster-cli/issues',
 );
 
 tests_recursive( 't' );

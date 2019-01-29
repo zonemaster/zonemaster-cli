@@ -57,11 +57,17 @@ msgstr "Specificera tester att köra. Skall vara antingen namnet på en testmodu
 msgid "As soon as a message at this level or higher is logged, execution will stop"
 msgstr "Avsluta testkörningen så snart ett meddelande med denna nivå eller högre registreras."
 
-msgid "Name of configuration file to load."
-msgstr "Namnet på en konfigurationsfil att läsa in."
+msgid "DEPRECATED, use profile instead."
+msgstr "DEPRECATED, use profile instead."
 
-msgid "Name of policy file to load."
-msgstr "Namnet på en policy-fil att läsa in."
+msgid "Name of profile file to load. (DEFAULT)"
+msgstr "Namnet på en profile-fil att läsa in. (DEFAULT)"
+
+msgid "Name of configuration file to load. (DEPRECATED)"
+msgstr "Namnet på en konfigurationsfil att läsa in. (DEPRECATED)"
+
+msgid "Name of policy file to load. (DEPRECATED)"
+msgstr "Namnet på en policy-fil att läsa in. (DEPRECATED)"
 
 msgid "Strings with DS data on the form \"keytag,algorithm,type,digest\""
 msgstr "En sträng med DS-data på formatet \"keytag,algoritm,typ,digest\"."
@@ -84,11 +90,11 @@ msgstr "Kände inte igen avslutsnivån '"
 msgid "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 or DEBUG3.\n"
 msgstr "--level måste vara en av CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 eller DEBUG3.\n"
 
-msgid "Loading policy from "
-msgstr "Laddar policy från "
+msgid "Loading policy from {path}."
+msgstr "Laddar policy från {path}."
 
-msgid "Loading configuration from "
-msgstr "Laddar konfiguration från "
+msgid "Loading configuration from {path}."
+msgstr "Laddar konfiguration från {path}."
 
 msgid  "Seconds "
 msgstr " Sekund "
@@ -150,12 +156,15 @@ msgstr "Ser OK ut."
 msgid "At the end of a run, print a summary of the times the zone's name servers took to answer."
 msgstr "Efter att körningen avslutats, skriv ut en summering av zonens namnservrars svarstider."
 
-msgid  "Print the effective configuration used in JSON format, then exit."
-msgstr "Skriv ut den effektiva konfigurationen i JSON-format, sedan avsluta."
+msgid "Print the effective profile used in JSON format, then exit."
+msgstr "Print the effective profile used in JSON format, then exit."
 
-msgid  "Print the effective policy used in JSON format, then exit."
-msgstr "Skriv ut den effektiva policyn i JSON-format, sedan avsluta."
+msgid "Print the effective configuration used in JSON format, then exit. (DEPRECATED)"
+msgstr "Skriv ut den effektiva konfigurationen i JSON-format, sedan avsluta. (DEPRECATED)"
 
-msgid  "Local IP address that the test engine should try to send its requests from."
+msgid "Print the effective policy used in JSON format, then exit. (DEPRECATED)"
+msgstr "Skriv ut den effektiva policyn i JSON-format, sedan avsluta. (DEPRECATED)"
+
+msgid "Local IP address that the test engine should try to send its requests from."
 msgstr "Lokal IP adress som testmotorn skall skicka sin trafik från."
 

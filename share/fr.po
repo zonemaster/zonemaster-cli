@@ -57,11 +57,17 @@ msgstr "Permet d'indiquer quel test doit être exécuté. Peut être un nom de m
 msgid  "As soon as a message at this level or higher is logged, execution will stop. Must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO or DEBUG."
 msgstr "Dès qu'un résultat de test avec ce niveau de gravité ou supérieur sera rencontré, l'exécution s'arrêtera. Doit avoir pour valeur CRITICAL, ERROR, WARNING, NOTICE, INFO ou DEBUG."
 
-msgid  "Name of configuration file to load."
-msgstr "Option avec comme argument le nom du fichier de configuration à charger."
+msgid "Name of profile file to load. (DEFAULT)"
+msgstr "Option avec comme argument le nom du fichier profile à charger. (DEFAULT)"
 
-msgid  "Name of policy file to load."
-msgstr "Option avec comme argument le nom du fichier contenant la politique de tests qui sera appliquée."
+msgid "DEPRECATED, use profile instead."
+msgstr "Ce mode de configuration n'est plus supporté, utiliser un fichier \"profile\" en lieu et place."
+
+msgid  "Name of configuration file to load. (DEPRECATED)"
+msgstr "Option avec comme argument le nom du fichier de configuration à charger. (DEPRECATED)"
+
+msgid  "Name of policy file to load. (DEPRECATED)"
+msgstr "Option avec comme argument le nom du fichier contenant la politique de tests qui sera appliquée. (DEPRECATED)"
 
 msgid  "Strings with DS data on the form \"keytag,algorithm,type,digest\""
 msgstr "Option avec comme argument les informations pour le traitement de la DS. Le format à utiliser est \"keytag,algorithm,type,digest\"."
@@ -84,11 +90,11 @@ msgstr "Impossible de reconnaître le niveau de gravité provoquant l'arrêt de 
 msgid  "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 or DEBUG3.\n"
 msgstr "--level doit avoir pour valeur CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 ou DEBUG3.\n"
 
-msgid  "Loading policy from "
-msgstr "Chargement de la politique de tests depuis le fichier "
+msgid  "Loading policy from {path}."
+msgstr "Chargement de la politique de tests depuis le fichier {path}."
 
-msgid  "Loading configuration from "
-msgstr "Chargement de la configuration depuis le fichier "
+msgid  "Loading configuration from {path}."
+msgstr "Chargement de la configuration depuis le fichier {path}."
 
 msgid  "Seconds "
 msgstr "Durée   "
@@ -149,4 +155,14 @@ msgstr "Le résultat semble concluant."
 
 msgid  "At the end of a run, print a summary of the times the zone's name servers took to answer."
 msgstr "A la fin de l'exécution, affichage d'un récapitulatif sur les temps de réponses des serveurs de noms de la eone interrogés au cours de l'analyse."
+
+msgid "Print the effective profile used in JSON format, then exit."
+msgstr "Affichage du \"profile\" réellement utilisé au format JSON."
+
+msgid "Print the effective configuration used in JSON format, then exit. (DEPRECATED)"
+msgstr "Affichage de la configuration réellement utilisé au format JSON. (DEPRECATED)"
+
+msgid "Print the effective policy used in JSON format, then exit. (DEPRECATED)"
+msgstr "Affichage de la politique réellement utilisé au format JSON. (DEPRECATED)"
+
 

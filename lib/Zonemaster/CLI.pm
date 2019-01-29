@@ -6,7 +6,7 @@ extends 'Zonemaster::Engine::Exception';
 # The actual interesting module.
 package Zonemaster::CLI;
 
-use version; our $VERSION = version->declare("v1.1.3");
+use version; our $VERSION = version->declare("v2.0.0");
 
 use 5.014002;
 use warnings;
@@ -28,6 +28,7 @@ use POSIX qw[setlocale LC_MESSAGES LC_CTYPE];
 use List::Util qw[max];
 use Text::Reflow qw[reflow_string];
 use JSON::XS;
+use File::Slurp;
 
 our %numeric = Zonemaster::Engine::Logger::Entry->levels;
 our $JSON    = JSON::XS->new->allow_blessed->convert_blessed->canonical;
@@ -43,10 +44,14 @@ has 'version' => (
 );
 
 has 'level' => (
-    is       => 'ro',
-    isa      => 'Str',
-    required => 0,
-    default  => 'NOTICE',
+    is          => 'ro',
+    isa         => 'Str',
+    required    => 0,
+    default     => 'NOTICE',
+    initializer => sub {
+        my ( $self, $value, $set, $attr ) = @_;
+        $set->( uc $value );
+    },
     documentation =>
       __( 'The minimum severity level to display. Must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO or DEBUG.' ),
 );
@@ -160,26 +165,37 @@ has 'test' => (
 );
 
 has 'stop_level' => (
-    is            => 'ro',
-    isa           => 'Str',
-    required      => 0,
+    is          => 'ro',
+    isa         => 'Str',
+    required    => 0,
+    initializer => sub {
+        my ( $self, $value, $set, $attr ) = @_;
+        $set->( uc $value );
+    },
     documentation => __(
 'As soon as a message at this level or higher is logged, execution will stop. Must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO or DEBUG.'
     )
+);
+
+has 'profile' => (
+    is            => 'ro',
+    isa           => 'Str',
+    required      => 0,
+    documentation => __( 'Name of profile file to load. (DEFAULT)' ),
 );
 
 has 'config' => (
     is            => 'ro',
     isa           => 'Str',
     required      => 0,
-    documentation => __( 'Name of configuration file to load.' ),
+    documentation => __( 'Name of configuration file to load. (TERMINATED)' ),
 );
 
 has 'policy' => (
     is            => 'ro',
     isa           => 'Str',
     required      => 0,
-    documentation => __( 'Name of policy file to load.' ),
+    documentation => __( 'Name of policy file to load. (TERMINATED)' ),
 );
 
 has 'ds' => (
@@ -200,7 +216,7 @@ has 'progress' => (
     is            => 'ro',
     isa           => 'Bool',
     default       => !!( -t STDOUT ),
-    documentation => __( 'Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off if it is not.' ),
+    documentation => __( 'Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off if it is not. Disable with --noprogress.' ),
 );
 
 has 'encoding' => (
@@ -223,12 +239,20 @@ has 'nstimes' => (
     documentation => __('At the end of a run, print a summary of the times the zone\'s name servers took to answer.'),
 );
 
+has 'dump_profile' => (
+    is => 'ro',
+    isa => 'Bool',
+    required => 0,
+    default => 0,
+    documentation => __( 'Print the effective profile used in JSON format, then exit.' ),
+);
+
 has 'dump_config' => (
     is => 'ro',
     isa => 'Bool',
     required => 0,
     default => 0,
-    documentation => __( 'Print the effective configuration used in JSON format, then exit.' ),
+    documentation => __( 'Print the effective configuration used in JSON format, then exit. (TERMINATED)' ),
 );
 
 has 'dump_policy' => (
@@ -236,7 +260,7 @@ has 'dump_policy' => (
     isa => 'Bool',
     required => 0,
     default => 0,
-    documentation => __( 'Print the effective policy used in JSON format, then exit.' ),
+    documentation => __( 'Print the effective policy used in JSON format, then exit. (TERMINATED)' ),
 );
 
 has 'sourceaddr' => (
@@ -284,32 +308,51 @@ sub run {
         print_test_list();
     }
 
-    Zonemaster::Engine->config->ipv4_ok(0+$self->ipv4);
-    Zonemaster::Engine->config->ipv6_ok(0+$self->ipv6);
+    Zonemaster::Engine::Profile->effective->set( q{net.ipv4}, 0+$self->ipv4 );
+    Zonemaster::Engine::Profile->effective->set( q{net.ipv6}, 0+$self->ipv6 );
 
     if ($self->sourceaddr) {
-        Zonemaster::Engine->config->resolver_source($self->sourceaddr);
+        Zonemaster::Engine::Profile->effective->set( q{resolver.source}, $self->sourceaddr );
     }
 
-    if ( $self->policy ) {
-        say __( "Loading policy from " ) . $self->policy . '.' if not ($self->dump_config or $self->dump_policy);
-        Zonemaster::Engine->config->load_policy_file( $self->policy );
-    }
+    # Filehandle for diagnostics output
+    my $fh_diag = ( $self->json or $self->json_stream or $self->raw or $self->dump_config or $self->dump_policy )
+      ? *STDERR     # Structured output mode (e.g. JSON)
+      : *STDOUT;    # Human readable output mode
 
-    if ( $self->config ) {
-        say __( "Loading configuration from " ) . $self->config . '.' if not ($self->dump_config or $self->dump_policy);
-        Zonemaster::Engine->config->load_config_file( $self->config );
+    if ( $self->profile ) {
+        say $fh_diag __x( "Loading profile from {path}.", path => $self->profile );
+	my $json    = read_file( $self->profile );
+	my $foo     = Zonemaster::Engine::Profile->from_json( $json );
+	my $profile = Zonemaster::Engine::Profile->default;
+	$profile->merge( $foo );
+	Zonemaster::Engine::Profile->effective->merge( $profile );
     }
+    else {
 
-    if ( $self->dump_config ) {
-        do_dump_config();
-    }
-
-    if ( $self->dump_policy ) {
-        foreach my $mod (Zonemaster::Engine->modules) {
-            Zonemaster::Engine->config->load_module_policy($mod)
+        if ( $self->policy ) {
+            say $fh_diag __x( "Loading policy from {path}.", path => $self->policy );
+            say $fh_diag __x( "Use of config and policy have been TERMINATED, use profile instead." );
+            exit( 1 );
         }
-        do_dump_policy();
+
+        if ( $self->config ) {
+            say $fh_diag __x( "Loading configuaration from {path}.", path => $self->config );
+            say $fh_diag __x( "Use of config and policy have been TERMINATED, use profile instead." );
+            exit( 1 );
+        }
+    }
+
+    if ( $self->dump_profile ) {
+        do_dump_profile();
+    }
+    else {
+
+        if ( $self->dump_config or $self->dump_policy ) {
+            say $fh_diag __x( "TERMINATED, use dump_profile instead." );
+            exit( 1 );
+        }
+
     }
 
     if ( $self->stop_level and not defined( $numeric{ $self->stop_level } ) ) {
@@ -341,11 +384,11 @@ sub run {
         sub {
             my ( $entry ) = @_;
 
-            $self->print_spinner() unless $self->json_stream;
+            $self->print_spinner() if $fh_diag eq *STDOUT;
 
             $counter{ uc $entry->level } += 1;
 
-            if ( $numeric{ uc $entry->level } >= $numeric{ uc $self->level } ) {
+            if ( $numeric{ uc $entry->level } >= $numeric{ $self->level } ) {
                 $printed_something = 1;
 
                 if ( $translator ) {
@@ -385,14 +428,15 @@ sub run {
                     printf "%7.2f %-9s %s\n", $entry->timestamp, $entry->level, $entry->string;
                 }
             } ## end if ( $numeric{ uc $entry...})
-            if ( $self->stop_level and $numeric{ uc $entry->level } >= $numeric{ uc $self->stop_level } ) {
+            if ( $self->stop_level and $numeric{ uc $entry->level } >= $numeric{ $self->stop_level } ) {
                 die( Zonemaster::Engine::Exception::NormalExit->new( { message => "Saw message at level " . $entry->level } ) );
             }
         }
     );
 
-    if ( $self->config or $self->policy ) {
-        print "\n";    # Cosmetic
+    if ( $self->profile or $self->config or $self->policy ) {
+        # Separate initialization from main output in human readable output mode
+        print "\n" if $fh_diag eq *STDOUT;
     }
 
     my ( $domain ) = @{ $self->extra_argv };
@@ -624,15 +668,11 @@ sub print_test_list {
     exit( 0 );
 } ## end sub print_test_list
 
-sub do_dump_policy {
+sub do_dump_profile {
     my $json = JSON::XS->new->canonical->pretty;
-    print $json->encode(Zonemaster::Engine->config->policy);
-    exit;
-}
+    
+    print $json->encode( Zonemaster::Engine::Profile->effective->{ q{profile} } );
 
-sub do_dump_config {
-    my $json = JSON::XS->new->canonical->pretty;
-    print $json->encode(Zonemaster::Engine->config->get);
     exit;
 }
 

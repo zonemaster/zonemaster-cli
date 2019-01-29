@@ -1,5 +1,34 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
+
+v2.0.0 2019-01-25 (pre-release version)
+
+ - Status
+   - This is a pre-release version not fully tested on all supported
+     OS's and Perl versions. This version will not be available on
+     CPAN.
+ - API change
+   - Replaced separate config and policy with a unified profile
+     (see below)
+   - Some changes in printout that can affect scripts using
+     zonemaster-cli (see below)
+ - Features
+   - Changes in printout
+     - Print information on STDERR if --json has been selected #84
+     - Diagnostics #85
+     - Only show spinner in human readable output mode #86
+     - Make --level and --stop_level case-insensitive #87
+  - Replaced separate config and policy with a unified profile
+     - Removed config and policy and added profile #70, #93
+ - Fixes
+   - All link references on Github now to zonemaster/zonemaster instead
+     of old dotse/zonemaster #81
+   - Clarify documentation of --progress option #88
+   - Travis tests against develop branch of Zonemaster-Engine instead
+     of fetching from CPAN #92
+   - Update travis configuration when it comes to Perl versions. #95
+
+
 v1.1.3 2018-06-25
 
 Fixed:
