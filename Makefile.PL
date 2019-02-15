@@ -16,8 +16,6 @@ tests_recursive( 't' );
 
 configure_requires( 'Locale::Msgfmt' => 0.15, );
 
-build_requires( 'Test::More' => 0, );
-
 requires(
     'JSON::XS'           => 0,
     'Locale::TextDomain' => 1.23,
