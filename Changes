@@ -1,5 +1,16 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
+v2.0.1 2019-05-22 (public release version)
+
+ [Status]
+ - This a public release fully tested before release. This version
+   will be available on CPAN.
+
+ [Fixes]
+ - Updated installation instructions for FreeBSD (#101)
+ - Dropped support for Ubuntu 14.04 (#99)
+ - Made Travis use the equivalent branch in Zonemaster-Engine (#98)
+
 
 v2.0.0 2019-01-25 (pre-release version)
 
