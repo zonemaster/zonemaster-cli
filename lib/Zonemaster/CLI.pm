@@ -3,6 +3,8 @@ package Zonemaster::Engine::Exception::NormalExit;
 use Moose;
 extends 'Zonemaster::Engine::Exception';
 
+# Just a meaningless comment.
+
 # The actual interesting module.
 package Zonemaster::CLI;
 
