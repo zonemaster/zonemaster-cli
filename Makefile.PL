@@ -23,8 +23,8 @@ requires(
     'Locale::TextDomain' => 1.23,
     'MooseX::Getopt'     => 0,
     'Text::Reflow'       => 0,
-    'Zonemaster::Engine' => 2.0,
-    'Zonemaster::LDNS'   => 1.0,
+    'Zonemaster::Engine' => 3.0,
+    'Zonemaster::LDNS'   => 2.0,
 );
 
 sub MY::postamble {
