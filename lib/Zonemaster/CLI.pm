@@ -6,7 +6,7 @@ extends 'Zonemaster::Engine::Exception';
 # The actual interesting module.
 package Zonemaster::CLI;
 
-use version; our $VERSION = version->declare("v2.0.1");
+use version; our $VERSION = version->declare("v2.0.2");
 
 use 5.014002;
 use warnings;

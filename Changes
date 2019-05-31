@@ -1,5 +1,13 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
+v2.0.2 2019-05-31 (public fix version)
+
+ [Fixes]
+ - Corrects in Makefile.PL the versions of Zonemaster::Engine
+ and Zonemaster::LDNS that this version of Zonemaster::CLI
+ depends on (#105)
+
+
 v2.0.1 2019-05-22 (public release version)
 
  [Status]
