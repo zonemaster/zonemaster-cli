@@ -21,6 +21,7 @@ build_requires( 'Test::More' => 0, );
 requires(
     'JSON::XS'           => 0,
     'Locale::TextDomain' => 1.23,
+    'Net::Interface'     => 0,
     'MooseX::Getopt'     => 0,
     'Text::Reflow'       => 0,
     'Zonemaster::Engine' => 3.0,
