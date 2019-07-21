@@ -165,4 +165,9 @@ msgstr "Affichage de la configuration réellement utilisé au format JSON. (DEPR
 msgid "Print the effective policy used in JSON format, then exit. (DEPRECATED)"
 msgstr "Affichage de la politique réellement utilisé au format JSON. (DEPRECATED)"
 
+msgid "Address '"
+msgstr "L'adresse '"
+
+msgid "' cannot be used as source address for DNS queries."
+msgstr "' ne peut pas être utilisée comme adresse source pour les requêtes DNS."
 

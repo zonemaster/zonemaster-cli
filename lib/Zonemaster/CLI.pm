@@ -6,7 +6,7 @@ extends 'Zonemaster::Engine::Exception';
 # The actual interesting module.
 package Zonemaster::CLI;
 
-use version; our $VERSION = version->declare("v2.0.3");
+use version; our $VERSION = version->declare("v2.0.4");
 
 use 5.014002;
 use warnings;
@@ -319,7 +319,7 @@ sub run {
             Zonemaster::Engine::Profile->effective->set( q{resolver.source}, $self->sourceaddr );
         }
 	else {
-            die __( "Address " . $self->sourceaddr . " cannot be used as source address for DNS queries.\n" );
+            die __( "Address '" ) . $self->sourceaddr . __("' cannot be used as source address for DNS queries.") . "\n";
         }
     }
 
