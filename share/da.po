@@ -168,3 +168,8 @@ msgstr "Print the effective policy used in JSON format, then exit. (DEPRECATED)"
 msgid "Local IP address that the test engine should try to send its requests from."
 msgstr "Local IP address that the test engine should try to send its requests from."
 
+msgid "Address '"
+msgstr "Address '"
+
+msgid "' cannot be used as source address for DNS queries."
+msgstr "' cannot be used as source address for DNS queries."

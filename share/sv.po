@@ -168,3 +168,8 @@ msgstr "Skriv ut den effektiva policyn i JSON-format, sedan avsluta. (DEPRECATED
 msgid "Local IP address that the test engine should try to send its requests from."
 msgstr "Lokal IP adress som testmotorn skall skicka sin trafik från."
 
+msgid "Address '"
+msgstr "IP-adress '"
+
+msgid "' cannot be used as source address for DNS queries."
+msgstr "' kan inte användas som källadress för DNS-frågor."
