@@ -444,10 +444,16 @@ sub run {
                     if ( $self->show_testcase ) {
                         $prefix .= sprintf "%-14s ", $entry->testcase;
                     }
+                    $prefix .= $entry->tag;
 
                     my $message = $entry->string;
-                    $message =~ s/^([A-Z0-9]+:)*//;
-                    printf "%s%s\n", $prefix, $message;
+                    $message =~ s/^[A-Z0-9:]+//;    # strip MODULE:TAG, they're coming in $prefix instead
+                    my @lines = split /\n/, $message;
+
+                    printf "%s%s %s\n", $prefix, ' ', shift @lines;
+                    for my $line ( @lines ) {
+                        printf "%s%s %s\n", $prefix, '>', $line;
+                    }
                 }
             } ## end if ( $numeric{ uc $entry...})
             if ( $self->stop_level and $numeric{ uc $entry->level } >= $numeric{ $self->stop_level } ) {
