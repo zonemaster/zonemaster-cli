@@ -16,7 +16,7 @@ msgid "The minimum severity level to display"
 msgstr "Det mindste alvorlighedsniveau som skal udskrives."
 
 msgid "The locale to use for messages translation."
-msgstr "Landestandarden som skal bruges ved udskrift."
+msgstr "Det 'locale' som skal bruges ved oversættelse af beskeder."
 
 msgid "Flag indicating if output should be in JSON or not."
 msgstr "Flag der beskriver om format er JSON eller ej."
