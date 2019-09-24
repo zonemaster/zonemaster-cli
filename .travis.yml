@@ -55,8 +55,8 @@ before_install:
 - cpan-install Devel::CheckLib
 
   # Install Zonemaster LDNS
-- git clone --depth=1 --branch=$TRAVIS_BRANCH https://github.com/mattias-p/zonemaster-ldns.git
-- ( cd zonemaster-ldns && cpanm --verbose --notest . ) && rm -rf zonemaster-ldns
+- git clone --depth=1 --branch=$TRAVIS_BRANCH https://github.com/zonemaster/zonemaster-ldns.git
+- ( cd zonemaster-ldns && cpanm --verbose --notest --configure-args="--no-ed25519" . ) && rm -rf zonemaster-ldns
 
   # Install Zonemaster Engine
 - git clone --depth=1 --branch=$TRAVIS_BRANCH https://github.com/zonemaster/zonemaster-engine.git
