@@ -66,4 +66,7 @@ before_script:
   # Run tests in the clone directory
 - pwd ; cd $TRAVIS_BUILD_DIR ; pwd
 - rm -rf build_dir
-- cat Makefile.PL
+
+script:
+- perl Makefile.PL
+- make --trace test
