@@ -28,7 +28,6 @@ addons:
     - liblocale-msgfmt-perl
     - libmail-rfc822-address-perl
     - libmodule-find-perl
-    - libmoose-perl
     - libnet-ip-perl
     - libpod-coverage-perl
     - libreadonly-xs-perl
@@ -41,7 +40,6 @@ addons:
     - libtool
     - m4
       # From Zonemaster CLI installation instruction
-    - libmoosex-getopt-perl
     - libtext-reflow-perl
 
 before_install:
@@ -53,6 +51,9 @@ before_install:
 
   # Zonemaster LDNS needs a newer version of Module::Install
 - cpan-install Module::Install Module::Install::XSUtil
+
+  # Moose installed from OS packages depend on a newer version of Devel::OverloadInfo
+- cpan-install Devel::OverloadInfo Moose MooseX::Getopt
 
   # Install Zonemaster LDNS
 - git clone --depth=1 --branch=51-ed25519 https://github.com/mattias-p/zonemaster-ldns.git
