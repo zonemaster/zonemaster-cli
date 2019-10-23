@@ -68,4 +68,3 @@ before_install:
 before_script:
   # Run tests in the clone directory
 - cd $TRAVIS_BUILD_DIR
-- rm -rf build_dir
