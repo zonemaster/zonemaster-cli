@@ -1,6 +1,6 @@
 use 5.014002;
-use strict;
-use warnings FATAL => 'all';
+#use strict;
+#use warnings FATAL => 'all';
 use inc::Module::Install;
 
 use ExtUtils::MakeMaker ();
