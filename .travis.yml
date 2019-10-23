@@ -54,7 +54,7 @@ before_install:
 - cpan-install Module::Install Module::Install::XSUtil
 
   # Install Zonemaster LDNS
-- git clone --depth=1 --branch=ed-25519 https://github.com/mattias-p/zonemaster-ldns.git
+- git clone --depth=1 --branch=51-ed25519 https://github.com/mattias-p/zonemaster-ldns.git
 - ( cd zonemaster-ldns && cpanm --verbose --notest --configure-args="--no-ed25519" . ) && rm -rf zonemaster-ldns
 
   # Install Zonemaster Engine
