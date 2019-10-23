@@ -27,7 +27,6 @@ addons:
     - liblocale-msgfmt-perl
     - libmail-rfc822-address-perl
     - libmodule-find-perl
-    - libmodule-install-xsutil-perl
     - libmoose-perl
     - libnet-ip-perl
     - libpod-coverage-perl
@@ -52,7 +51,7 @@ before_install:
 - eval $(curl https://travis-perl.github.io/init) --auto
 
   # Zonemaster LDNS needs a newer version of Module::Install
-- cpan-install Module::Install
+- cpan-install Module::Install Module::Install::XSUtil
 
   # Cpanm can't find Devel::CheckLib installed from binary package
 - cpan-install Devel::CheckLib
