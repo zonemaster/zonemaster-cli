@@ -17,18 +17,16 @@ addons:
     - build-essential
     - cpanminus
     - libclone-perl
+    - libdevel-checklib-perl
     - libfile-sharedir-perl
     - libfile-slurp-perl
     - libidn11-dev
     - libintl-perl
-    - libio-socket-inet6-perl
     - libjson-pp-perl
     - liblist-moreutils-perl
     - liblocale-msgfmt-perl
     - libmail-rfc822-address-perl
     - libmodule-find-perl
-    - libmodule-install-xsutil-perl
-    - libmoose-perl
     - libnet-ip-perl
     - libpod-coverage-perl
     - libreadonly-xs-perl
@@ -41,22 +39,27 @@ addons:
     - libtool
     - m4
       # From Zonemaster CLI installation instruction
-    - libmoosex-getopt-perl
     - libtext-reflow-perl
 
 before_install:
+  # Help Perl find modules installed from OS packages
+- export PERL5LIB=/usr/share/perl5
+
   # Provide cpanm helper
 - eval $(curl https://travis-perl.github.io/init) --auto
 
   # Zonemaster LDNS needs a newer version of Module::Install
-- cpan-install Module::Install
+- cpan-install Module::Install Module::Install::XSUtil
 
-  # Cpanm can't find Devel::CheckLib installed from binary package
-- cpan-install Devel::CheckLib
+  # Moose installed from OS package depends on a newer version of Devel::OverloadInfo
+- cpan-install Devel::OverloadInfo Moose MooseX::Getopt
+
+  # IO::Socket::INET6 can't find Socket6 installed from OS package
+- cpan-install Socket6 IO::Socket::INET6
 
   # Install Zonemaster LDNS
-- git clone --depth=1 --branch=$TRAVIS_BRANCH https://github.com/mattias-p/zonemaster-ldns.git
-- ( cd zonemaster-ldns && cpanm --verbose --notest . ) && rm -rf zonemaster-ldns
+- git clone --depth=1 --branch=$TRAVIS_BRANCH https://github.com/zonemaster/zonemaster-ldns.git
+- ( cd zonemaster-ldns && cpanm --verbose --notest --configure-args="--no-ed25519" . ) && rm -rf zonemaster-ldns
 
   # Install Zonemaster Engine
 - git clone --depth=1 --branch=$TRAVIS_BRANCH https://github.com/zonemaster/zonemaster-engine.git
