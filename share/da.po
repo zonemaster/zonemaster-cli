@@ -4,139 +4,139 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Project-Id-Version: 0.0.5\n"
-"PO-Revision-Date: 2019-07-08\n"
-"Last-Translator: haarbo@dk-hostmaster.dk\n"
+"PO-Revision-Date: 2017-12-06\n"
+"Last-Translator: mats.dufberg@iis.se\n"
 "Language-Team: Zonemaster Team\n"
 "MIME-Version: 1.0\n"
 
 msgid "Print version information and exit."
-msgstr "Udskriv version og afbryd."
+msgstr "Print version information and exit."
 
 msgid "The minimum severity level to display"
-msgstr "Det mindste alvorlighedsniveau som skal udskrives."
+msgstr "The minimum severity level to display"
 
 msgid "The locale to use for messages translation."
-msgstr "Det 'locale' som skal bruges ved oversættelse af beskeder."
+msgstr "The locale to use for messages translation."
 
 msgid "Flag indicating if output should be in JSON or not."
-msgstr "Flag der beskriver om format er JSON eller ej."
+msgstr "Flag indicating if output should be in JSON or not."
 
 msgid "Flag indicating if output should be translated to human language or dumped raw."
-msgstr "Flag der beskriver om resultatet skal oversættes til menneskesprog eller vises i råt format."
+msgstr "Flag indicating if output should be translated to human language or dumped raw."
 
 msgid "Print timestamp on entries."
-msgstr "Udskriv tidsstempler."
+msgstr "Print timestamp on entries."
 
 msgid "Print level on entries."
-msgstr "Udskriv alvorlighedsniveauer."
+msgstr "Print level on entries."
 
 msgid "Print the name of the module on entries."
-msgstr "Udskriv modulets navn."
+msgstr "Print the name of the module on entries."
 
 msgid "A name/ip string giving a nameserver for undelegated tests. Can be given multiple times."
-msgstr "Et navn/ip-adresse som angiver navneserveren til prædelegerede test. Kan anføres flere gange."
+msgstr "A name/ip string giving a nameserver for undelegated tests. Can be given multiple times."
 
 msgid "Name of a file to save DNS data to after running tests."
-msgstr "Filnavn indeholdende DNS-data efter udførte test."
+msgstr "Name of a file to save DNS data to after running tests."
 
 msgid "Name of a file to restore DNS data from before running test."
-msgstr "Filnavn indeholdende DNS-data som skal indlæses før afvikling af test."
+msgstr "Name of a file to restore DNS data from before running test."
 
 msgid "Flag to permit or deny queries being sent via IPv4. --ipv4 permits IPv4 traffic, --no-ipv4 forbids it."
-msgstr "Flag til angivelse af om forespørgsler må sendes via IPv4 eller ej. --ipv4 tillader IPv4 trafik, --no-ipv4 forbyder det."
+msgstr "Flag to permit or deny queries being sent via IPv4. --ipv4 permits IPv4 traffic, --no-ipv4 forbids it."
 
 msgid "Flag to permit or deny queries being sent via IPv6. --ipv6 permits IPv6 traffic, --no-ipv6 forbids it."
-msgstr "Flag til angivelse af om forespørgsler må sendes via IPv6 eller ej. --ipv6 tillader IPv6 trafik, --no-ipv6 forbyder det."
+msgstr "Flag to permit or deny queries being sent via IPv6. --ipv6 permits IPv6 traffic, --no-ipv6 forbids it."
 
 msgid "Instead of running a test, list all available tests."
-msgstr "I stedet for at afvikle en test, udskriv alle mulige test."
+msgstr "Instead of running a test, list all available tests."
 
 msgid "Specify test to run. Should be either the name of a module, or the name of a module and the name of a method in that module separated by a \"/\" character (Example: \"Basic/basic1\"). The method specified must be one that takes a zone object as its single argument. This switch can be repeated"
-msgstr "Angiv test som skal afvikles. Skal være enten et modulnavn, et modulnavn og navnet op en metode i modulet adskilt af en skråstreg (Eksempel: \"Basic/basic1\"). Den valgte metode skal tage en enkelt zone som argument. Dette flag kan gentages."
+msgstr "Specify test to run. Should be either the name of a module, or the name of a module and the name of a method in that module separated by a \"/\" character (Example: \"Basic/basic1\"). The method specified must be one that takes a zone object as its single argument. This switch can be repeated"
 
 msgid "As soon as a message at this level or higher is logged, execution will stop"
-msgstr "Afbryd testkørslen, så snart en hændelse med dette niveau eller højere er logget."
+msgstr "As soon as a message at this level or higher is logged, execution will stop"
 
 msgid "DEPRECATED, use profile instead."
-msgstr "FORÆLDET, brug profil i stedet for."
+msgstr "DEPRECATED, use profile instead."
 
 msgid "Name of profile file to load. (DEFAULT)"
-msgstr "Navn på profil-fil, der skal indlæses. (STANDARD)"
+msgstr "Name of profile file to load. (DEFAULT)"
 
 msgid "Name of configuration file to load. (DEPRECATED)"
-msgstr "Navn på konfigurations-fil, der skal indlæses. (FORÆLDET)"
+msgstr "Name of configuration file to load. (DEPRECATED)"
 
 msgid "Name of policy file to load. (DEPRECATED)"
-msgstr "Navn på policy-fil, der skal indlæses. (FORÆLDET)"
+msgstr "Name of policy file to load. (DEPRECATED)"
 
 msgid "Strings with DS data on the form \"keytag,algorithm,type,digest\""
-msgstr "En streng med DS-data i formatet \"keytag,algorithm,type,digest\""
+msgstr "Strings with DS data on the form \"keytag,algorithm,type,digest\""
 
 msgid "Print a count of the number of messages at each level"
-msgstr "Udskriv antallet af registrerede beskeder på hvert niveau."
+msgstr "Print a count of the number of messages at each level"
 
 msgid "Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off if it is not."
-msgstr "Flag der fortæller, om en aktivitetsindikator skal anvendes. Udskrives, hvis STDOUT er en tty, ellers ikke."
+msgstr "Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off if it is not."
 
 msgid "Name of the character encoding used for command line arguments"
-msgstr "Navn på tegnkodningen, der skal anvendes for kommandolinje-argumenter."
+msgstr "Name of the character encoding used for command line arguments"
 
 msgid "Must give the name of a domain to test.\n"
-msgstr "Domænenavn, der skal testes, skal angives.\n"
+msgstr "Et domænenavn at testes skal gives.\n"
 
 msgid "Failed to recognize stop level '"
-msgstr "Ukendt afslutningsniveau '"
+msgstr "Failed to recognize stop level '"
 
 msgid "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 or DEBUG3.\n"
-msgstr "--level skal være et af CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 or DEBUG3.\n"
+msgstr "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 or DEBUG3.\n"
 
 msgid "Loading policy from {path}."
-msgstr "Indlæser policy fra {path}."
+msgstr "Loading policy from {path}."
 
 msgid "Loading configuration from {path}."
-msgstr "Indlæser konfiguration fra {path}."
+msgstr "Loading configuration from {path}."
 
 msgid "Seconds "
-msgstr "Sekunder "
+msgstr "Seconds "
 
 msgid "Level     "
-msgstr "Niveau    "
+msgstr "Level     "
 
 msgid "Module       "
-msgstr "Modul        "
+msgstr "Module       "
 
 msgid "Message"
-msgstr "Besked"
+msgstr "Message"
 
 msgid "\n\n   Level\tNumber of log entries"
-msgstr "\n\n   Niveau\tAntal logbeskeder"
+msgstr "\n\n   Level\tNumber of log entries"
 
 msgid "%8s\t%5d entries.\n"
-msgstr "%8s\t%5d beskeder.\n"
+msgstr "%8s\t%5d entries.\n"
 
 msgid "Warning: Zonemaster::LDNS not compiled with libidn, cannot handle non-ASCII names correctly."
-msgstr "Advarser: Zonemaster::LDNS er ikke kompileret med libidn, kan derfor ikke benytte ikke-ASCII navne."
+msgstr "Warning: Zonemaster::LDNS not compiled with libidn, cannot handle non-ASCII names correctly."
 
 msgid "Warning: setting locale %s failed (is it installed on this system?).\n\n"
-msgstr "Advarsel: Kunne ikke sætte locale %s (er det installeret på systemet?).\n\n"
+msgstr "Warning: setting locale %s failed (is it installed on this system?).\n\n"
 
 msgid "CRITICAL"
-msgstr "KRITISK"
+msgstr "CRITICAL"
 
 msgid "ERROR"
-msgstr "FEJL"
+msgstr "ERROR"
 
 msgid "WARNING"
-msgstr "ADVARSEL"
+msgstr "WARNING"
 
 msgid "NOTICE"
-msgstr "NOTER"
+msgstr "NOTICE"
 
 msgid "INFO"
 msgstr "INFO"
 
 msgid "DEBUG"
-msgstr "FEJLSØG"
+msgstr "DEBUG"
 
 msgid "======= "
 msgstr "======= "
@@ -151,20 +151,20 @@ msgid "======="
 msgstr "======="
 
 msgid "Looks OK."
-msgstr "Ser OK ud."
+msgstr "Looks OK."
 
 msgid "At the end of a run, print a summary of the times the zone's name servers took to answer."
-msgstr "Efter afsluttet afvikling, udskriv en opsummering af svarftiderne som zonens navneservere brugte på at svare."
+msgstr "At the end of a run, print a summary of the times the zone's name servers took to answer."
 
 msgid "Print the effective profile used in JSON format, then exit."
-msgstr "Udskriv den effektive profil benyttet i JSON-format, og afslut."
+msgstr "Print the effective profile used in JSON format, then exit."
 
 msgid "Print the effective configuration used in JSON format, then exit. (DEPRECATED)"
-msgstr "Udskriv den effektive konfiguration benyttet i JSON-format, og afslut. (FORÆLDET)"
+msgstr "Print the effective configuration used in JSON format, then exit. (DEPRECATED)"
 
 msgid "Print the effective policy used in JSON format, then exit. (DEPRECATED)"
-msgstr "Udskriv den effektive policy benyttet i JSON-format, og afslut. (FORÆLDET)"
+msgstr "Print the effective policy used in JSON format, then exit. (DEPRECATED)"
 
 msgid "Local IP address that the test engine should try to send its requests from."
-msgstr "Lokal IP-adresse som test-motoren skal sende sin foresgpørgsler fra."
+msgstr "Local IP address that the test engine should try to send its requests from."
 
