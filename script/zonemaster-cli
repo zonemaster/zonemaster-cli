@@ -141,6 +141,13 @@ module. The specified method will be called with a zone object as its single
 argument. It's up to the user to make sure that that is the kind of argument
 the method expects.
 
+=item --exclude_test=MODULE, --exclude_test=MODULE/METHOD
+
+Run all tests except the specified tests. You can either give the name of a 
+testing module, in which case that module will be ignored, or you can give
+the name of a module followed by a slash and the name of a method in that
+module. The specified method will be ignored.
+
 =item --stop_level=LEVEL
 
 As soon as a message of the given level or higher is logged, terminate the

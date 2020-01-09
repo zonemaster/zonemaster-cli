@@ -164,6 +164,15 @@ has 'test' => (
     )
 );
 
+has 'exclude_test' => (
+    is            => 'ro',
+    isa           => 'ArrayRef',
+    required      => 0,
+    documentation => __(
+'Specify test to NOT run. Should be either the name of a module, or the name of a module and the name of a method in that module separated by a "/" character (Example: "Basic/basic1"). The method specified must be one that takes a zone object as its single argument. This switch can be repeated.'
+    )
+);
+
 has 'stop_level' => (
     is          => 'ro',
     isa         => 'Str',
@@ -481,17 +490,39 @@ sub run {
     # Actually run tests!
     eval {
         if ( $self->test and @{ $self->test } > 0 ) {
+            # Run the specified tests
+            my $zone = Zonemaster::Engine->zone( $domain );
             foreach my $t ( @{ $self->test } ) {
                 my ( $module, $method ) = split( '/', $t, 2 );
                 if ( $method ) {
-                    Zonemaster::Engine->test_method( $module, $method, Zonemaster::Engine->zone( $domain ) );
+                    Zonemaster::Engine->test_method( $module, $method, $zone );
                 }
                 else {
                     Zonemaster::Engine->test_module( $module, $domain );
                 }
             }
         }
+        elsif ( $self->exclude_test and @{ $self->exclude_test } > 0 ) {
+            # Run all test except the specified ones
+            my $zone = Zonemaster::Engine->zone( $domain );
+            my %exclude_test = map {$_ => 1} @{$self->exclude_test};  # convert to hash
+            my %methods = Zonemaster::Engine->all_methods;
+            foreach my $module ( sort keys %methods ) {
+                foreach my $method ( sort @{ $methods{$module} } ) {
+                    # Skipping a module+method?
+                    if ( exists( $exclude_test{ "$module/$method" } ) ) {
+                        next;
+                    }
+                    # Skipping a module?
+                    if ( exists( $exclude_test{ $module } ) ) {
+                        next;
+                    }
+                    Zonemaster::Engine->test_method( $module, $method, $zone );
+                }
+            }
+        }
         else {
+            # Run all tests
             Zonemaster::Engine->test_zone( $domain );
         }
     };
