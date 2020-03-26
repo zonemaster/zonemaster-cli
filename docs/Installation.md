@@ -86,6 +86,13 @@ Install dependencies available from binary packages:
 pkg install p5-JSON-XS p5-Locale-libintl p5-MooseX-Getopt p5-Text-Reflow
 ```
 
+Verify remaining dependencies.
+
+> This step is not needed for installation. It is only here for the developers of Zonemaster.
+```sh
+cpanm --scandeps Zonemaster-CLI-x.y.z.tar.gz # Normally you skip this step.
+```
+
 Install Zonemaster::CLI:
 
 ```sh
