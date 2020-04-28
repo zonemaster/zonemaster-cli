@@ -70,6 +70,20 @@ This instruction covers the following operating systems:
    sudo cpanm Zonemaster::CLI
    ```
 
+3) For Ubuntu 18.04: Update configuration of "locale"
+
+   ```sh
+   sudo perl -pi -e 's/^# (sv_SE\.UTF-8.*|fr_FR\.UTF-8.*|da_DK\.UTF-8.*|en_US\.UTF-8.*)/$1/' /etc/locale.gen
+   sudo locale-gen
+   ```
+
+   After the update, `locale -a` should at least list the following locales:
+   ```
+   da_DK.utf8
+   en_US.utf8
+   fr_FR.utf8
+   sv_SE.utf8
+   ```
 
 ### Installation on FreeBSD
 
