@@ -30,72 +30,85 @@ Zonemaster::CLI, see the [declaration of prerequisites].
 
 This instruction covers the following operating systems:
 
- * [CentOS](#1-centos)
- * [Debian](#2-debian)
- * [FreeBSD](#3-freebsd)
- * [Ubuntu](#4-ubuntu)
+ * [Installation on CentOS]
+ * [Installation on Debian]
+ * [Installation on FreeBSD]
+ * [Installation on Ubuntu]
+
+### Installation on CentOS
+
+1) Install binary dependencies:
+
+   ```sh
+   sudo yum install perl-JSON-XS
+   ```
+
+2) Install dependencies from CPAN:
+
+   ```sh
+   sudo cpanm Locale::Msgfmt Locale::TextDomain MooseX::Getopt Text::Reflow
+   ```
+
+3) Install Zonemaster::CLI 
+
+   ```sh
+   sudo cpanm Zonemaster::CLI
+   ```
 
 
-### 1. CentOS
+### Installation on Debian
 
-Install binary dependencies:
+1) Update configuration of "locale"
 
-```sh
-sudo yum install perl-JSON-XS
-```
+   ```sh
+   sudo perl -pi -e 's/^# (sv_SE\.UTF-8.*|fr_FR\.UTF-8.*|da_DK\.UTF-8.*|en_US\.UTF-8.*)/$1/' /etc/locale.gen
+   sudo locale-gen
+   ```
 
-Install dependencies from CPAN:
+   After the update, `locale -a` should at least list the following locales:
+   ```
+   da_DK.utf8
+   en_US.utf8
+   fr_FR.utf8
+   sv_SE.utf8
+   ```
 
-```sh
-sudo cpanm Locale::Msgfmt Locale::TextDomain MooseX::Getopt Text::Reflow
-```
+2) Install dependencies:
 
-Install Zonemaster::CLI 
+   ```sh
+   sudo apt-get install libmoosex-getopt-perl libtext-reflow-perl libmodule-install-perl
+   ```
 
-```sh
-sudo cpanm Zonemaster::CLI
-```
+3) Install Zonemaster::CLI:
 
+   ```sh
+   sudo cpanm Zonemaster::CLI
+   ```
 
-### 2. Debian
+### Installation on FreeBSD
 
-Install dependencies:
+1) Become root:
 
-```sh
-sudo apt-get install libmoosex-getopt-perl libtext-reflow-perl libmodule-install-perl
-```
+   ```sh
+   su -l
+   ```
 
-Install Zonemaster::CLI:
+2) Install dependencies available from binary packages:
 
-```sh
-sudo cpanm Zonemaster::CLI
-```
+   ```sh
+   pkg install p5-JSON-XS p5-Locale-libintl p5-MooseX-Getopt p5-Text-Reflow
+   ```
 
+3) Install Zonemaster::CLI:
 
-### 3. FreeBSD
-
-Become root:
-
-```sh
-su -l
-```
-
-Install dependencies available from binary packages:
-
-```sh
-pkg install p5-JSON-XS p5-Locale-libintl p5-MooseX-Getopt p5-Text-Reflow
-```
-
-Install Zonemaster::CLI:
-
-```sh
-cpanm Zonemaster::CLI
-```
+   ```sh
+   cpanm Zonemaster::CLI
+   ```
 
 
-### 4. Ubuntu
+### Installation on Ubuntu
 
-Use the procedure for installation on [Debian](#2-debian).
+Use the procedure for installation on [Debian][Installation on Debian].
 
 
 ## Post-installation sanity check
@@ -116,7 +129,10 @@ The command is expected to take a few seconds and print some results about the d
  * For a [JSON-RPC][JSON-RPC API] frontend, follow the [Zonemaster::Backend
    installation] instruction.
 
--------
+[Installation on CentOS]: #installation-on-centos
+[Installation on Debian]: #installation-on-debian
+[Installation on FreeBSD]: #installation-on-freebsd
+[Installation on Ubuntu]: #installation-on-ubuntu
 
 [Declaration of prerequisites]: https://github.com/zonemaster/zonemaster/blob/master/README.md#prerequisites
 [JSON-RPC API]: https://github.com/zonemaster/zonemaster-backend/blob/master/docs/API.md
@@ -127,9 +143,3 @@ The command is expected to take a few seconds and print some results about the d
 [Zonemaster::GUI installation]: https://github.com/zonemaster/zonemaster-gui/blob/master/docs/Installation.md
 [Zonemaster::LDNS]: https://github.com/zonemaster/zonemaster-ldns/blob/master/README.md
 
-Copyright (c) 2013 - 2017, IIS (The Internet Foundation in Sweden) \
-Copyright (c) 2013 - 2017, AFNIC \
-Creative Commons Attribution 4.0 International License
-
-You should have received a copy of the license along with this
-work.  If not, see <http://creativecommons.org/licenses/by/4.0/>.
