@@ -58,19 +58,7 @@ This instruction covers the following operating systems:
 
 ### Installation on Debian
 
-1) Install dependencies:
-
-   ```sh
-   sudo apt-get install libmoosex-getopt-perl libtext-reflow-perl libmodule-install-perl
-   ```
-
-2) Install Zonemaster::CLI:
-
-   ```sh
-   sudo cpanm Zonemaster::CLI
-   ```
-
-3) For Ubuntu 18.04: Update configuration of "locale"
+1) Update configuration of "locale"
 
    ```sh
    sudo perl -pi -e 's/^# (sv_SE\.UTF-8.*|fr_FR\.UTF-8.*|da_DK\.UTF-8.*|en_US\.UTF-8.*)/$1/' /etc/locale.gen
@@ -83,6 +71,18 @@ This instruction covers the following operating systems:
    en_US.utf8
    fr_FR.utf8
    sv_SE.utf8
+   ```
+
+2) Install dependencies:
+
+   ```sh
+   sudo apt-get install libmoosex-getopt-perl libtext-reflow-perl libmodule-install-perl
+   ```
+
+3) Install Zonemaster::CLI:
+
+   ```sh
+   sudo cpanm Zonemaster::CLI
    ```
 
 ### Installation on FreeBSD
