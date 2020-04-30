@@ -1,13 +1,12 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
-v2.0.3 2019-11-15
+v2.0.3 2020-04-30
 
- [Changes]
- - Update Centos installation (#119, #117)
+ [Features]
+ - (none)
 
  [Fixes]
- - Updated Travis config after update of zonemaster-ldns (#116)
- - Fixed Travis (#121)
+ - Update installation instructions (#119, #117, #137)
  - Translation into Danish (#109, #61)
  
 
