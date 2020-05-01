@@ -1,5 +1,15 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
+v2.0.3 2020-04-30
+
+ [Features]
+ - (none)
+
+ [Fixes]
+ - Update installation instructions (#119, #117, #137)
+ - Translation into Danish (#109, #61)
+ 
+
 v2.0.2 2019-05-31 (public fix version)
 
  [Fixes]
