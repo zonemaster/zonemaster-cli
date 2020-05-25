@@ -11,7 +11,16 @@ use version; our $VERSION = version->declare("v2.0.4");
 use 5.014002;
 use warnings;
 
-use Locale::TextDomain 'Zonemaster-CLI';
+BEGIN {
+    # Locale::TextDomain (<= 1.20) doesn't know about File::ShareDir so give a helping hand.
+    # This is a hugely simplified version of the reference implementation located here:
+    # https://metacpan.org/source/GUIDO/libintl-perl-1.21/lib/Locale/TextDomain.pm
+    require File::ShareDir;
+    require Locale::TextDomain;
+    my $share = File::ShareDir::dist_dir( 'Zonemaster-CLI' );
+    Locale::TextDomain->import( 'Zonemaster-CLI', "$share/locale" );
+}
+
 use Moose;
 with 'MooseX::Getopt';
 
