@@ -337,7 +337,7 @@ sub run {
         }
 
         if ( $self->config ) {
-            say $fh_diag __x( "Loading configuaration from {path}.", path => $self->config );
+            say $fh_diag __x( "Loading configuration from {path}.", path => $self->config );
             say $fh_diag __x( "Use of config and policy have been TERMINATED, use profile instead." );
             exit( 1 );
         }
