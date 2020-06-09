@@ -20,7 +20,6 @@ script/zonemaster-cli
 script/zonemaster-info
 share/Makefile
 share/locale/da/LC_MESSAGES/Zonemaster-CLI.mo
-share/locale/en/LC_MESSAGES/Zonemaster-CLI.mo
 share/locale/fr/LC_MESSAGES/Zonemaster-CLI.mo
 share/locale/sv/LC_MESSAGES/Zonemaster-CLI.mo
 t/00-load.t
