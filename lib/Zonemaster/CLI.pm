@@ -397,7 +397,7 @@ sub run {
                     }
 
                     if ( $self->show_level ) {
-                        printf "%-9s ", __( $entry->level );
+                        printf "%-9s ", translate_severity( $entry->level );
                     }
 
                     if ( $self->show_module ) {
@@ -515,7 +515,7 @@ sub run {
         say __( "\n\n   Level\tNumber of log entries" );
         say "   =====\t=====================";
         foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
-            printf __( "%8s\t%5d entries.\n" ), __( $level ), $counter{$level};
+            printf __( "%8s\t%5d entries.\n" ), translate_severity( $level ), $counter{$level};
         }
     }
 
@@ -674,6 +674,31 @@ sub do_dump_profile {
     print $json->encode( Zonemaster::Engine::Profile->effective->{ q{profile} } );
 
     exit;
+}
+
+sub translate_severity {
+    my $severity = shift;
+    if ( $severity eq "DEBUG" ) {
+        return __( "DEBUG" );
+    }
+    elsif ( $severity eq "INFO" ) {
+        return __( "INFO" );
+    }
+    elsif ( $severity eq "NOTICE" ) {
+        return __( "NOTICE" );
+    }
+    elsif ( $severity eq "WARNING" ) {
+        return __( "WARNING" );
+    }
+    elsif ( $severity eq "ERROR" ) {
+        return __( "ERROR" );
+    }
+    elsif ( $severity eq "CRITICAL" ) {
+        return __( "CRITICAL" );
+    }
+    else {
+        return $severity;
+    }
 }
 
 1;
