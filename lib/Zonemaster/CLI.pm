@@ -6,10 +6,12 @@ extends 'Zonemaster::Engine::Exception';
 # The actual interesting module.
 package Zonemaster::CLI;
 
-use version; our $VERSION = version->declare("v2.0.4");
-
 use 5.014002;
+
+use strict;
 use warnings;
+
+use version; our $VERSION = version->declare("v2.0.5");
 
 use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
@@ -109,6 +111,13 @@ has 'show_module' => (
     is            => 'ro',
     isa           => 'Bool',
     documentation => __( 'Print the name of the module on entries.' ),
+    default       => 0,
+);
+
+has 'show_testcase' => (
+    is            => 'ro',
+    isa           => 'Bool',
+    documentation => __( 'Print the name of the test case (method) on entries.' ),
     default       => 0,
 );
 
@@ -322,11 +331,11 @@ sub run {
 
     if ( $self->profile ) {
         say $fh_diag __x( "Loading profile from {path}.", path => $self->profile );
-	my $json    = read_file( $self->profile );
-	my $foo     = Zonemaster::Engine::Profile->from_json( $json );
-	my $profile = Zonemaster::Engine::Profile->default;
-	$profile->merge( $foo );
-	Zonemaster::Engine::Profile->effective->merge( $profile );
+        my $json    = read_file( $self->profile );
+        my $foo     = Zonemaster::Engine::Profile->from_json( $json );
+        my $profile = Zonemaster::Engine::Profile->default;
+        $profile->merge( $foo );
+        Zonemaster::Engine::Profile->effective->merge( $profile );
     }
     else {
 
@@ -337,7 +346,7 @@ sub run {
         }
 
         if ( $self->config ) {
-            say $fh_diag __x( "Loading configuration from {path}.", path => $self->config );
+            say $fh_diag __x( "Loading configuaration from {path}.", path => $self->config );
             say $fh_diag __x( "Use of config and policy have been TERMINATED, use profile instead." );
             exit( 1 );
         }
@@ -397,11 +406,15 @@ sub run {
                     }
 
                     if ( $self->show_level ) {
-                        printf "%-9s ", translate_severity( $entry->level );
+                        printf "%-9s ", __( $entry->level );
                     }
 
                     if ( $self->show_module ) {
                         printf "%-12s ", $entry->module;
+                    }
+
+                    if ( $self->show_testcase ) {
+                        printf "%-14s ", $entry->module ne q{SYSTEM} ? $entry->testcase : q{};
                     }
 
                     say $translator->translate_tag( $entry );
@@ -411,6 +424,7 @@ sub run {
 
                     $r{timestamp} = $entry->timestamp;
                     $r{module}    = $entry->module;
+                    $r{testcase}  = $entry->testcase;
                     $r{tag}       = $entry->tag;
                     $r{level}     = $entry->level;
                     $r{args}      = $entry->args if $entry->args;
@@ -454,6 +468,9 @@ sub run {
         if ( $self->show_module ) {
             print __( 'Module       ' );
         }
+        if ( $self->show_testcase ) {
+            print __( 'Testcase       ' );
+        }
         say __( 'Message' );
 
         if ( $self->time ) {
@@ -464,6 +481,9 @@ sub run {
         }
         if ( $self->show_module ) {
             print __( '============ ' );
+        }
+        if ( $self->show_testcase ) {
+            print __( '============== ' );
         }
         say __( '=======' );
     } ## end if ( $translator )
@@ -515,7 +535,7 @@ sub run {
         say __( "\n\n   Level\tNumber of log entries" );
         say "   =====\t=====================";
         foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
-            printf __( "%8s\t%5d entries.\n" ), translate_severity( $level ), $counter{$level};
+            printf __( "%8s\t%5d entries.\n" ), __( $level ), $counter{$level};
         }
     }
 
@@ -674,31 +694,6 @@ sub do_dump_profile {
     print $json->encode( Zonemaster::Engine::Profile->effective->{ q{profile} } );
 
     exit;
-}
-
-sub translate_severity {
-    my $severity = shift;
-    if ( $severity eq "DEBUG" ) {
-        return __( "DEBUG" );
-    }
-    elsif ( $severity eq "INFO" ) {
-        return __( "INFO" );
-    }
-    elsif ( $severity eq "NOTICE" ) {
-        return __( "NOTICE" );
-    }
-    elsif ( $severity eq "WARNING" ) {
-        return __( "WARNING" );
-    }
-    elsif ( $severity eq "ERROR" ) {
-        return __( "ERROR" );
-    }
-    elsif ( $severity eq "CRITICAL" ) {
-        return __( "CRITICAL" );
-    }
-    else {
-        return $severity;
-    }
 }
 
 1;
