@@ -6,6 +6,8 @@
 \.tar\.gz$
 \.bak$
 \.po$
+# Skip MO files directly under share
+^share/[^/]*\.mo$
 
 #!start included /usr/share/perl/5.20/ExtUtils/MANIFEST.SKIP
 # Avoid version control files.
