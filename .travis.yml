@@ -68,9 +68,9 @@ before_install:
 before_script:
     - echo TRAVIS_BUILD_DIR $TRAVIS_BUILD_DIR
     - echo "FIND TRAVIS_BUILD_DIR:"
-    - cd $TRAVIS_BUILD_DIR && find . \( -name .git -o -name build_dir \) -prune -o -true | sort
+    - ( cd $TRAVIS_BUILD_DIR && find . \( -name .git -o -name build_dir \) -prune -o -true | sort )
     - echo PWD `pwd`
     - echo "FIND:"
-    - find . \( -name .git -o -name build_dir \) -prune -o -true | sort
+    - ( find . \( -name .git -o -name build_dir \) -prune -o -true | sort )
       # Run tests in the repo root, not TRAVIS_BUILD_DIR
     - cd $HOME/build/zonemaster/zonemaster-cli
