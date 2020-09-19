@@ -67,6 +67,8 @@ before_install:
 
 before_script:
     - echo TRAVIS_BUILD_DIR $TRAVIS_BUILD_DIR
+    - echo "LS TRAVIS_BUILD_DIR:"
+    - ls -l $TRAVIS_BUILD_DIR
     - echo PWD `pwd`
     - echo "LS:"
     - ls -l
