@@ -64,3 +64,7 @@ before_install:
   # Install Zonemaster Engine
 - git clone --depth=1 --branch=$TRAVIS_BRANCH https://github.com/zonemaster/zonemaster-engine.git
 - ( cd zonemaster-engine && cpanm --verbose --notest . ) && rm -rf zonemaster-engine
+
+before_script:
+      # Run tests in the repo root, not TRAVIS_BUILD_DIR
+    - cd $HOME/build/zonemaster/zonemaster-cli

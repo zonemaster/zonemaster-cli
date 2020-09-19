@@ -25,7 +25,7 @@ requires(
 
 sub MY::postamble {
         return <<'MAKE_FRAG';
-	$(MYEXTLIB): share/Makefile
+pure_all :: share/Makefile
 	cd share && $(MAKE) all
 MAKE_FRAG
 };
