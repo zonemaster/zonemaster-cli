@@ -67,10 +67,10 @@ before_install:
 
 before_script:
     - echo TRAVIS_BUILD_DIR $TRAVIS_BUILD_DIR
-    - echo "LS TRAVIS_BUILD_DIR:"
-    - ls -l $TRAVIS_BUILD_DIR
+    - echo "FIND TRAVIS_BUILD_DIR:"
+    - find $TRAVIS_BUILD_DIR \( -name .git -o -name build_dir \) -prune -o -true
     - echo PWD `pwd`
-    - echo "LS:"
-    - ls -l
+    - echo "FIND:"
+    - find . \( -name .git -o -name build_dir \) -prune -o -true
       # Run tests in the repo root, not TRAVIS_BUILD_DIR
     - cd $HOME/build/zonemaster/zonemaster-cli
