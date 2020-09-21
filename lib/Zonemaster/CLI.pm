@@ -6,7 +6,7 @@ extends 'Zonemaster::Engine::Exception';
 # The actual interesting module.
 package Zonemaster::CLI;
 
-use version; our $VERSION = version->declare("v2.0.4");
+use version; our $VERSION = version->declare("v2.0.5");
 
 use 5.014002;
 use warnings;
@@ -521,7 +521,7 @@ sub run {
 
     if ( $self->nstimes ) {
         my $zone = Zonemaster::Engine->zone( $domain );
-        my $max = max map { length( "$_" ) } @{ $zone->ns };
+        my $max = max map { length( "$_" ) } ( @{ $zone->ns }, q{Server} );
 
         print "\n";
         printf "%${max}s %s\n", 'Server', ' Max (ms)      Min      Avg   Stddev   Median     Total';
