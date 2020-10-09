@@ -375,13 +375,11 @@ sub run {
     my $translator;
     $translator = Zonemaster::Engine::Translator->new unless ( $self->raw or $self->json or $self->json_stream );
     $translator->locale( $self->locale ) if $translator and $self->locale;
-    eval { $translator->data } if $translator;    # Provoke lazy loading of translation data
 
     my $json_translator;
     if ( $self->json_translate ) {
         $json_translator = Zonemaster::Engine::Translator->new;
         $json_translator->locale( $self->locale ) if $self->locale;
-        eval { $json_translator->data };
     }
 
     if ( $self->restore ) {
@@ -547,7 +545,7 @@ sub run {
 
     if ( $self->nstimes ) {
         my $zone = Zonemaster::Engine->zone( $domain );
-        my $max = max map { length( "$_" ) } @{ $zone->ns };
+        my $max = max map { length( "$_" ) } ( @{ $zone->ns }, q{Server} );
 
         print "\n";
         printf "%${max}s %s\n", 'Server', ' Max (ms)      Min      Avg   Stddev   Median     Total';

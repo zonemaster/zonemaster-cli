@@ -61,7 +61,7 @@ This instruction covers the following operating systems:
 1) Update configuration of "locale"
 
    ```sh
-   sudo perl -pi -e 's/^# (sv_SE\.UTF-8.*|fr_FR\.UTF-8.*|da_DK\.UTF-8.*|en_US\.UTF-8.*)/$1/' /etc/locale.gen
+   sudo perl -pi -e 's/^# (da_DK\.UTF-8.*|en_US\.UTF-8.*|fr_FR\.UTF-8.*|nb_NO\.UTF-8.*|sv_SE\.UTF-8.*)/$1/' /etc/locale.gen
    sudo locale-gen
    ```
 
@@ -70,6 +70,7 @@ This instruction covers the following operating systems:
    da_DK.utf8
    en_US.utf8
    fr_FR.utf8
+   nb_NO.utf8
    sv_SE.utf8
    ```
 
