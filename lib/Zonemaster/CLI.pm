@@ -11,7 +11,7 @@ use 5.014002;
 use strict;
 use warnings;
 
-use version; our $VERSION = version->declare("v2.0.5");
+use version; our $VERSION = version->declare( "v2.0.7" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
@@ -117,7 +117,7 @@ has 'show_module' => (
 has 'show_testcase' => (
     is            => 'ro',
     isa           => 'Bool',
-    documentation => __( 'Print the name of the test case (method) on entries.' ),
+    documentation => __( 'Print the name of the test case on entries.' ),
     default       => 0,
 );
 
@@ -346,7 +346,7 @@ sub run {
         }
 
         if ( $self->config ) {
-            say $fh_diag __x( "Loading configuaration from {path}.", path => $self->config );
+            say $fh_diag __x( "Loading configuration from {path}.", path => $self->config );
             say $fh_diag __x( "Use of config and policy have been TERMINATED, use profile instead." );
             exit( 1 );
         }
@@ -406,7 +406,7 @@ sub run {
                     }
 
                     if ( $self->show_level ) {
-                        printf "%-9s ", __( $entry->level );
+                        printf "%-9s ", translate_severity( $entry->level );
                     }
 
                     if ( $self->show_module ) {
@@ -414,7 +414,7 @@ sub run {
                     }
 
                     if ( $self->show_testcase ) {
-                        printf "%-14s ", $entry->module ne q{SYSTEM} ? $entry->testcase : q{};
+                        printf "%-14s ", $entry->testcase;
                     }
 
                     say $translator->translate_tag( $entry );
@@ -435,11 +435,17 @@ sub run {
                 elsif ( $self->json ) {
                     # Don't do anything
                 }
-                elsif ( $self->show_module ) {
-                    printf "%7.2f %-9s %-12s %s\n", $entry->timestamp, $entry->level, $entry->module, $entry->string;
-                }
                 else {
-                    printf "%7.2f %-9s %s\n", $entry->timestamp, $entry->level, $entry->string;
+                    my $str = sprintf "%7.2f %-9s ", $entry->timestamp, $entry->level;
+                    if ( $self->show_module ) {
+                        $str.= sprintf "%-12s ", $entry->module;
+                    }
+                    if ( $self->show_testcase ) {
+                        $str.= sprintf "%-14s ", $entry->testcase;
+                    }
+                    my $entry_str = sprintf "%s", $entry->string;
+                    $entry_str =~ s/^([A-Z0-9]+:)*//;
+                    printf "%s%s\n", $str, $entry_str;
                 }
             } ## end if ( $numeric{ uc $entry...})
             if ( $self->stop_level and $numeric{ uc $entry->level } >= $numeric{ $self->stop_level } ) {
@@ -535,7 +541,7 @@ sub run {
         say __( "\n\n   Level\tNumber of log entries" );
         say "   =====\t=====================";
         foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
-            printf __( "%8s\t%5d entries.\n" ), __( $level ), $counter{$level};
+            printf __( "%8s\t%5d entries.\n" ), translate_severity( $level ), $counter{$level};
         }
     }
 
@@ -694,6 +700,31 @@ sub do_dump_profile {
     print $json->encode( Zonemaster::Engine::Profile->effective->{ q{profile} } );
 
     exit;
+}
+
+sub translate_severity {
+    my $severity = shift;
+    if ( $severity eq "DEBUG" ) {
+        return __( "DEBUG" );
+    }
+    elsif ( $severity eq "INFO" ) {
+        return __( "INFO" );
+    }
+    elsif ( $severity eq "NOTICE" ) {
+        return __( "NOTICE" );
+    }
+    elsif ( $severity eq "WARNING" ) {
+        return __( "WARNING" );
+    }
+    elsif ( $severity eq "ERROR" ) {
+        return __( "ERROR" );
+    }
+    elsif ( $severity eq "CRITICAL" ) {
+        return __( "CRITICAL" );
+    }
+    else {
+        return $severity;
+    }
 }
 
 1;
