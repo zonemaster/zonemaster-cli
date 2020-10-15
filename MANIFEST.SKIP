@@ -8,6 +8,7 @@
 \.po$
 # Skip MO files directly under share
 ^share/[^/]*\.mo$
+^share/Zonemaster-CLI.pot$
 
 #!start included /usr/share/perl/5.20/ExtUtils/MANIFEST.SKIP
 # Avoid version control files.
