@@ -3,7 +3,7 @@
 .PHONY: all dist touch-po update-po extract-pot
 
 DISTNAME = Zonemaster-CLI
-POFILES != echo *.po
+POFILES != find . -maxdepth 1 -type f -name '*.po' 
 MOFILES := $(POFILES:%.po=%.mo)
 POTFILE = $(DISTNAME).pot
 PMFILES != find ../lib -type f -name '*.pm' | sort
