@@ -19,7 +19,7 @@ Zonemaster::Engine installation].
 > install from your operating system distribution (rather than CPAN).
 > We recommend following the Zonemaster::Engine installation instruction.
 
-Prerequisite for FreeBSD is that the package system is upadated and activated
+Prerequisite for FreeBSD is that the package system is updated and activated
 (see the FreeBSD section of [Zonemaster::Engine installation]).
 
 For details on supported versions of Perl and operating system for
