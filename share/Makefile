@@ -1,12 +1,15 @@
+# This is the main Makefile in this directory and should be kept
+# GNU Make compatible.
+
 .POSIX:
 .SUFFIXES: .po .mo
 .PHONY: all dist touch-po update-po extract-pot
 
 DISTNAME = Zonemaster-CLI
-POFILES != find . -maxdepth 1 -type f -name '*.po' 
+POFILES := $(shell find . -maxdepth 1 -type f -name '*.po' -exec basename {} \;)
 MOFILES := $(POFILES:%.po=%.mo)
 POTFILE = $(DISTNAME).pot
-PMFILES != find ../lib -type f -name '*.pm' | sort
+PMFILES := $(shell find ../lib -type f -name '*.pm' | sort)
 
 all: $(MOFILES)
 	@echo
