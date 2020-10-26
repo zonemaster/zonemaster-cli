@@ -31,18 +31,16 @@ if ($^O eq "freebsd") {
 
 sub MY::postamble {
     my $sharemakefile = 'share/GNUmakefile';
-    my $text;
     if ($^O eq "freebsd") {
         # Make FreeBSD use gmake for share
-        $text = q[GMAKE ?= "gmake"] . "\n"
-            . q[pure_all :: ] . "$sharemakefile\n"
-            . "\t" . q[cd share && $(GMAKE) all] . "\n";
+        return "GMAKE ?= \"gmake\"\n"
+            . "pure_all :: $sharemakefile\n"
+            . "\tcd share && \$(GMAKE) all\n";
     } else {
         # Here Linux and GNU Make is assumed
-        $text = q[pure_all :: ] . "$sharemakefile\n"
-            . "\t" . q[cd share && $(MAKE) all] . "\n";
+        return "pure_all :: $sharemakefile\n"
+            . "\tcd share && \$(MAKE) all\n";
     };
-    return $text;
 };
 
 
