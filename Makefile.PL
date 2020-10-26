@@ -23,12 +23,27 @@ requires(
     'Zonemaster::LDNS'   => 2.0,
 );
 
-sub MY::postamble {
-        return <<'MAKE_FRAG';
-	$(MYEXTLIB): share/Makefile
-	cd share && $(MAKE) all
-MAKE_FRAG
+# Make all platforms include inc/Module/Install/External.pm
+requires_external_bin 'find';
+if ($^O eq "freebsd") {
+    requires_external_bin 'gmake';
 };
+
+sub MY::postamble {
+    my $sharemakefile = 'share/GNUmakefile';
+    if ($^O eq "freebsd") {
+        # Make FreeBSD use gmake for share
+        return "GMAKE ?= \"gmake\"\n"
+            . "pure_all :: $sharemakefile\n"
+            . "\tcd share && \$(GMAKE) all\n";
+    } else {
+        # Here Linux and GNU Make is assumed
+        return "pure_all :: $sharemakefile\n"
+            . "\tcd share && \$(MAKE) all\n";
+    };
+};
+
+
 
 install_script 'zonemaster-cli';
 install_share;

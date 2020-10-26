@@ -3,6 +3,7 @@ docs/Installation.md
 inc/Module/Install.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
+inc/Module/Install/External.pm
 inc/Module/Install/Fetch.pm
 inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
@@ -18,6 +19,7 @@ META.yml
 README.md
 script/zonemaster-cli
 script/zonemaster-info
+share/GNUmakefile
 share/Makefile
 share/locale/da/LC_MESSAGES/Zonemaster-CLI.mo
 share/locale/fr/LC_MESSAGES/Zonemaster-CLI.mo

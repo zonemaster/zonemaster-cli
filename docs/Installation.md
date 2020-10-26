@@ -97,7 +97,7 @@ This instruction covers the following operating systems:
 2) Install dependencies available from binary packages:
 
    ```sh
-   pkg install p5-JSON-XS p5-Locale-libintl p5-MooseX-Getopt p5-Text-Reflow
+   pkg install devel/gmake p5-JSON-XS p5-Locale-libintl p5-MooseX-Getopt p5-Text-Reflow
    ```
 
 3) Install Zonemaster::CLI:
