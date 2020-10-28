@@ -1,13 +1,15 @@
 msgid ""
 msgstr ""
-"Language: da\n"
-"Content-Type: text/plain; charset=utf-8\n"
-"Content-Transfer-Encoding: 8bit\n"
 "Project-Id-Version: 0.0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-10-28 19:25+0100\n"
 "PO-Revision-Date: 2019-07-08\n"
 "Last-Translator: haarbo@dk-hostmaster.dk\n"
 "Language-Team: Zonemaster Team\n"
+"Language: da\n"
 "MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 
 msgid "Print version information and exit."
 msgstr "Udskriv version og afbryd."
@@ -102,6 +104,19 @@ msgstr "En streng med DS-data i formatet \"keytag,algorithm,type,digest\""
 msgid "Print a count of the number of messages at each level"
 msgstr "Udskriv antallet af registrerede beskeder på hvert niveau."
 
+msgid "Name of the character encoding used for command line arguments"
+msgstr "Navn på tegnkodningen, der skal anvendes for kommandolinje-argumenter."
+
+msgid ""
+"At the end of a run, print a summary of the times the zone's name servers "
+"took to answer."
+msgstr ""
+"Efter afsluttet afvikling, udskriv en opsummering af svarftiderne som zonens "
+"navneservere brugte på at svare."
+
+msgid "Print the effective profile used in JSON format, then exit."
+msgstr "Udskriv den effektive profil benyttet i JSON-format, og afslut."
+
 msgid ""
 "Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off "
 "if it is not."
@@ -109,11 +124,18 @@ msgstr ""
 "Flag der fortæller, om en aktivitetsindikator skal anvendes. Udskrives, hvis "
 "STDOUT er en tty, ellers ikke."
 
-msgid "Name of the character encoding used for command line arguments"
-msgstr "Navn på tegnkodningen, der skal anvendes for kommandolinje-argumenter."
-
 msgid "Must give the name of a domain to test.\n"
 msgstr "Domænenavn, der skal testes, skal angives.\n"
+
+msgid ""
+"Local IP address that the test engine should try to send its requests from."
+msgstr "Lokal IP-adresse som test-motoren skal sende sin foresgpørgsler fra."
+
+msgid "Loading policy from {path}."
+msgstr "Indlæser policy fra {path}."
+
+msgid "Loading configuration from {path}."
+msgstr "Indlæser konfiguration fra {path}."
 
 msgid "Failed to recognize stop level '"
 msgstr "Ukendt afslutningsniveau '"
@@ -124,12 +146,6 @@ msgid ""
 msgstr ""
 "--level skal være et af CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, "
 "DEBUG2 or DEBUG3.\n"
-
-msgid "Loading policy from {path}."
-msgstr "Indlæser policy fra {path}."
-
-msgid "Loading configuration from {path}."
-msgstr "Indlæser konfiguration fra {path}."
 
 msgid "Seconds "
 msgstr "Sekunder "
@@ -142,6 +158,21 @@ msgstr "Modul        "
 
 msgid "Message"
 msgstr "Besked"
+
+msgid "======= "
+msgstr "======= "
+
+msgid "========= "
+msgstr "========= "
+
+msgid "============ "
+msgstr "============ "
+
+msgid "======="
+msgstr "======="
+
+msgid "Looks OK."
+msgstr "Ser OK ud."
 
 msgid ""
 "\n"
@@ -169,49 +200,6 @@ msgstr ""
 "Advarsel: Kunne ikke sætte locale %s (er det installeret på systemet?).\n"
 "\n"
 
-msgid "CRITICAL"
-msgstr "KRITISK"
-
-msgid "ERROR"
-msgstr "FEJL"
-
-msgid "WARNING"
-msgstr "ADVARSEL"
-
-msgid "NOTICE"
-msgstr "NOTER"
-
-msgid "INFO"
-msgstr "INFO"
-
-msgid "DEBUG"
-msgstr "FEJLSØG"
-
-msgid "======= "
-msgstr "======= "
-
-msgid "========= "
-msgstr "========= "
-
-msgid "============ "
-msgstr "============ "
-
-msgid "======="
-msgstr "======="
-
-msgid "Looks OK."
-msgstr "Ser OK ud."
-
-msgid ""
-"At the end of a run, print a summary of the times the zone's name servers "
-"took to answer."
-msgstr ""
-"Efter afsluttet afvikling, udskriv en opsummering af svarftiderne som zonens "
-"navneservere brugte på at svare."
-
-msgid "Print the effective profile used in JSON format, then exit."
-msgstr "Udskriv den effektive profil benyttet i JSON-format, og afslut."
-
 msgid ""
 "Print the effective configuration used in JSON format, then exit. "
 "(DEPRECATED)"
@@ -223,6 +211,20 @@ msgid "Print the effective policy used in JSON format, then exit. (DEPRECATED)"
 msgstr ""
 "Udskriv den effektive policy benyttet i JSON-format, og afslut. (FORÆLDET)"
 
-msgid ""
-"Local IP address that the test engine should try to send its requests from."
-msgstr "Lokal IP-adresse som test-motoren skal sende sin foresgpørgsler fra."
+msgid "DEBUG"
+msgstr "FEJLSØG"
+
+msgid "INFO"
+msgstr "INFO"
+
+msgid "NOTICE"
+msgstr "NOTER"
+
+msgid "WARNING"
+msgstr "ADVARSEL"
+
+msgid "ERROR"
+msgstr "FEJL"
+
+msgid "CRITICAL"
+msgstr "KRITISK"

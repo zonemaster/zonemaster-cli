@@ -1,13 +1,15 @@
 msgid ""
 msgstr ""
-"Language: en\n"
-"Content-Type: text/plain; charset=utf-8\n"
-"Content-Transfer-Encoding: 8bit\n"
 "Project-Id-Version: 0.0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-10-28 18:57+0100\n"
 "PO-Revision-Date: 2014-09-09 15:20+0200\n"
 "Last-Translator: calle@init.se\n"
 "Language-Team: Zonemaster Team\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 
 msgid "Print version information and exit."
 msgstr "Skriv ut versionsinformation och avsluta."
@@ -103,6 +105,19 @@ msgid "Print a count of the number of messages at each level"
 msgstr ""
 "Skriv ut en summering av antalet registrerade meddelanden på varje nivå."
 
+msgid "Name of the character encoding used for command line arguments"
+msgstr "Namnet på den teckenkodning som används för kommandoradsargumenten."
+
+msgid ""
+"At the end of a run, print a summary of the times the zone's name servers "
+"took to answer."
+msgstr ""
+"Efter att körningen avslutats, skriv ut en summering av zonens namnservrars "
+"svarstider."
+
+msgid "Print the effective profile used in JSON format, then exit."
+msgstr "Print the effective profile used in JSON format, then exit."
+
 msgid ""
 "Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off "
 "if it is not."
@@ -110,11 +125,15 @@ msgstr ""
 "Flagga för om en aktivitets-indikator skall användas. Normalt på om STDOUT "
 "är en tty, och av annars."
 
-msgid "Name of the character encoding used for command line arguments"
-msgstr "Namnet på den teckenkodning som används för kommandoradsargumenten."
+msgid ""
+"Local IP address that the test engine should try to send its requests from."
+msgstr "Lokal IP adress som testmotorn skall skicka sin trafik från."
 
-msgid "Must give the name of a domain to test.\n"
-msgstr "Måste ange namnet på en domän att testa.\n"
+msgid "Loading policy from {path}."
+msgstr "Laddar policy från {path}."
+
+msgid "Loading configuration from {path}."
+msgstr "Laddar konfiguration från {path}."
 
 msgid "Failed to recognize stop level '"
 msgstr "Kände inte igen avslutsnivån '"
@@ -126,11 +145,8 @@ msgstr ""
 "--level måste vara en av CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, "
 "DEBUG2 eller DEBUG3.\n"
 
-msgid "Loading policy from {path}."
-msgstr "Laddar policy från {path}."
-
-msgid "Loading configuration from {path}."
-msgstr "Laddar konfiguration från {path}."
+msgid "Must give the name of a domain to test.\n"
+msgstr "Måste ange namnet på en domän att testa.\n"
 
 msgid "Seconds "
 msgstr " Sekund "
@@ -143,6 +159,21 @@ msgstr "Modul        "
 
 msgid "Message"
 msgstr "Meddelande"
+
+msgid "======= "
+msgstr "======= "
+
+msgid "========= "
+msgstr "====      "
+
+msgid "============ "
+msgstr "============ "
+
+msgid "======="
+msgstr "=========="
+
+msgid "Looks OK."
+msgstr "Ser OK ut."
 
 msgid ""
 "\n"
@@ -171,49 +202,6 @@ msgstr ""
 "det här systemet?).\n"
 "\n"
 
-msgid "CRITICAL"
-msgstr "KRITISKT"
-
-msgid "ERROR"
-msgstr "FEL"
-
-msgid "WARNING"
-msgstr "VARNING"
-
-msgid "NOTICE"
-msgstr "NOTIS"
-
-msgid "INFO"
-msgstr "INFO"
-
-msgid "DEBUG"
-msgstr "DEBUG"
-
-msgid "======= "
-msgstr "======= "
-
-msgid "========= "
-msgstr "====      "
-
-msgid "============ "
-msgstr "============ "
-
-msgid "======="
-msgstr "=========="
-
-msgid "Looks OK."
-msgstr "Ser OK ut."
-
-msgid ""
-"At the end of a run, print a summary of the times the zone's name servers "
-"took to answer."
-msgstr ""
-"Efter att körningen avslutats, skriv ut en summering av zonens namnservrars "
-"svarstider."
-
-msgid "Print the effective profile used in JSON format, then exit."
-msgstr "Print the effective profile used in JSON format, then exit."
-
 msgid ""
 "Print the effective configuration used in JSON format, then exit. "
 "(DEPRECATED)"
@@ -225,6 +213,20 @@ msgid "Print the effective policy used in JSON format, then exit. (DEPRECATED)"
 msgstr ""
 "Skriv ut den effektiva policyn i JSON-format, sedan avsluta. (DEPRECATED)"
 
-msgid ""
-"Local IP address that the test engine should try to send its requests from."
-msgstr "Lokal IP adress som testmotorn skall skicka sin trafik från."
+msgid "DEBUG"
+msgstr "DEBUG"
+
+msgid "INFO"
+msgstr "INFO"
+
+msgid "NOTICE"
+msgstr "NOTIS"
+
+msgid "WARNING"
+msgstr "VARNING"
+
+msgid "ERROR"
+msgstr "FEL"
+
+msgid "CRITICAL"
+msgstr "KRITISKT"
