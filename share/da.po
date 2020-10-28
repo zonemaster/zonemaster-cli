@@ -131,9 +131,11 @@ msgid ""
 "Local IP address that the test engine should try to send its requests from."
 msgstr "Lokal IP-adresse som test-motoren skal sende sin foresgpørgsler fra."
 
+#, perl-brace-format
 msgid "Loading policy from {path}."
 msgstr "Indlæser policy fra {path}."
 
+#, perl-brace-format
 msgid "Loading configuration from {path}."
 msgstr "Indlæser konfiguration fra {path}."
 
@@ -183,6 +185,7 @@ msgstr ""
 "\n"
 "   Niveau\tAntal logbeskeder"
 
+#, perl-format
 msgid "%8s\t%5d entries.\n"
 msgstr "%8s\t%5d beskeder.\n"
 

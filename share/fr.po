@@ -158,9 +158,11 @@ msgstr ""
 msgid "Must give the name of a domain to test.\n"
 msgstr "Il est nécessaire d'indiquer un nom de domaine pour lancer le test.\n"
 
+#, perl-brace-format
 msgid "Loading policy from {path}."
 msgstr "Chargement de la politique de tests depuis le fichier {path}."
 
+#, perl-brace-format
 msgid "Loading configuration from {path}."
 msgstr "Chargement de la configuration depuis le fichier {path}."
 
@@ -212,6 +214,7 @@ msgstr ""
 "\n"
 "   Niveau\tOccurences dans le log"
 
+#, perl-format
 msgid "%8s\t%5d entries.\n"
 msgstr "%8s\t%5d entrées.\n"
 

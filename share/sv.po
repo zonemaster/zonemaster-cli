@@ -6,7 +6,7 @@ msgstr ""
 "PO-Revision-Date: 2014-09-09 15:20+0200\n"
 "Last-Translator: calle@init.se\n"
 "Language-Team: Zonemaster Team\n"
-"Language: en\n"
+"Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -129,9 +129,11 @@ msgid ""
 "Local IP address that the test engine should try to send its requests from."
 msgstr "Lokal IP adress som testmotorn skall skicka sin trafik från."
 
+#, perl-brace-format
 msgid "Loading policy from {path}."
 msgstr "Laddar policy från {path}."
 
+#, perl-brace-format
 msgid "Loading configuration from {path}."
 msgstr "Laddar konfiguration från {path}."
 
@@ -184,6 +186,7 @@ msgstr ""
 "\n"
 "   Nivå \tAntal loggmeddelanden"
 
+#, perl-format
 msgid "%8s\t%5d entries.\n"
 msgstr "%8s\t%5d meddelanden.\n"
 
