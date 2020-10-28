@@ -12,7 +12,7 @@ msgstr ""
 msgid "Print version information and exit."
 msgstr "Skriv ut versionsinformation och avsluta."
 
-msgid "The minimum severity level to display"
+msgid "The minimum severity level to display."
 msgstr "Den lägsta allvarlighetsgrad som skall skrivas ut."
 
 msgid "The locale to use for messages translation."
@@ -51,10 +51,10 @@ msgstr "Flagga som tillåter eller förbjuder användning av IPv6. --ipv6 tillå
 msgid "Instead of running a test, list all available tests."
 msgstr "Istället för att köra tester, skriv ut en lista med alla tillgängliga tester."
 
-msgid "Specify test to run. Should be either the name of a module, or the name of a module and the name of a method in that module separated by a \"/\" character (Example: \"Basic/basic1\"). The method specified must be one that takes a zone object as its single argument. This switch can be repeated"
+msgid "Specify test to run. Should be either the name of a module, or the name of a module and the name of a method in that module separated by a \"/\" character (Example: \"Basic/basic1\"). The method specified must be one that takes a zone object as its single argument. This switch can be repeated."
 msgstr "Specificera tester att köra. Skall vara antingen namnet på en testmodul, eller namnet på en modul och namnet på en testmetod i den modulen separerade med ett snedstreck (exempel: \"Basic/basic1\"). Den utpekade metoden måste vara en som tar enbart ett zon-objekt som argument. Den här flaggan kan anges flera gånger."
 
-msgid "As soon as a message at this level or higher is logged, execution will stop"
+msgid "As soon as a message at this level or higher is logged, execution will stop."
 msgstr "Avsluta testkörningen så snart ett meddelande med denna nivå eller högre registreras."
 
 msgid "DEPRECATED, use profile instead."
