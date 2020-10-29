@@ -3,7 +3,7 @@
 
 .POSIX:
 .SUFFIXES: .po .mo
-.PHONY: all dist touch-po update-po extract-pot
+.PHONY: all dist tidy-po touch-po update-po extract-pot
 
 DISTNAME = Zonemaster-CLI
 POFILES := $(shell find . -maxdepth 1 -type f -name '*.po' -exec basename {} \;)
@@ -16,6 +16,12 @@ all: $(MOFILES)
 	@echo Remember to make sure all of the above names are in the
 	@echo MANIFEST file, or they will not be installed.
 	@echo
+
+# Tidy the formatting of all PO files
+tidy-po:
+	@tmpdir="`mktemp -d tidy-po.XXXXXXXX`" ;\
+	trap 'rm -rf "$$tmpdir"' EXIT ;\
+	for f in $(POFILES) ; do msgcat $$f -o $$tmpdir/$$f && mv -f $$tmpdir/$$f $$f  ; done
 
 touch-po:
 	@touch $(POTFILE) $(POFILES)
