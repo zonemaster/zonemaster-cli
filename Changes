@@ -1,5 +1,9 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
+v3.0.1 2020-11-09 (public release version)
+ [Fixes]
+ - Fixed an version specification error in Makefile.PL.
+
 v3.0.0 2020-11-06 (public release version)
 
  [Breaking changes]
