@@ -97,6 +97,10 @@ Turn the printing of the message severity level on or off (default on).
 
 Turn the printing of which module produced a message on or off (default off).
 
+=item --show_testcase, --no-show_testcase
+
+Turn the printing of which test case produced a message on or off (default off).
+
 =item --ns=NAME[/IP]
 
 Provide information about a nameserver, for undelegated tests. The argument
