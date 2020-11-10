@@ -14,13 +14,16 @@ resources(
 
 tests_recursive( 't' );
 
+# "2.1.0" could be declared as "2.001" but not as "2.1"
+# (see Zonemaster::LDNS below)
+
 requires(
     'JSON::XS'           => 0,
     'Locale::TextDomain' => 1.23,
     'MooseX::Getopt'     => 0,
     'Text::Reflow'       => 0,
     'Zonemaster::Engine' => 4.0,
-    'Zonemaster::LDNS'   => 2.1,
+    'Zonemaster::LDNS'   => 2.001,
 );
 
 # Make all platforms include inc/Module/Install/External.pm
