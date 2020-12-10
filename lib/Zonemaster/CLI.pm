@@ -317,9 +317,6 @@ sub run {
         print_test_list();
     }
 
-    Zonemaster::Engine::Profile->effective->set( q{net.ipv4}, 0+$self->ipv4 );
-    Zonemaster::Engine::Profile->effective->set( q{net.ipv6}, 0+$self->ipv6 );
-
     if ($self->sourceaddr) {
         Zonemaster::Engine::Profile->effective->set( q{resolver.source}, $self->sourceaddr );
     }
@@ -351,6 +348,12 @@ sub run {
             exit( 1 );
         }
     }
+
+    # These two must come after any profile from command line has been loaded
+    # to override the profile setting
+    Zonemaster::Engine::Profile->effective->set( q{net.ipv4}, 0+$self->ipv4 );
+    Zonemaster::Engine::Profile->effective->set( q{net.ipv6}, 0+$self->ipv6 );
+
 
     if ( $self->dump_profile ) {
         do_dump_profile();
