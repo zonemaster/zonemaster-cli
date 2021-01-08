@@ -447,7 +447,7 @@ sub run {
                     $prefix .= $entry->tag;
 
                     my $message = $entry->string;
-                    $message =~ s/^[A-Z0-9:]+//;    # strip MODULE:TAG, they're coming in $prefix instead
+                    $message =~ s/^[A-Z0-9:_]+//;    # strip MODULE:TAG, they're coming in $prefix instead
                     my @lines = split /\n/, $message;
 
                     printf "%s%s %s\n", $prefix, ' ', shift @lines;
