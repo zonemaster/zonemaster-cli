@@ -437,16 +437,17 @@ sub run {
                     # Don't do anything
                 }
                 else {
-                    my $str = sprintf "%7.2f %-9s ", $entry->timestamp, $entry->level;
+                    my $prefix = sprintf "%7.2f %-9s ", $entry->timestamp, $entry->level;
                     if ( $self->show_module ) {
-                        $str.= sprintf "%-12s ", $entry->module;
+                        $prefix .= sprintf "%-12s ", $entry->module;
                     }
                     if ( $self->show_testcase ) {
-                        $str.= sprintf "%-14s ", $entry->testcase;
+                        $prefix .= sprintf "%-14s ", $entry->testcase;
                     }
-                    my $entry_str = sprintf "%s", $entry->string;
-                    $entry_str =~ s/^([A-Z0-9]+:)*//;
-                    printf "%s%s\n", $str, $entry_str;
+
+                    my $message = $entry->string;
+                    $message =~ s/^([A-Z0-9]+:)*//;
+                    printf "%s%s\n", $prefix, $message;
                 }
             } ## end if ( $numeric{ uc $entry...})
             if ( $self->stop_level and $numeric{ uc $entry->level } >= $numeric{ $self->stop_level } ) {
