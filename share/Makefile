@@ -1,8 +1,15 @@
-POFILES = $(wildcard *.po)
-MOFILES := $(POFILES:.po=.mo)
+# This is a wrapper for BSD Make (FreeBSD) to execute
+# GNU Make (gmake) and the primary makefile GNUmakefile.
 
-%.mo: %.po
-	@mkdir -p locale/$*/LC_MESSAGES
-	@perl -e 'use Locale::Msgfmt; msgfmt({in => $$ARGV[0], out => $$ARGV[1]});' $< locale/$*/LC_MESSAGES/Zonemaster-CLI.mo
+GNUMAKE?= gmake
+FILES != ls *
 
-all: ${MOFILES}
+# File targets should be evaluated by gmake.
+.PHONY: all $(FILES)
+
+all:
+	@${GNUMAKE} $@
+
+.DEFAULT:
+	@${GNUMAKE} $@
+

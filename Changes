@@ -1,5 +1,63 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
+v3.0.1 2020-11-09 (public release version)
+ [Fixes]
+ - Fixed an version specification error in Makefile.PL.
+
+v3.0.0 2020-11-06 (public release version)
+
+ [Breaking changes]
+ - Added "--show_testcase" and changed format when "--raw"
+   is selected (#157)
+
+ [Features]
+ - Added Norwegian language support to match added
+   translation to Norwegian in Zonemaster-Engine (#164, #155,
+   #161)
+
+ [Fixes]
+ - Updated/corrected translations/PO files (#174, #173)
+ - Corrected documentation (#172)
+ - Rename share/Makefile to share/GNUmakefile and
+   create wrapper for FreeBSD. Make FreeBSD use gmake
+   for share/GNUmakefile (#169)
+ - Corrected MANIFEST (#168)
+ - Updated share/Makefile (#167)
+ - Clean-up (#166, #158)
+ - Correcting --nstimes option (#163, #148)
+ - Updated translation/PO files handling (#151, #132, #147,
+   #150, #149)
+
+
+v2.0.4 2020-05-22
+
+ [Fixes]
+ - Bumping the version of Zonemaster::CLI to be able to
+   upload a new package to CPAN to avoid the confusion
+   that the version v2.0.3.1 created. There are no
+   changes compared to v2.0.3.
+
+
+v2.0.3.1 2020-05-15
+
+ [Fixes]
+ - This release fixes inconsitency between the branches in the
+   repository. See the release notes for v2.0.3 for the real
+   changes.
+ - There is no change in data so this release has not been
+   published on CPAN.
+
+
+v2.0.3 2020-04-30
+
+ [Features]
+ - (none)
+
+ [Fixes]
+ - Update installation instructions (#119, #117, #137)
+ - Translation into Danish (#109, #61)
+ 
+
 v2.0.2 2019-05-31 (public fix version)
 
  [Fixes]

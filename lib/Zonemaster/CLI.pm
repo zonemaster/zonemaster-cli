@@ -6,10 +6,12 @@ extends 'Zonemaster::Engine::Exception';
 # The actual interesting module.
 package Zonemaster::CLI;
 
-use version; our $VERSION = version->declare("v2.0.4");
-
 use 5.014002;
+
+use strict;
 use warnings;
+
+use version; our $VERSION = version->declare( "v3.0.2" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
@@ -112,6 +114,13 @@ has 'show_module' => (
     is            => 'ro',
     isa           => 'Bool',
     documentation => __( 'Print the name of the module on entries.' ),
+    default       => 0,
+);
+
+has 'show_testcase' => (
+    is            => 'ro',
+    isa           => 'Bool',
+    documentation => __( 'Print the name of the test case on entries.' ),
     default       => 0,
 );
 
@@ -311,9 +320,6 @@ sub run {
         print_test_list();
     }
 
-    Zonemaster::Engine::Profile->effective->set( q{net.ipv4}, 0+$self->ipv4 );
-    Zonemaster::Engine::Profile->effective->set( q{net.ipv6}, 0+$self->ipv6 );
-
     if ($self->sourceaddr) {
         if ($self->check_sourceaddress_exists ) {
             Zonemaster::Engine::Profile->effective->set( q{resolver.source}, $self->sourceaddr );
@@ -330,11 +336,11 @@ sub run {
 
     if ( $self->profile ) {
         say $fh_diag __x( "Loading profile from {path}.", path => $self->profile );
-	my $json    = read_file( $self->profile );
-	my $foo     = Zonemaster::Engine::Profile->from_json( $json );
-	my $profile = Zonemaster::Engine::Profile->default;
-	$profile->merge( $foo );
-	Zonemaster::Engine::Profile->effective->merge( $profile );
+        my $json    = read_file( $self->profile );
+        my $foo     = Zonemaster::Engine::Profile->from_json( $json );
+        my $profile = Zonemaster::Engine::Profile->default;
+        $profile->merge( $foo );
+        Zonemaster::Engine::Profile->effective->merge( $profile );
     }
     else {
 
@@ -345,11 +351,17 @@ sub run {
         }
 
         if ( $self->config ) {
-            say $fh_diag __x( "Loading configuaration from {path}.", path => $self->config );
+            say $fh_diag __x( "Loading configuration from {path}.", path => $self->config );
             say $fh_diag __x( "Use of config and policy have been TERMINATED, use profile instead." );
             exit( 1 );
         }
     }
+
+    # These two must come after any profile from command line has been loaded
+    # to override the profile setting
+    Zonemaster::Engine::Profile->effective->set( q{net.ipv4}, 0+$self->ipv4 );
+    Zonemaster::Engine::Profile->effective->set( q{net.ipv6}, 0+$self->ipv6 );
+
 
     if ( $self->dump_profile ) {
         do_dump_profile();
@@ -374,13 +386,11 @@ sub run {
     my $translator;
     $translator = Zonemaster::Engine::Translator->new unless ( $self->raw or $self->json or $self->json_stream );
     $translator->locale( $self->locale ) if $translator and $self->locale;
-    eval { $translator->data } if $translator;    # Provoke lazy loading of translation data
 
     my $json_translator;
     if ( $self->json_translate ) {
         $json_translator = Zonemaster::Engine::Translator->new;
         $json_translator->locale( $self->locale ) if $self->locale;
-        eval { $json_translator->data };
     }
 
     if ( $self->restore ) {
@@ -405,11 +415,15 @@ sub run {
                     }
 
                     if ( $self->show_level ) {
-                        printf "%-9s ", __( $entry->level );
+                        printf "%-9s ", translate_severity( $entry->level );
                     }
 
                     if ( $self->show_module ) {
                         printf "%-12s ", $entry->module;
+                    }
+
+                    if ( $self->show_testcase ) {
+                        printf "%-14s ", $entry->testcase;
                     }
 
                     say $translator->translate_tag( $entry );
@@ -419,6 +433,7 @@ sub run {
 
                     $r{timestamp} = $entry->timestamp;
                     $r{module}    = $entry->module;
+                    $r{testcase}  = $entry->testcase;
                     $r{tag}       = $entry->tag;
                     $r{level}     = $entry->level;
                     $r{args}      = $entry->args if $entry->args;
@@ -429,11 +444,17 @@ sub run {
                 elsif ( $self->json ) {
                     # Don't do anything
                 }
-                elsif ( $self->show_module ) {
-                    printf "%7.2f %-9s %-12s %s\n", $entry->timestamp, $entry->level, $entry->module, $entry->string;
-                }
                 else {
-                    printf "%7.2f %-9s %s\n", $entry->timestamp, $entry->level, $entry->string;
+                    my $str = sprintf "%7.2f %-9s ", $entry->timestamp, $entry->level;
+                    if ( $self->show_module ) {
+                        $str.= sprintf "%-12s ", $entry->module;
+                    }
+                    if ( $self->show_testcase ) {
+                        $str.= sprintf "%-14s ", $entry->testcase;
+                    }
+                    my $entry_str = sprintf "%s", $entry->string;
+                    $entry_str =~ s/^([A-Z0-9]+:)*//;
+                    printf "%s%s\n", $str, $entry_str;
                 }
             } ## end if ( $numeric{ uc $entry...})
             if ( $self->stop_level and $numeric{ uc $entry->level } >= $numeric{ $self->stop_level } ) {
@@ -462,6 +483,9 @@ sub run {
         if ( $self->show_module ) {
             print __( 'Module       ' );
         }
+        if ( $self->show_testcase ) {
+            print __( 'Testcase       ' );
+        }
         say __( 'Message' );
 
         if ( $self->time ) {
@@ -472,6 +496,9 @@ sub run {
         }
         if ( $self->show_module ) {
             print __( '============ ' );
+        }
+        if ( $self->show_testcase ) {
+            print __( '============== ' );
         }
         say __( '=======' );
     } ## end if ( $translator )
@@ -523,13 +550,13 @@ sub run {
         say __( "\n\n   Level\tNumber of log entries" );
         say "   =====\t=====================";
         foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
-            printf __( "%8s\t%5d entries.\n" ), __( $level ), $counter{$level};
+            printf __( "%8s\t%5d entries.\n" ), translate_severity( $level ), $counter{$level};
         }
     }
 
     if ( $self->nstimes ) {
         my $zone = Zonemaster::Engine->zone( $domain );
-        my $max = max map { length( "$_" ) } @{ $zone->ns };
+        my $max = max map { length( "$_" ) } ( @{ $zone->ns }, q{Server} );
 
         print "\n";
         printf "%${max}s %s\n", 'Server', ' Max (ms)      Min      Avg   Stddev   Median     Total';
@@ -708,6 +735,31 @@ sub do_dump_profile {
     print $json->encode( Zonemaster::Engine::Profile->effective->{ q{profile} } );
 
     exit;
+}
+
+sub translate_severity {
+    my $severity = shift;
+    if ( $severity eq "DEBUG" ) {
+        return __( "DEBUG" );
+    }
+    elsif ( $severity eq "INFO" ) {
+        return __( "INFO" );
+    }
+    elsif ( $severity eq "NOTICE" ) {
+        return __( "NOTICE" );
+    }
+    elsif ( $severity eq "WARNING" ) {
+        return __( "WARNING" );
+    }
+    elsif ( $severity eq "ERROR" ) {
+        return __( "ERROR" );
+    }
+    elsif ( $severity eq "CRITICAL" ) {
+        return __( "CRITICAL" );
+    }
+    else {
+        return $severity;
+    }
 }
 
 1;
