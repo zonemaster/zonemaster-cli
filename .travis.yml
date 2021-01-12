@@ -66,5 +66,5 @@ before_install:
 - ( cd zonemaster-engine && cpanm --verbose --notest . ) && rm -rf zonemaster-engine
 
   # Fix Header files location issue
-- if [[ ! -e /usr/include/sys/ ]]; then mkdir /usr/include/sys/; fi
-- if [[ ! -e /usr/include/sys/socket.h ]]; then ln -s /usr/include/bits/socket.h /usr/include/sys/socket.h; fi
+- if [[ ! -e /usr/include/sys/ ]]; then sudo mkdir /usr/include/sys/; fi
+- if [[ ! -e /usr/include/sys/socket.h ]]; then sudo ln -s /usr/include/bits/socket.h /usr/include/sys/socket.h; fi
