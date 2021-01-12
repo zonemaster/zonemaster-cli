@@ -11,7 +11,7 @@ use 5.014002;
 use strict;
 use warnings;
 
-use version; our $VERSION = version->declare( "v3.0.2" );
+use version; our $VERSION = version->declare( "v3.0.3" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
@@ -324,8 +324,8 @@ sub run {
         if ($self->check_sourceaddress_exists ) {
             Zonemaster::Engine::Profile->effective->set( q{resolver.source}, $self->sourceaddr );
         }
-	else {
-            die __( "Address '" ) . $self->sourceaddr . __("' cannot be used as source address for DNS queries.") . "\n";
+        else {
+            die __x( "Address {address} cannot be used as source address for DNS queries.\n", address => $self->sourceaddr );
         }
     }
 
@@ -599,7 +599,7 @@ sub check_sourceaddress_exists {
                 my $zm_ifaddr;
                 if ( $family == AF_INET ) {
                     $zm_ifaddr = Zonemaster::Engine::Net::IP->new(Net::Interface::inet_ntoa($ifaddr));
-	        }
+                }
                 elsif ( $family == AF_INET6 ) {
                     $zm_ifaddr = Zonemaster::Engine::Net::IP->new(Net::Interface::inet_ntop($ifaddr));
                 }

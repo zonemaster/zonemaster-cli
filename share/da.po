@@ -132,6 +132,10 @@ msgid ""
 msgstr "Lokal IP-adresse som test-motoren skal sende sin foresgpørgsler fra."
 
 #, perl-brace-format
+msgid "Address {address} cannot be used as source address for DNS queries.\n"
+msgstr "Address {address} cannot be used as source address for DNS queries."
+
+#, perl-brace-format
 msgid "Loading policy from {path}."
 msgstr "Indlæser policy fra {path}."
 
@@ -216,12 +220,6 @@ msgstr ""
 
 msgid "DEBUG"
 msgstr "FEJLSØG"
-
-msgid "Address '"
-msgstr "Address '"
-
-msgid "' cannot be used as source address for DNS queries."
-msgstr "' cannot be used as source address for DNS queries."
 
 msgid "INFO"
 msgstr "INFO"

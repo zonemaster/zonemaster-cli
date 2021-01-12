@@ -177,6 +177,10 @@ msgstr ""
 "\n"
 
 #, perl-brace-format
+msgid "Address {address} cannot be used as source address for DNS queries.\n"
+msgstr "IP-adress {address} kan inte användas som källadress för DNS-frågor.\n"
+
+#, perl-brace-format
 msgid "Loading profile from {path}."
 msgstr "Laddar profil från {path}."
 
@@ -267,12 +271,6 @@ msgstr "DEBUG"
 
 msgid "INFO"
 msgstr "INFO"
-
-msgid "Address '"
-msgstr "IP-adress '"
-
-msgid "' cannot be used as source address for DNS queries."
-msgstr "' kan inte användas som källadress för DNS-frågor."
 
 msgid "NOTICE"
 msgstr "NOTIS"
