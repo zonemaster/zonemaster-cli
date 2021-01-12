@@ -168,10 +168,6 @@ msgstr ""
 "\n"
 
 #, perl-brace-format
-msgid "Address {address} cannot be used as source address for DNS queries.\n"
-msgstr "Address {address} cannot be used as source address for DNS queries.\n"
-
-#, perl-brace-format
 msgid "Loading profile from {path}."
 msgstr "Laster profil fra {path}."
 
