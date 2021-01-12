@@ -67,5 +67,5 @@ before_install:
 
   # Fix Header files location issue
 - if [[ ! -e /usr/include/sys/ ]]; then sudo mkdir /usr/include/sys/; fi
-- if [[ ! -e /usr/include/bits/ && -e /usr/include/x86_64-linux-gnu/bits/ ]]; then sudo ln -s /usr/include/x86_64-linux-gnu/bits/ /usr/include/bits/; fi
+- if [[ ! -e /usr/include/bits/ && -e /usr/include/x86_64-linux-gnu/bits/ ]]; then sudo ln -s /usr/include/x86_64-linux-gnu/bits/ /usr/include/bits; fi
 - if [[ ! -e /usr/include/sys/socket.h ]]; then sudo ln -s /usr/include/bits/socket.h /usr/include/sys/socket.h; fi
