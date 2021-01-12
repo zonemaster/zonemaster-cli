@@ -46,7 +46,7 @@ This instruction covers the following operating systems:
 2) Install dependencies from CPAN:
 
    ```sh
-   sudo cpanm Locale::Msgfmt Locale::TextDomain MooseX::Getopt Text::Reflow
+   sudo cpanm Locale::Msgfmt Locale::TextDomain MooseX::Getopt Text::Reflow Net::Interface
    ```
 
 3) Install Zonemaster::CLI 
@@ -77,7 +77,7 @@ This instruction covers the following operating systems:
 2) Install dependencies:
 
    ```sh
-   sudo apt-get install libmoosex-getopt-perl libtext-reflow-perl libmodule-install-perl
+   sudo apt-get install libmoosex-getopt-perl libtext-reflow-perl libmodule-install-perl libnet-interface-perl
    ```
 
 3) Install Zonemaster::CLI:
@@ -97,7 +97,7 @@ This instruction covers the following operating systems:
 2) Install dependencies available from binary packages:
 
    ```sh
-   pkg install devel/gmake p5-JSON-XS p5-Locale-libintl p5-MooseX-Getopt p5-Text-Reflow
+   pkg install devel/gmake p5-JSON-XS p5-Locale-libintl p5-MooseX-Getopt p5-Text-Reflow p5-Net-Interface
    ```
 
 3) Install Zonemaster::CLI:

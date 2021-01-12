@@ -159,6 +159,12 @@ msgid "Must give the name of a domain to test.\n"
 msgstr "Il est nécessaire d'indiquer un nom de domaine pour lancer le test.\n"
 
 #, perl-brace-format
+msgid "Address {address} cannot be used as source address for DNS queries.\n"
+msgstr ""
+"L'adresse {address} ne peut pas être utilisée comme adresse source pour les "
+"requêtes DNS.\n"
+
+#, perl-brace-format
 msgid "Loading policy from {path}."
 msgstr "Chargement de la politique de tests depuis le fichier {path}."
 

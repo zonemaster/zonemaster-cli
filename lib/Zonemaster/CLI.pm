@@ -11,7 +11,7 @@ use 5.014002;
 use strict;
 use warnings;
 
-use version; our $VERSION = version->declare( "v3.0.1" );
+use version; our $VERSION = version->declare( "v3.0.3" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
@@ -23,6 +23,7 @@ use Zonemaster::Engine::Translator;
 use Zonemaster::Engine::Util qw[pod_extract_for];
 use Zonemaster::Engine::Exception;
 use Zonemaster::Engine::Zone;
+use Zonemaster::Engine::Net::IP;
 use Scalar::Util qw[blessed];
 use Encode;
 use Zonemaster::LDNS;
@@ -31,6 +32,8 @@ use List::Util qw[max];
 use Text::Reflow qw[reflow_string];
 use JSON::XS;
 use File::Slurp;
+use Net::Interface;
+use Socket qw[AF_INET AF_INET6];
 
 our %numeric = Zonemaster::Engine::Logger::Entry->levels;
 our $JSON    = JSON::XS->new->allow_blessed->convert_blessed->canonical;
@@ -318,7 +321,12 @@ sub run {
     }
 
     if ($self->sourceaddr) {
-        Zonemaster::Engine::Profile->effective->set( q{resolver.source}, $self->sourceaddr );
+        if ($self->check_sourceaddress_exists ) {
+            Zonemaster::Engine::Profile->effective->set( q{resolver.source}, $self->sourceaddr );
+        }
+        else {
+            die __x( "Address {address} cannot be used as source address for DNS queries.\n", address => $self->sourceaddr );
+        }
     }
 
     # Filehandle for diagnostics output
@@ -580,6 +588,32 @@ sub run {
 
     return;
 } ## end sub run
+
+sub check_sourceaddress_exists {
+    my ( $self ) = @_;
+    my $address = Zonemaster::Engine::Net::IP->new($self->sourceaddr);
+    my $exists = 0;
+    foreach my $if ( Net::Interface->interfaces() ) {
+        foreach my $family ( AF_INET, AF_INET6 ) {
+            foreach my $ifaddr ( $if->address($family) ) {
+                my $zm_ifaddr;
+                if ( $family == AF_INET ) {
+                    $zm_ifaddr = Zonemaster::Engine::Net::IP->new(Net::Interface::inet_ntoa($ifaddr));
+                }
+                elsif ( $family == AF_INET6 ) {
+                    $zm_ifaddr = Zonemaster::Engine::Net::IP->new(Net::Interface::inet_ntop($ifaddr));
+                }
+                if ( $address->short eq $zm_ifaddr->short ) {
+                    $exists = 1;
+                    last;
+                }
+            }
+            last if $exists;
+        }
+        last if $exists;
+    }
+    return $exists;
+}
 
 sub add_fake_delegation {
     my ( $self, $domain ) = @_;

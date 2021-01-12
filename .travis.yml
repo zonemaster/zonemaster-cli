@@ -64,3 +64,8 @@ before_install:
   # Install Zonemaster Engine
 - git clone --depth=1 --branch=$TRAVIS_BRANCH https://github.com/zonemaster/zonemaster-engine.git
 - ( cd zonemaster-engine && cpanm --verbose --notest . ) && rm -rf zonemaster-engine
+
+  # Fix Header files location issue
+- if [[ ! -e /usr/include/sys/ ]]; then sudo mkdir /usr/include/sys/; fi
+- if [[ ! -e /usr/include/bits/ && -e /usr/include/x86_64-linux-gnu/bits/ ]]; then sudo ln -s /usr/include/x86_64-linux-gnu/bits/ /usr/include/bits; fi
+- if [[ ! -e /usr/include/sys/socket.h ]]; then sudo ln -s /usr/include/bits/socket.h /usr/include/sys/socket.h; fi
