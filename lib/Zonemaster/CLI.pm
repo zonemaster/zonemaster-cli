@@ -147,7 +147,6 @@ has 'restore' => (
 has 'ipv4' => (
     is      => 'ro',
     isa     => 'Bool',
-    default => 1,
     documentation =>
       __( 'Flag to permit or deny queries being sent via IPv4. --ipv4 permits IPv4 traffic, --no-ipv4 forbids it.' ),
 );
@@ -155,7 +154,6 @@ has 'ipv4' => (
 has 'ipv6' => (
     is      => 'ro',
     isa     => 'Bool',
-    default => 1,
     documentation =>
       __( 'Flag to permit or deny queries being sent via IPv6. --ipv6 permits IPv6 traffic, --no-ipv6 forbids it.' ),
 );
@@ -358,9 +356,9 @@ sub run {
     }
 
     # These two must come after any profile from command line has been loaded
-    # to override the profile setting
-    Zonemaster::Engine::Profile->effective->set( q{net.ipv4}, 0+$self->ipv4 );
-    Zonemaster::Engine::Profile->effective->set( q{net.ipv6}, 0+$self->ipv6 );
+    # to override the profile setting, but only if selected.
+    Zonemaster::Engine::Profile->effective->set( q{net.ipv4}, 0+$self->ipv4 ) if defined ($self->ipv4);
+    Zonemaster::Engine::Profile->effective->set( q{net.ipv6}, 0+$self->ipv6 ) if defined ($self->ipv6);
 
 
     if ( $self->dump_profile ) {
