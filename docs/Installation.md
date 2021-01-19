@@ -40,13 +40,13 @@ This instruction covers the following operating systems:
 1) Install binary dependencies:
 
    ```sh
-   sudo yum install perl-JSON-XS
+   sudo yum install perl-JSON-XS perl-MooseX-Getopt
    ```
 
 2) Install dependencies from CPAN:
 
    ```sh
-   sudo cpanm Locale::Msgfmt Locale::TextDomain MooseX::Getopt Text::Reflow Net::Interface
+   sudo cpanm Net::Interface Text::Reflow
    ```
 
 3) Install Zonemaster::CLI 
