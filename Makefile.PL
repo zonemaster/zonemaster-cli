@@ -39,11 +39,11 @@ sub MY::postamble {
         # Make FreeBSD use gmake for share
         return "GMAKE ?= \"gmake\"\n"
             . "pure_all :: $sharemakefile\n"
-            . "\tcd share && \$(GMAKE) all\n";
+            . "\tcd share && \$(GMAKE) touch-po all\n";
     } else {
         # Here Linux and GNU Make is assumed
         return "pure_all :: $sharemakefile\n"
-            . "\tcd share && \$(MAKE) all\n";
+            . "\tcd share && \$(MAKE) touch-po all\n";
     };
 };
 
