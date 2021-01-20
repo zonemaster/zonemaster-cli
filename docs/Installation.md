@@ -46,8 +46,18 @@ This instruction covers the following operating systems:
 2) Install dependencies from CPAN:
 
    ```sh
-   sudo cpanm Net::Interface Text::Reflow
+   sudo cpanm Text::Reflow
+   curl -O https://cpan.metacpan.org/authors/id/M/MI/MIKER/Net-Interface-1.016.tar.gz
+   tar xf Net-Interface-1.016.tar.gz
+   cd Net-Interface-1.016
+   ./configure
+   perl -I. Makefile.PL
+   make
+   sudo make install
    ```
+
+   > **Note:** We only recommend installing Net::Interface this way because of
+   > compilation errors when using `cpanm` on CentOS 8.
 
 3) Install Zonemaster::CLI 
 
