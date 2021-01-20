@@ -362,7 +362,7 @@ sub run {
     }
     if defined ($self->ipv6) {
         Zonemaster::Engine::Profile->effective->set( q{net.ipv6}, 0+$self->ipv6 );
-    };
+    }
 
 
     if ( $self->dump_profile ) {
