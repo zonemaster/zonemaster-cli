@@ -357,10 +357,10 @@ sub run {
 
     # These two must come after any profile from command line has been loaded
     # to make any IPv4/IPv6 option override the profile setting.
-    if defined ($self->ipv4) {
+    if ( defined ($self->ipv4) ) {
         Zonemaster::Engine::Profile->effective->set( q{net.ipv4}, 0+$self->ipv4 );
     }
-    if defined ($self->ipv6) {
+    if ( defined ($self->ipv6) ) {
         Zonemaster::Engine::Profile->effective->set( q{net.ipv6}, 0+$self->ipv6 );
     }
 
