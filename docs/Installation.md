@@ -40,14 +40,29 @@ This instruction covers the following operating systems:
 1) Install binary dependencies:
 
    ```sh
-   sudo yum install perl-JSON-XS
+   sudo yum install perl-JSON-XS perl-MooseX-Getopt
    ```
 
 2) Install dependencies from CPAN:
 
-   ```sh
-   sudo cpanm Locale::Msgfmt Locale::TextDomain MooseX::Getopt Text::Reflow Net::Interface
-   ```
+   * CentOS 7:
+
+     ```sh
+     sudo cpanm Net::Interface Text::Reflow
+     ```
+
+   * CentOS 8:
+
+     ```sh
+     sudo cpanm Text::Reflow
+     curl -O https://cpan.metacpan.org/authors/id/M/MI/MIKER/Net-Interface-1.016.tar.gz
+     tar xf Net-Interface-1.016.tar.gz
+     cd Net-Interface-1.016
+     ./configure
+     perl -I. Makefile.PL
+     make
+     sudo make install
+     ```
 
 3) Install Zonemaster::CLI 
 
