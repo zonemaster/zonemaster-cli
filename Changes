@@ -1,8 +1,27 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
-v3.0.1 2020-11-09 (public release version)
+v3.0.4 2021-02-10 (public release version)
+
+ [Features]
+ - Updates --raw mode output in debug level (#113)
+
  [Fixes]
- - Fixed an version specification error in Makefile.PL.
+ - Updates the installation instructions (#188)
+ - Prevents PO files to be updated unintentionally (#186)
+ - Fixes how command line options of profile and IP
+   interact (#185, #183, #182)
+ - Makes --sourceaddr behavior more reasonable when
+   selected address is not reasonable (#110, #38)
+
+v3.0.3 (never released)
+
+v3.0.2 (never released)
+
+v3.0.1 2020-11-09 (public release version)
+
+ [Fixes]
+ - Fixed an version specification error in Makefile.PL
+   (#178)
 
 v3.0.0 2020-11-06 (public release version)
 
