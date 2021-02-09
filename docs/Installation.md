@@ -40,14 +40,29 @@ This instruction covers the following operating systems:
 1) Install binary dependencies:
 
    ```sh
-   sudo yum install perl-JSON-XS
+   sudo yum install perl-JSON-XS perl-MooseX-Getopt
    ```
 
 2) Install dependencies from CPAN:
 
-   ```sh
-   sudo cpanm Locale::Msgfmt Locale::TextDomain MooseX::Getopt Text::Reflow
-   ```
+   * CentOS 7:
+
+     ```sh
+     sudo cpanm Net::Interface Text::Reflow
+     ```
+
+   * CentOS 8:
+
+     ```sh
+     sudo cpanm Text::Reflow
+     curl -O https://cpan.metacpan.org/authors/id/M/MI/MIKER/Net-Interface-1.016.tar.gz
+     tar xf Net-Interface-1.016.tar.gz
+     cd Net-Interface-1.016
+     ./configure
+     perl -I. Makefile.PL
+     make
+     sudo make install
+     ```
 
 3) Install Zonemaster::CLI 
 
@@ -77,7 +92,7 @@ This instruction covers the following operating systems:
 2) Install dependencies:
 
    ```sh
-   sudo apt-get install libmoosex-getopt-perl libtext-reflow-perl libmodule-install-perl
+   sudo apt-get install libmoosex-getopt-perl libtext-reflow-perl libmodule-install-perl libnet-interface-perl
    ```
 
 3) Install Zonemaster::CLI:
@@ -97,7 +112,7 @@ This instruction covers the following operating systems:
 2) Install dependencies available from binary packages:
 
    ```sh
-   pkg install devel/gmake p5-JSON-XS p5-Locale-libintl p5-MooseX-Getopt p5-Text-Reflow
+   pkg install devel/gmake p5-JSON-XS p5-Locale-libintl p5-MooseX-Getopt p5-Text-Reflow p5-Net-Interface
    ```
 
 3) Install Zonemaster::CLI:
