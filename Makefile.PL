@@ -23,7 +23,7 @@ requires(
     'Net::Interface'     => 0,
     'MooseX::Getopt'     => 0,
     'Text::Reflow'       => 0,
-    'Zonemaster::Engine' => 4.0,
+    'Zonemaster::Engine' => 4.001,
     'Zonemaster::LDNS'   => 2.001,
 );
 

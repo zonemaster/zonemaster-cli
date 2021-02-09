@@ -11,7 +11,7 @@ use 5.014002;
 use strict;
 use warnings;
 
-use version; our $VERSION = version->declare( "v3.0.3" );
+use version; our $VERSION = version->declare( "v3.0.4" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
