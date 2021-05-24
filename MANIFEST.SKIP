@@ -10,6 +10,9 @@
 ^share/[^/]*\.mo$
 ^share/Zonemaster-CLI.pot$
 
+# Exclude Github control files
+^\.github/
+
 #!start included /usr/share/perl/5.20/ExtUtils/MANIFEST.SKIP
 # Avoid version control files.
 \bRCS\b
