@@ -1,4 +1,5 @@
 Changes
+CONTRIBUTING.md
 docs/Installation.md
 inc/Module/Install.pm
 inc/Module/Install/Base.pm
