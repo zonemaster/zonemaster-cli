@@ -28,7 +28,7 @@ msgid "Flag indicating if output should be in JSON or not."
 msgstr "Flag angiver om output-format skal være JSON eller ej."
 
 msgid "Flag indicating if output should be streaming JSON or not."
-msgstr "Flag angiver om output-format skal være JSON eller ej."
+msgstr "Flag angiver om output-format skal være streaming JSON eller ej."
 
 msgid ""
 "Flag indicating if streaming JSON output should include the translated "
@@ -204,7 +204,7 @@ msgid ""
 "or DEBUG3.\n"
 msgstr ""
 "--level skal være enten CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, "
-"DEBUG2 or DEBUG3.\n"
+"DEBUG2 eller DEBUG3.\n"
 
 msgid "Must give the name of a domain to test.\n"
 msgstr "Domænenavn, der skal testes, skal angives.\n"
@@ -219,7 +219,7 @@ msgid "Module       "
 msgstr "Modul        "
 
 msgid "Testcase       "
-msgstr ""
+msgstr "Testcase       "
 
 msgid "Message"
 msgstr "Besked"
