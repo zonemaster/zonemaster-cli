@@ -172,7 +172,7 @@ msgstr ""
 
 #, perl-brace-format
 msgid "Address {address} cannot be used as source address for DNS queries.\n"
-msgstr "Adresse {address} kan ikke brukes som fra-adresse for DNS-spørringer."
+msgstr "Adresse {address} kan ikke brukes som fra-adresse for DNS-spørringer.\n"
 
 #, perl-brace-format
 msgid "Loading profile from {path}."
