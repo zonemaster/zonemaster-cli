@@ -18,5 +18,8 @@ pod2htm*.tmp
 pm_to_blib
 Zonemaster-CLI-*
 Zonemaster-CLI-*.tar.gz
-*.bak
 share/Zonemaster-CLI.pot
+
+# Emacs and other backup files
+*.bak
+*~

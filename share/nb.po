@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-05 10:41+0200\n"
-"PO-Revision-Date: 2020-08-05 09:46+0200\n"
+"POT-Creation-Date: 2021-05-28 14:31+0200\n"
+"PO-Revision-Date: 2021-05-28 14:35+0200\n"
 "Last-Translator: Richard Persson <richard.persson@norid.no>\n"
 "Language-Team: Zonemaster Team\n"
 "Language: nb\n"
@@ -50,6 +50,9 @@ msgstr "Skriv nivå på innslag."
 
 msgid "Print the name of the module on entries."
 msgstr "Skriv modulnavn på innslag."
+
+msgid "Print the name of the test case on entries."
+msgstr "Skriv testnavn på innslag."
 
 msgid ""
 "A name/ip string giving a nameserver for undelegated tests, or just a name "
@@ -168,6 +171,10 @@ msgstr ""
 "\n"
 
 #, perl-brace-format
+msgid "Address {address} cannot be used as source address for DNS queries.\n"
+msgstr "Adresse {address} kan ikke brukes som fra-adresse for DNS-spørringer.\n"
+
+#, perl-brace-format
 msgid "Loading profile from {path}."
 msgstr "Laster profil fra {path}."
 
@@ -207,6 +214,9 @@ msgstr "Nivå      "
 msgid "Module       "
 msgstr "Modul        "
 
+msgid "Testcase       "
+msgstr "Test           "
+
 msgid "Message"
 msgstr "Melding"
 
@@ -218,6 +228,9 @@ msgstr "========= "
 
 msgid "============ "
 msgstr "============ "
+
+msgid "============== "
+msgstr "============== "
 
 msgid "======="
 msgstr "======="
