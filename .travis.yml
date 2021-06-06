@@ -1,14 +1,71 @@
 language: perl
+
 perl:
-    - "5.28"
-    - "5.26"
-    - "5.24"
-    - "5.22"
-    - "5.20"
-    - "5.16"
+- "5.30"
+- "5.28"
+- "5.26"
+- "5.24"
+- "5.22"
+- "5.16"
+
+addons:
+  apt:
+    packages:
+      # From Zonemaster Engine installation instruction
+    - autoconf
+    - automake
+    - build-essential
+    - cpanminus
+    - libclone-perl
+    - libdevel-checklib-perl
+    - libfile-sharedir-perl
+    - libfile-slurp-perl
+    - libidn11-dev
+    - libintl-perl
+    - libjson-pp-perl
+    - liblist-moreutils-perl
+    - liblocale-msgfmt-perl
+    - libmail-rfc822-address-perl
+    - libmodule-find-perl
+    - libnet-ip-perl
+    - libpod-coverage-perl
+    - libreadonly-xs-perl
+    - libssl-dev
+    - libtest-differences-perl
+    - libtest-exception-perl
+    - libtest-fatal-perl
+    - libtest-pod-perl
+    - libtext-csv-perl
+    - libtool
+    - m4
+      # From Zonemaster CLI installation instruction
+    - libtext-reflow-perl
+
 before_install:
-    - eval $(curl https://travis-perl.github.io/init) --auto
-    - local-lib
-    - git clone --depth=1 --branch=develop https://github.com/zonemaster/zonemaster-ldns.git
-    - git clone --depth=1 --branch=develop https://github.com/zonemaster/zonemaster-engine.git
-    - cpan-install --deps Devel::CheckLib Module::Install Module::Install::XSUtil ./zonemaster-ldns ./zonemaster-engine
+  # Help Perl find modules installed from OS packages
+- export PERL5LIB=/usr/share/perl5
+
+  # Provide cpanm helper
+- eval $(curl https://travis-perl.github.io/init) --auto
+
+  # Zonemaster LDNS needs a newer version of Module::Install
+- cpan-install Module::Install Module::Install::XSUtil
+
+  # Moose installed from OS package depends on a newer version of Devel::OverloadInfo
+- cpan-install Devel::OverloadInfo Moose MooseX::Getopt
+
+  # IO::Socket::INET6 can't find Socket6 installed from OS package
+- cpan-install Socket6 IO::Socket::INET6
+
+  # Install Zonemaster LDNS
+- git clone --depth=1 --branch=$TRAVIS_BRANCH https://github.com/zonemaster/zonemaster-ldns.git
+- ( cd zonemaster-ldns && cpanm --verbose --notest --configure-args="--no-ed25519" . ) && rm -rf zonemaster-ldns
+
+  # Install Zonemaster Engine
+- git clone --depth=1 --branch=$TRAVIS_BRANCH https://github.com/zonemaster/zonemaster-engine.git
+- ( cd zonemaster-engine && cpanm --verbose --notest . ) && rm -rf zonemaster-engine
+
+  # Fix Header files location issue
+- if [[ ! -e /usr/include/sys/ ]]; then sudo mkdir /usr/include/sys/; fi
+- if [[ ! -e /usr/include/bits/ && -e /usr/include/x86_64-linux-gnu/bits/ ]]; then sudo ln -s /usr/include/x86_64-linux-gnu/bits/ /usr/include/bits; fi
+- if [[ ! -e /usr/include/sys/socket.h ]]; then sudo ln -s /usr/include/bits/socket.h /usr/include/sys/socket.h; fi

@@ -1,4 +1,4 @@
-Makefile
+/Makefile
 Makefile.old
 Build
 Build.bat
@@ -10,6 +10,7 @@ cover_db/
 blib/
 inc/
 share/locale/
+share/*.mo
 .lwpcookies
 .last_cover_stats
 nytprof.out
@@ -17,4 +18,8 @@ pod2htm*.tmp
 pm_to_blib
 Zonemaster-CLI-*
 Zonemaster-CLI-*.tar.gz
+share/Zonemaster-CLI.pot
+
+# Emacs and other backup files
 *.bak
+*~
