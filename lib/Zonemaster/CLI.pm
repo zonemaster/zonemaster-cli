@@ -11,7 +11,7 @@ use 5.014002;
 use strict;
 use warnings;
 
-use version; our $VERSION = version->declare( "v3.1.0" );
+use version; our $VERSION = version->declare( "v3.2.0" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
@@ -49,11 +49,11 @@ has 'version' => (
 );
 
 has 'level' => (
-    is          => 'ro',
-    isa         => 'Str',
-    required    => 0,
-    default     => 'NOTICE',
-    initializer => sub {
+    is            => 'ro',
+    isa           => 'Str',
+    required      => 0,
+    default       => 'NOTICE',
+    initializer   => sub {
         my ( $self, $value, $set, $attr ) = @_;
         $set->( uc $value );
     },
@@ -76,16 +76,22 @@ has 'json' => (
 );
 
 has 'json_stream' => (
+    traits        => [ 'Getopt' ],
     is            => 'ro',
     isa           => 'Bool',
     default       => 0,
+    cmd_aliases   => 'json_stream',
+    cmd_flag      => 'json-stream',
     documentation => __( 'Flag indicating if output should be streaming JSON or not.' ),
 );
 
 has 'json_translate' => (
+    traits        => [ 'Getopt' ],
     is            => 'ro',
     isa           => 'Bool',
     default       => 0,
+    cmd_aliases   => 'json_translate',
+    cmd_flag      => 'json-translate',
     documentation => __( 'Flag indicating if streaming JSON output should include the translated message of the tag or not.' ),
 );
 
@@ -104,22 +110,31 @@ has 'time' => (
 );
 
 has 'show_level' => (
+    traits        => [ 'Getopt' ],
     is            => 'ro',
     isa           => 'Bool',
+    cmd_aliases   => 'show_level',
+    cmd_flag      => 'show-level',
     documentation => __( 'Print level on entries.' ),
     default       => 1,
 );
 
 has 'show_module' => (
+    traits        => [ 'Getopt' ],
     is            => 'ro',
     isa           => 'Bool',
+    cmd_aliases   => 'show_module',
+    cmd_flag      => 'show-module',
     documentation => __( 'Print the name of the module on entries.' ),
     default       => 0,
 );
 
 has 'show_testcase' => (
+    traits        => [ 'Getopt' ],
     is            => 'ro',
     isa           => 'Bool',
+    cmd_aliases   => 'show_testcase',
+    cmd_flag      => 'show-testcase',
     documentation => __( 'Print the name of the test case on entries.' ),
     default       => 0,
 );
@@ -145,23 +160,26 @@ has 'restore' => (
 );
 
 has 'ipv4' => (
-    is      => 'ro',
-    isa     => 'Bool',
+    is            => 'ro',
+    isa           => 'Bool',
     documentation =>
       __( 'Flag to permit or deny queries being sent via IPv4. --ipv4 permits IPv4 traffic, --no-ipv4 forbids it.' ),
 );
 
 has 'ipv6' => (
-    is      => 'ro',
-    isa     => 'Bool',
+    is            => 'ro',
+    isa           => 'Bool',
     documentation =>
       __( 'Flag to permit or deny queries being sent via IPv6. --ipv6 permits IPv6 traffic, --no-ipv6 forbids it.' ),
 );
 
 has 'list_tests' => (
+    traits        => [ 'Getopt' ],
     is            => 'ro',
     isa           => 'Bool',
     default       => 0,
+    cmd_aliases   => 'list_tests',
+    cmd_flag      => 'list-tests',
     documentation => __( 'Instead of running a test, list all available tests.' ),
 );
 
@@ -175,13 +193,16 @@ has 'test' => (
 );
 
 has 'stop_level' => (
-    is          => 'ro',
-    isa         => 'Str',
-    required    => 0,
-    initializer => sub {
+    traits        => [ 'Getopt' ],
+    is            => 'ro',
+    isa           => 'Str',
+    required      => 0,
+    initializer   => sub {
         my ( $self, $value, $set, $attr ) = @_;
         $set->( uc $value );
     },
+    cmd_aliases   => 'stop_level',
+    cmd_flag      => 'stop-level',
     documentation => __(
 'As soon as a message at this level or higher is logged, execution will stop. Must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO or DEBUG.'
     )
@@ -226,13 +247,13 @@ has 'progress' => (
     is            => 'ro',
     isa           => 'Bool',
     default       => !!( -t STDOUT ),
-    documentation => __( 'Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off if it is not. Disable with --noprogress.' ),
+    documentation => __( 'Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off if it is not. Disable with --no-progress.' ),
 );
 
 has 'encoding' => (
-    is      => 'ro',
-    isa     => 'Str',
-    default => sub {
+    is            => 'ro',
+    isa           => 'Str',
+    default       => sub {
         my $locale = $ENV{LC_CTYPE} // 'C';
         my ( $e ) = $locale =~ m|\.(.*)$|;
         $e //= 'UTF-8';
@@ -250,41 +271,50 @@ has 'nstimes' => (
 );
 
 has 'dump_profile' => (
-    is => 'ro',
-    isa => 'Bool',
-    required => 0,
-    default => 0,
+    traits        => [ 'Getopt' ],
+    is            => 'ro',
+    isa           => 'Bool',
+    required      => 0,
+    default       => 0,
+    cmd_aliases   => 'dump_profile',
+    cmd_flag      => 'dump-profile',
     documentation => __( 'Print the effective profile used in JSON format, then exit.' ),
 );
 
 has 'dump_config' => (
-    is => 'ro',
-    isa => 'Bool',
-    required => 0,
-    default => 0,
+    traits        => [ 'Getopt' ],
+    is            => 'ro',
+    isa           => 'Bool',
+    required      => 0,
+    default       => 0,
+    cmd_aliases   => 'dump_config',
+    cmd_flag      => 'dump-config',
     documentation => __( 'Print the effective configuration used in JSON format, then exit. (TERMINATED)' ),
 );
 
 has 'dump_policy' => (
-    is => 'ro',
-    isa => 'Bool',
-    required => 0,
-    default => 0,
+    traits        => [ 'Getopt' ],
+    is            => 'ro',
+    isa           => 'Bool',
+    required      => 0,
+    default       => 0,
+    cmd_aliases   => 'dump_policy',
+    cmd_flag      => 'dump-policy',
     documentation => __( 'Print the effective policy used in JSON format, then exit. (TERMINATED)' ),
 );
 
 has 'sourceaddr' => (
-    is => 'ro',
-    isa => 'Str',
-    required => 0,
+    is            => 'ro',
+    isa           => 'Str',
+    required      => 0,
     documentation => __( 'Local IP address that the test engine should try to send its requests from.' ),
 );
 
 has 'elapsed' => (
-    is => 'ro',
-    isa => 'Bool',
-    required => 0,
-    default => 0,
+    is            => 'ro',
+    isa           => 'Bool',
+    required      => 0,
+    default       => 0,
     documentation => 'Print elapsed time at end of run.',
 );
 

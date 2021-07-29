@@ -71,12 +71,12 @@ locale, and if that doesn't exist either to English.
 
 Print results as JSON instead of human language.
 
-=item --json_stream
+=item --json_stream, --json-stream
 
 Stream the results as JSON objects, useful to follow the progress in a machine
 readable way.
 
-=item --json_translate
+=item --json_translate, --json-translate
 
 For streaming JSON output, include the translated message of the tag.
 
@@ -89,15 +89,15 @@ system.
 
 Turn the printing of timestamps on or off (default on).
 
-=item --show_level, --no-show_level
+=item --show_level, --no-show_level, --show-level, --no-show-level
 
 Turn the printing of the message severity level on or off (default on).
 
-=item --show_module, --no-show_module
+=item --show_module, --no-show_module, --show-module, --no-show-module
 
 Turn the printing of which module produced a message on or off (default off).
 
-=item --show_testcase, --no-show_testcase
+=item --show_testcase, --no-show_testcase, --show-testcase, --no-show-testcase
 
 Turn the printing of which test case produced a message on or off (default off).
 
@@ -132,7 +132,7 @@ Allow or disallow the sending of IPv4 packets (default on).
 
 Allow or disallow the sending of IPv6 packets (default on).
 
-=item --list_tests
+=item --list_tests, --list-tests
 
 Instead of running a test, list all the tests presented by the testing modules.
 
@@ -145,7 +145,7 @@ module. The specified method will be called with a zone object as its single
 argument. It's up to the user to make sure that that is the kind of argument
 the method expects.
 
-=item --stop_level=LEVEL
+=item --stop_level=LEVEL, --stop-level=LEVEL
 
 As soon as a message of the given level or higher is logged, terminate the
 testing process.
