@@ -11,7 +11,7 @@ use 5.014002;
 use strict;
 use warnings;
 
-use version; our $VERSION = version->declare( "v3.2.0" );
+use version; our $VERSION = version->declare( "v3.3.0" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
@@ -215,20 +215,6 @@ has 'profile' => (
     documentation => __( 'Name of profile file to load. (DEFAULT)' ),
 );
 
-has 'config' => (
-    is            => 'ro',
-    isa           => 'Str',
-    required      => 0,
-    documentation => __( 'Name of configuration file to load. (TERMINATED)' ),
-);
-
-has 'policy' => (
-    is            => 'ro',
-    isa           => 'Str',
-    required      => 0,
-    documentation => __( 'Name of policy file to load. (TERMINATED)' ),
-);
-
 has 'ds' => (
     is            => 'ro',
     isa           => 'ArrayRef[Str]',
@@ -279,28 +265,6 @@ has 'dump_profile' => (
     cmd_aliases   => 'dump_profile',
     cmd_flag      => 'dump-profile',
     documentation => __( 'Print the effective profile used in JSON format, then exit.' ),
-);
-
-has 'dump_config' => (
-    traits        => [ 'Getopt' ],
-    is            => 'ro',
-    isa           => 'Bool',
-    required      => 0,
-    default       => 0,
-    cmd_aliases   => 'dump_config',
-    cmd_flag      => 'dump-config',
-    documentation => __( 'Print the effective configuration used in JSON format, then exit. (TERMINATED)' ),
-);
-
-has 'dump_policy' => (
-    traits        => [ 'Getopt' ],
-    is            => 'ro',
-    isa           => 'Bool',
-    required      => 0,
-    default       => 0,
-    cmd_aliases   => 'dump_policy',
-    cmd_flag      => 'dump-policy',
-    documentation => __( 'Print the effective policy used in JSON format, then exit. (TERMINATED)' ),
 );
 
 has 'sourceaddr' => (
@@ -358,7 +322,7 @@ sub run {
     }
 
     # Filehandle for diagnostics output
-    my $fh_diag = ( $self->json or $self->json_stream or $self->raw or $self->dump_config or $self->dump_policy )
+    my $fh_diag = ( $self->json or $self->json_stream or $self->raw )
       ? *STDERR     # Structured output mode (e.g. JSON)
       : *STDOUT;    # Human readable output mode
 
@@ -369,20 +333,6 @@ sub run {
         my $profile = Zonemaster::Engine::Profile->default;
         $profile->merge( $foo );
         Zonemaster::Engine::Profile->effective->merge( $profile );
-    }
-    else {
-
-        if ( $self->policy ) {
-            say $fh_diag __x( "Loading policy from {path}.", path => $self->policy );
-            say $fh_diag __x( "Use of config and policy have been TERMINATED, use profile instead." );
-            exit( 1 );
-        }
-
-        if ( $self->config ) {
-            say $fh_diag __x( "Loading configuration from {path}.", path => $self->config );
-            say $fh_diag __x( "Use of config and policy have been TERMINATED, use profile instead." );
-            exit( 1 );
-        }
     }
 
     # These two must come after any profile from command line has been loaded
@@ -397,14 +347,6 @@ sub run {
 
     if ( $self->dump_profile ) {
         do_dump_profile();
-    }
-    else {
-
-        if ( $self->dump_config or $self->dump_policy ) {
-            say $fh_diag __x( "TERMINATED, use dump_profile instead." );
-            exit( 1 );
-        }
-
     }
 
     if ( $self->stop_level and not defined( $numeric{ $self->stop_level } ) ) {
@@ -502,7 +444,7 @@ sub run {
         }
     );
 
-    if ( $self->profile or $self->config or $self->policy ) {
+    if ( $self->profile ) {
         # Separate initialization from main output in human readable output mode
         print "\n" if $fh_diag eq *STDOUT;
     }
