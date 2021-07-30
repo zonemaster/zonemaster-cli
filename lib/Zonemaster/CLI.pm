@@ -288,8 +288,8 @@ sub run {
     my %counter;
     my $printed_something;
 
-    if ( $self->extra_argv ) {
-        print "Unknown option: ", join q{ }, @{$self->extra_argv}, "\n";
+    if ( grep /^-/, @{ $self->extra_argv } ) {
+        print "Unknown option: ", join( q{ }, grep /^-/, @{ $self->extra_argv } ), "\n";
         print "Run \"zonemaster-cli -h\" to get the valid options\n";
         exit;
     }
