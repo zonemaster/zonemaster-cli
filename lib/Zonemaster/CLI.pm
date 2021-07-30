@@ -11,11 +11,11 @@ use 5.014002;
 use strict;
 use warnings;
 
-use version; our $VERSION = version->declare( "v3.3.0" );
+use version; our $VERSION = version->declare( "v3.4.0" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
-with 'MooseX::Getopt';
+with 'MooseX::Getopt::GLD' => { getopt_conf => [ 'pass_through' ] };
 
 use Zonemaster::Engine;
 use Zonemaster::Engine::Logger::Entry;
@@ -287,6 +287,12 @@ sub run {
     my @accumulator;
     my %counter;
     my $printed_something;
+
+    if ( grep /^-/, @{ $self->extra_argv } ) {
+        print "Unknown option: ", join( q{ }, grep /^-/, @{ $self->extra_argv } ), "\n";
+        print "Run \"zonemaster-cli -h\" to get the valid options\n";
+        exit;
+    }
 
     if ( $self->locale ) {
         undef $ENV{LANGUAGE};
