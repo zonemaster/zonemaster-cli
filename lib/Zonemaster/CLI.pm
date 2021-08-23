@@ -11,7 +11,7 @@ use 5.014002;
 use strict;
 use warnings;
 
-use version; our $VERSION = version->declare( "v3.4.0" );
+use version; our $VERSION = version->declare( "v3.5.0" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
@@ -390,23 +390,37 @@ sub run {
                 $printed_something = 1;
 
                 if ( $translator ) {
+                    my $header = q{};
                     if ( $self->time ) {
-                        printf "%7.2f ", $entry->timestamp;
+                        $header .= sprintf "%7.2f ", $entry->timestamp;
                     }
 
                     if ( $self->show_level ) {
-                        printf "%-9s ", translate_severity( $entry->level );
+                        $header .= sprintf "%-9s ", translate_severity( $entry->level );
                     }
 
                     if ( $self->show_module ) {
-                        printf "%-12s ", $entry->module;
+                        $header .= sprintf "%-12s ", $entry->module;
                     }
 
                     if ( $self->show_testcase ) {
-                        printf "%-14s ", $entry->testcase;
+                        $header .= sprintf "%-14s ", $entry->testcase;
                     }
 
-                    say $translator->translate_tag( $entry );
+                    print $header;
+
+                    if ( $entry->level eq q{DEBUG3} and scalar( keys %{$entry->args} ) == 1 and defined $entry->args->{packet} ) {
+                        my $packet = $entry->args->{packet};
+                        my $padding = q{ } x length $header;
+                        $entry->args->{packet} = q{};
+                        say $translator->translate_tag( $entry );
+                        foreach my $line ( split /\n/, $packet ) {
+                            print $padding, $line, "\n";
+                        }
+                    }
+                    else {
+                        say $translator->translate_tag( $entry );
+                    }
                 }
                 elsif ( $self->json_stream ) {
                     my %r;
