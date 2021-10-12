@@ -45,24 +45,9 @@ This instruction covers the following operating systems:
 
 2) Install dependencies from CPAN:
 
-   * CentOS 7:
-
-     ```sh
-     sudo cpanm Net::Interface Text::Reflow
-     ```
-
-   * CentOS 8:
-
-     ```sh
-     sudo cpanm Text::Reflow
-     curl -O https://cpan.metacpan.org/authors/id/M/MI/MIKER/Net-Interface-1.016.tar.gz
-     tar xf Net-Interface-1.016.tar.gz
-     cd Net-Interface-1.016
-     ./configure
-     perl -I. Makefile.PL
-     make
-     sudo make install
-     ```
+   ```sh
+   sudo cpanm Text::Reflow
+   ```
 
 3) Install Zonemaster::CLI 
 
@@ -93,7 +78,7 @@ This instruction covers the following operating systems:
 2) Install dependencies:
 
    ```sh
-   sudo apt-get install libmoosex-getopt-perl libtext-reflow-perl libmodule-install-perl libnet-interface-perl
+   sudo apt-get install libmoosex-getopt-perl libtext-reflow-perl libmodule-install-perl
    ```
 
 3) Install Zonemaster::CLI:
@@ -113,7 +98,7 @@ This instruction covers the following operating systems:
 2) Install dependencies available from binary packages:
 
    ```sh
-   pkg install devel/gmake p5-JSON-XS p5-Locale-libintl p5-MooseX-Getopt p5-Text-Reflow p5-Net-Interface
+   pkg install devel/gmake p5-JSON-XS p5-Locale-libintl p5-MooseX-Getopt p5-Text-Reflow
    ```
 
 3) Install Zonemaster::CLI:

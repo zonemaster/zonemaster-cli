@@ -32,7 +32,6 @@ use List::Util qw[max];
 use Text::Reflow qw[reflow_string];
 use JSON::XS;
 use File::Slurp;
-use Net::Interface;
 use Socket qw[AF_INET AF_INET6];
 
 our %numeric = Zonemaster::Engine::Logger::Entry->levels;
@@ -271,7 +270,10 @@ has 'sourceaddr' => (
     is            => 'ro',
     isa           => 'Str',
     required      => 0,
-    documentation => __( 'Local IP address that the test engine should try to send its requests from.' ),
+    documentation => __(
+            'Source IP address used to send queries. '
+          . 'Setting an IP address not correctly configured on a local network interface causes cryptic error messages.'
+    ),
 );
 
 has 'elapsed' => (
@@ -319,12 +321,8 @@ sub run {
     }
 
     if ($self->sourceaddr) {
-        if ($self->check_sourceaddress_exists ) {
-            Zonemaster::Engine::Profile->effective->set( q{resolver.source}, $self->sourceaddr );
-        }
-        else {
-            die __x( "Address {address} cannot be used as source address for DNS queries.\n", address => $self->sourceaddr );
-        }
+
+        Zonemaster::Engine::Profile->effective->set( q{resolver.source}, $self->sourceaddr );
     }
 
     # Filehandle for diagnostics output
@@ -589,32 +587,6 @@ sub run {
 
     return;
 } ## end sub run
-
-sub check_sourceaddress_exists {
-    my ( $self ) = @_;
-    my $address = Zonemaster::Engine::Net::IP->new($self->sourceaddr);
-    my $exists = 0;
-    foreach my $if ( Net::Interface->interfaces() ) {
-        foreach my $family ( AF_INET, AF_INET6 ) {
-            foreach my $ifaddr ( $if->address($family) ) {
-                my $zm_ifaddr;
-                if ( $family == AF_INET ) {
-                    $zm_ifaddr = Zonemaster::Engine::Net::IP->new(Net::Interface::inet_ntoa($ifaddr));
-                }
-                elsif ( $family == AF_INET6 ) {
-                    $zm_ifaddr = Zonemaster::Engine::Net::IP->new(Net::Interface::inet_ntop($ifaddr));
-                }
-                if ( $address->short eq $zm_ifaddr->short ) {
-                    $exists = 1;
-                    last;
-                }
-            }
-            last if $exists;
-        }
-        last if $exists;
-    }
-    return $exists;
-}
 
 sub add_fake_delegation {
     my ( $self, $domain ) = @_;
