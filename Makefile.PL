@@ -20,7 +20,6 @@ tests_recursive( 't' );
 requires(
     'JSON::XS'           => 0,
     'Locale::TextDomain' => 1.23,
-    'Net::Interface'     => 0,
     'MooseX::Getopt'     => 0,
     'Text::Reflow'       => 0,
     'Zonemaster::Engine' => 4.002,

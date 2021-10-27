@@ -182,6 +182,12 @@ then be run.
 The default value will be taken from the C<LC_CTYPE> environment variable if
 possible, and set to UTF-8 if not.
 
+=item --sourceaddr=IPADDR
+
+Source IP address used to send queries.
+Setting an IP address not correctly configured on a local network interface
+causes cryptic error messages.
+
 =back
 
 =head1 PROFILES
