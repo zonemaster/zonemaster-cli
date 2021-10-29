@@ -2,6 +2,7 @@
 ^\.perlcriticrc$
 ^\.travis\.yml$
 ^MANIFEST\.SKIP$
+^Dockerfile$
 
 \.tar\.gz$
 \.bak$
