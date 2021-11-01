@@ -1,7 +1,5 @@
 FROM zonemaster/engine:local as build
 
-ARG version
-
 RUN apk add --no-cache \
     # Only needed for Net::Interface
     build-base \
@@ -14,6 +12,8 @@ RUN apk add --no-cache \
  && cpanm --no-wget \
     MooseX::Getopt \
     Text::Reflow
+
+ARG version
 
 COPY ./Zonemaster-CLI-${version}.tar.gz ./Zonemaster-CLI-${version}.tar.gz
 
