@@ -5,11 +5,12 @@ RUN apk add --no-cache \
     build-base \
     perl-dev \
     perl-doc \
+    perl-lwp-protocol-https \
     make \
     # Compile-time dependencies
     perl-app-cpanminus \
     perl-module-install \
- && cpanm --no-wget \
+ && cpanm --no-wget --from https://cpan.metacpan.org/ \
     MooseX::Getopt \
     Text::Reflow
 
