@@ -48,7 +48,7 @@ make docker-tag-version
 Tag the local base image as the latest version:
 
 ```sh
-make docker-tag-version
+make docker-tag-latest
 ```
 
 

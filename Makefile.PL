@@ -51,10 +51,10 @@ sub MY::postamble {
 docker-build: dist
 	sudo docker build --tag zonemaster/cli:local --build-arg version=$(VERSION) .
 
-docker-tag-version: docker-image
+docker-tag-version: docker-build
 	sudo docker tag zonemaster/cli:local zonemaster/cli:$(VERSION)
 
-docker-tag-latest: docker-image
+docker-tag-latest: docker-build
 	sudo docker tag zonemaster/cli:local zonemaster/cli:latest
 
 END_DOCKER
