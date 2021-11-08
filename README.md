@@ -54,7 +54,7 @@ make docker-tag-latest
 Test a zone using the local base image:
 
 ```sh
-sudo docker run zonemaster/cli:local zonemaster.net
+sudo docker run --rm zonemaster/cli:local zonemaster.net
 ```
 
 ### Documentation
