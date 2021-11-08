@@ -36,7 +36,7 @@ base image].
 Build a new local base image:
 
 ```sh
-make docker-build
+make all dist docker-build
 ```
 
 Tag the local base image with the current version number:

@@ -48,13 +48,13 @@ sub MY::postamble {
 
     my $docker = <<'END_DOCKER';
 
-docker-build: dist
+docker-build:
 	sudo docker build --tag zonemaster/cli:local --build-arg version=$(VERSION) .
 
-docker-tag-version: docker-build
+docker-tag-version:
 	sudo docker tag zonemaster/cli:local zonemaster/cli:$(VERSION)
 
-docker-tag-latest: docker-build
+docker-tag-latest:
 	sudo docker tag zonemaster/cli:local zonemaster/cli:latest
 
 END_DOCKER
