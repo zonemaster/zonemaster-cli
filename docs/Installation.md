@@ -30,17 +30,17 @@ Zonemaster::CLI, see the [declaration of prerequisites].
 
 This instruction covers the following operating systems:
 
- * [Installation on CentOS]
+ * [Installation on Rocky Linux]
  * [Installation on Debian]
  * [Installation on FreeBSD]
- * [Installation on Ubuntu]
+ * [Installation on Debian and Ubuntu]
 
-### Installation on CentOS
+### Installation on Rocky Linux
 
 1) Install binary dependencies:
 
    ```sh
-   sudo yum install perl-JSON-XS perl-MooseX-Getopt
+   sudo dnf install perl-JSON-XS perl-MooseX-Getopt
    ```
 
 2) Install dependencies from CPAN:
@@ -49,14 +49,14 @@ This instruction covers the following operating systems:
    sudo cpanm Text::Reflow
    ```
 
-3) Install Zonemaster::CLI 
+3) Install Zonemaster::CLI
 
    ```sh
    sudo cpanm Zonemaster::CLI
    ```
 
 
-### Installation on Debian
+### Installation on Debian and Ubuntu
 
 1) Update configuration of "locale"
 
@@ -108,11 +108,6 @@ This instruction covers the following operating systems:
    ```
 
 
-### Installation on Ubuntu
-
-Use the procedure for installation on [Debian][Installation on Debian].
-
-
 ## Post-installation sanity check
 
 Run the zonemaster-cli command:
@@ -131,8 +126,8 @@ The command is expected to take a few seconds and print some results about the d
  * For a [JSON-RPC][JSON-RPC API] frontend, follow the [Zonemaster::Backend
    installation] instruction.
 
-[Installation on CentOS]: #installation-on-centos
-[Installation on Debian]: #installation-on-debian
+[Installation on Rocky Linux]: #installation-on-rocky-linux
+[Installation on Debian and Ubuntu]: #installation-on-debian-and-ubuntu
 [Installation on FreeBSD]: #installation-on-freebsd
 [Installation on Ubuntu]: #installation-on-ubuntu
 
@@ -144,4 +139,3 @@ The command is expected to take a few seconds and print some results about the d
 [Zonemaster::Engine]: https://github.com/zonemaster/zonemaster-engine/blob/master/README.md
 [Zonemaster::GUI installation]: https://github.com/zonemaster/zonemaster-gui/blob/master/docs/Installation.md
 [Zonemaster::LDNS]: https://github.com/zonemaster/zonemaster-ldns/blob/master/README.md
-
