@@ -33,17 +33,33 @@ if ($^O eq "freebsd") {
 };
 
 sub MY::postamble {
+    my $pure_all;
     my $sharemakefile = 'share/GNUmakefile';
     if ($^O eq "freebsd") {
         # Make FreeBSD use gmake for share
-        return "GMAKE ?= \"gmake\"\n"
+        $pure_all = "GMAKE ?= \"gmake\"\n"
             . "pure_all :: $sharemakefile\n"
             . "\tcd share && \$(GMAKE) touch-po all\n";
     } else {
         # Here Linux and GNU Make is assumed
-        return "pure_all :: $sharemakefile\n"
+        $pure_all = "pure_all :: $sharemakefile\n"
             . "\tcd share && \$(MAKE) touch-po all\n";
     };
+
+    my $docker = <<'END_DOCKER';
+
+docker-build:
+	docker build --tag zonemaster/cli:local --build-arg version=$(VERSION) .
+
+docker-tag-version:
+	docker tag zonemaster/cli:local zonemaster/cli:$(VERSION)
+
+docker-tag-latest:
+	docker tag zonemaster/cli:local zonemaster/cli:latest
+
+END_DOCKER
+
+    return $pure_all . $docker;
 };
 
 

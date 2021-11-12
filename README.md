@@ -27,6 +27,36 @@ Installation instructions for the CLI
 
 This repository does not need any specific configuration.
 
+
+### Docker
+
+To build a local image for Zonemaster CLI you need a [local Zonemaster Engine
+base image].
+
+Build a new local base image:
+
+```sh
+make all dist docker-build
+```
+
+Tag the local base image with the current version number:
+
+```sh
+make docker-tag-version
+```
+
+Tag the local base image as the latest version:
+
+```sh
+make docker-tag-latest
+```
+
+Test a zone using the local base image:
+
+```sh
+docker run --rm zonemtaster/cli:local zonemaster.net
+```
+
 ### Documentation
 
 Other than the installation documentation, no specific documentation is needed.
@@ -50,4 +80,5 @@ The software is released under the 2-clause BSD license. See separate LICENSE fi
 [Zonemaster Engine installation instructions]:    https://github.com/zonemaster/zonemaster-engine/blob/master/docs/Installation.md
 [Zonemaster repository]:                          https://github.com/zonemaster/zonemaster
 [Zonemaster README]:                              https://github.com/zonemaster/zonemaster/blob/master/README.md
+[Local Zonemaster Engine base image]:             https://github.com/zonemaster/zonemaster/blob/master/README.md#docker
 
