@@ -18,9 +18,13 @@ meets one of the following requirements:
 
 ### Using Docker
 
-To run Zonemaster-CLI on docker you have to make sure that Docker is installed.
-Instructions for installation are found on Docker [get started] page. When
-Docker has been installed, no more installation is needed to run
+To run Zonemaster-CLI on Docker you have to make sure that Docker is installed
+on the computer and that you can run Docker on it.
+* Instructions for installation are found on Docker [get started] page.
+* Run the command `docker ps` on the command line to verify that you can run
+  Docker on the computer.
+
+When Docker has been correctly installed, no more installation is needed to run
 `zonemaster-cli`. Just follow the examples below.
 
 ### Local installation
@@ -44,7 +48,7 @@ With local installation:
 zonemaster-cli zonemaster.net
 ```
 
-The output comes continously as the tests are performed.
+The output comes continuously as the tests are performed.
 ```
 Seconds Level     Message
 ======= ========= =======
@@ -73,10 +77,10 @@ zonemaster-cli zonemaster.net --no-ipv6 --show-testcase --locale=da_DK.UTF-8
 ```
 
 The difference between running `zonemaster-cli` on Docker or local installation
-is invocation string, `docker run -t --rm zonemaster/cli` vs. `zonemaster-cli`.
-To simplify this document, from now on the short `zonemaster-cli` will be used
-and for Docker the long string will be assumed. To simplify repeated invocation
-on Docker an alias can be created for the shell.
+is the invocation string, `docker run -t --rm zonemaster/cli` vs.
+`zonemaster-cli`. To simplify this document, from now on the shorter
+`zonemaster-cli` will be used and for Docker the longer string will be assumed.
+To simplify repeated invocation on Docker an alias can be created for the shell.
 
 To see all available command line options, use the `--help` command.
 
@@ -92,9 +96,9 @@ To change the level of reporting you can use a command line option, e.g
 `--level=INFO` includes level INFO and higher in the report. See
 "[Severity Level Definitions]" for more information on the levels.
 
-The default level reporting is in plain English (or some other language), but
-other output formats are also available with options `--raw` and `json`
-respectively.
+By default the output is formatted as plain text in English (or some other
+language), but other more "technical" output formats are also available with
+options `--raw` and `json`, respectively.
 
 
 ## Translation
@@ -150,7 +154,9 @@ docker run -t --rm zonemaster/cli zonemaster.net --locale=da_DK.UTF-8
 ```
 
 If the environment variable `LANGUAGE` is set with correct LOCALE then no option
-is needed, e.g. `LANGUAGE=da_DK.UTF-8`.
+is needed, e.g. `LANGUAGE=da_DK.UTF-8`. `zonemaster-cli` also respects `LC_ALL`,
+`LC_MESSAGES` and `LANG`. `LANGUAGE` takes precedence over the other, and then
+the order is `LC_ALL`, `LC_MESSAGES` and last `LANG`.
 
 ## Advanced use
 
@@ -184,7 +190,7 @@ zonemaster-cli --list_tests
 Before you do any delegation change at the parent, either changing the NS
 records, glue address records or DS records, you might want to perform a
 check of your new child zone configuration so that everything you plan to
-change is in order. Zonemaster can do this for your. All you have to do
+change is in order. Zonemaster can do this for you. All you have to do
 is give Zonemaster all the parent data you plan to have for your new
 configuration. Any DNS lookups going for the parent will instead be
 answered by the data you entered. E.g.

@@ -29,10 +29,11 @@ This repository does not need any specific configuration.
 
 ## Docker
 
-Zonemaster-CLI is available on [Docker Hub], and can be run without any
-installation. See [USING] Zonemaster-CLI for how to run it on Docker.
+Zonemaster-CLI is available on [Docker Hub], and can be conveniently downloaded
+and run without any installation. See [USING] Zonemaster-CLI for how to run
+Zonemaster-CLI on Docker.
 
-To build your own Docker image, see [Create Docker Image] documentation.
+To build your own Docker image, see the [Docker Image Creation] documentation.
 
 
 ## Documentation
@@ -47,7 +48,7 @@ For participation, contact and bug reporting, please see the main
 [Zonemaster README].
 
 
-[Create Docker Image]:                            https://github.com/zonemaster/zonemaster/blob/master/docs/internal-documentation/maintenance/ReleaseProcess-create-docker-image.md
+[Docker Image Creation]                           https://github.com/zonemaster/zonemaster/blob/master/docs/internal-documentation/maintenance/ReleaseProcess-create-docker-image.md
 [Docker Hub]:                                     https://hub.docker.com/u/zonemaster
 [Installation]:                                   docs/Installation.md
 [USING]:                                          USING.md
