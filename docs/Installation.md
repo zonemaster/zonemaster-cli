@@ -1,5 +1,19 @@
 # Installation
 
+## Table of contents
+
+* [Overview](#Overview)
+* [Docker](#Docker)
+* [Prerequisites](#Prerequisites)
+* [Local installation](#Local-installation)
+  * [Installation on Rocky Linux](#Installation-on-Rocky-Linux)
+  * [Installation on Debian or Ubuntu](#Installation-on-Debian-or-Ubuntu)
+  * [Installation on FreeBSD](#Installation-on-FreeBSD)
+* [Post-installation sanity check](#Post-installation-sanity-check)
+* [Using zonemaster-cli](#Using-zonemaster-cli)
+* [What to do next?](#What-to-do-next)
+
+
 ## Overview
 
 This document describes prerequisites, installation and post-install sanity
@@ -7,6 +21,15 @@ checking for Zonemaster::CLI. The final section wraps up with a few pointer to
 other interfaces to Zonemaster. For an overview of the Zonemaster product,
 please see the [main Zonemaster Repository].
 
+## Docker
+
+Zonemaster-CLI is available on Docker Hub and can be run on Docker without any
+installation, besides that Docker must be installed. See the [USING]
+Zonemaster-CLI document for how to run it on Docker. Links for installation of
+Docker are found there.
+
+The rest of this document is about doing a local installation of Zonemaster-CLI,
+not relevant for running Zonemaster-CLI on Docker.
 
 ## Prerequisites
 
@@ -26,14 +49,7 @@ For details on supported versions of Perl and operating system for
 Zonemaster::CLI, see the [declaration of prerequisites].
 
 
-## Installation
-
-This instruction covers the following operating systems:
-
- * [Installation on Rocky Linux]
- * [Installation on Debian]
- * [Installation on FreeBSD]
- * [Installation on Debian and Ubuntu]
+## Local installation
 
 ### Installation on Rocky Linux
 
@@ -56,7 +72,7 @@ This instruction covers the following operating systems:
    ```
 
 
-### Installation on Debian and Ubuntu
+### Installation on Debian or Ubuntu
 
 1) Update configuration of "locale"
 
@@ -116,7 +132,14 @@ Run the zonemaster-cli command:
 zonemaster-cli --test basic zonemaster.net
 ```
 
-The command is expected to take a few seconds and print some results about the delegation of zonemaster.net.
+The command is expected to take a few seconds and print some results about the
+delegation of zonemaster.net.
+
+
+## Using zonemaster-cli
+
+See the [USING] Zonemaster-CLI document for an overview on how to use
+`zonemaster-cli` after installation.
 
 
 ## What to do next?
@@ -126,16 +149,14 @@ The command is expected to take a few seconds and print some results about the d
  * For a [JSON-RPC][JSON-RPC API] frontend, follow the [Zonemaster::Backend
    installation] instruction.
 
-[Installation on Rocky Linux]: #installation-on-rocky-linux
-[Installation on Debian and Ubuntu]: #installation-on-debian-and-ubuntu
-[Installation on FreeBSD]: #installation-on-freebsd
-[Installation on Ubuntu]: #installation-on-ubuntu
 
-[Declaration of prerequisites]: https://github.com/zonemaster/zonemaster/blob/master/README.md#prerequisites
-[JSON-RPC API]: https://github.com/zonemaster/zonemaster-backend/blob/master/docs/API.md
-[Main Zonemaster repository]: https://github.com/zonemaster/zonemaster/blob/master/README.md
-[Zonemaster::Backend installation]: https://github.com/zonemaster/zonemaster-backend/blob/master/docs/Installation.md
-[Zonemaster::Engine installation]: https://github.com/zonemaster/zonemaster-engine/blob/master/docs/Installation.md
-[Zonemaster::Engine]: https://github.com/zonemaster/zonemaster-engine/blob/master/README.md
-[Zonemaster::GUI installation]: https://github.com/zonemaster/zonemaster-gui/blob/master/docs/Installation.md
-[Zonemaster::LDNS]: https://github.com/zonemaster/zonemaster-ldns/blob/master/README.md
+[Declaration of prerequisites]:                   https://github.com/zonemaster/zonemaster/blob/master/README.md#prerequisites
+[JSON-RPC API]:                                   https://github.com/zonemaster/zonemaster-backend/blob/master/docs/API.md
+[Main Zonemaster repository]:                     https://github.com/zonemaster/zonemaster/blob/master/README.md
+[USING]:                                          ../USING.md
+[Zonemaster::Backend installation]:               https://github.com/zonemaster/zonemaster-backend/blob/master/docs/Installation.md
+[Zonemaster::Engine installation]:                https://github.com/zonemaster/zonemaster-engine/blob/master/docs/Installation.md
+[Zonemaster::Engine]:                             https://github.com/zonemaster/zonemaster-engine/blob/master/README.md
+[Zonemaster::GUI installation]:                   https://github.com/zonemaster/zonemaster-gui/blob/master/docs/Installation.md
+[Zonemaster::LDNS]:                               https://github.com/zonemaster/zonemaster-ldns/blob/master/README.md
+
