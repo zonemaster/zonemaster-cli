@@ -131,6 +131,17 @@ created. E.g.
 docker run -e LC_ALL=da -t --rm zonemaster/cli zonemaster.net
 ```
 
+If environment variable `LC_ALL` is set in the local shell with the correct
+"LANG" or with the equivalent "LOCALE" in from next section, then the following
+command will export `LC_ALL` with the that value to the docker container.
+```sh
+docker run -e LC_ALL -t --rm zonemaster/cli zonemaster.net
+```
+
+Environment vaiables `LANG` and `LC_MESSAGES` can be used in the same way as
+`LC_ALL`.
+
+
 ### In local installation
 
 By default all messages are in the language set in the local environment (if
@@ -167,9 +178,6 @@ users.
 
 If you only want to run a specific test case rather than the whole suite of
 tests, you can do that as well. E.g. test only test case [Connectivity03]:
-
-[Connectivity03]:  https://github.com/zonemaster/zonemaster/blob/master/docs/specifications/tests/Connectivity-TP/connectivity03.md
-
 ```sh
 zonemaster-cli --test Connectivity/connectivity03 example.com
 ```
@@ -210,7 +218,9 @@ record, but keep the NS records from the parent by only specifying the
 DS record and no NS records on the command line.
 
 
+[Connectivity03]:                  https://github.com/zonemaster/zonemaster/blob/master/docs/specifications/tests/Connectivity-TP/connectivity03.md
 [Get started]:                     https://www.docker.com/get-started
 [Installation instruction]:        docs/Installation.md
 [Severity Level Definitions]:      https://github.com/zonemaster/zonemaster/blob/master/docs/specifications/tests/SeverityLevelDefinitions.md
 [Translation]:                     #Translation
+
