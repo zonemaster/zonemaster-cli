@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-28 23:26+0100\n"
-"PO-Revision-Date: 2014-09-09 15:20+0200\n"
-"Last-Translator: mattias.paivarinta@iis.se\n"
+"POT-Creation-Date: 2021-11-16 17:01+0100\n"
+"PO-Revision-Date: 2021-11-16 16:37+0100\n"
+"Last-Translator: mats.dufberg@iis.se\n"
 "Language-Team: Zonemaster Team\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
@@ -107,12 +107,6 @@ msgstr ""
 msgid "Name of profile file to load. (DEFAULT)"
 msgstr "Namnet på en profile-fil att läsa in. (DEFAULT)"
 
-msgid "Name of configuration file to load. (TERMINATED)"
-msgstr "Namnet på en konfigurationsfil att läsa in. (Ej längre implementerad.)"
-
-msgid "Name of policy file to load. (TERMINATED)"
-msgstr "Namnet på en policyfil att läsa in. (Ej längre implementerad.)"
-
 msgid "Strings with DS data on the form \"keytag,algorithm,type,digest\""
 msgstr "En sträng med DS-data på formatet \"keytag,algoritm,typ,digest\"."
 
@@ -122,10 +116,10 @@ msgstr ""
 
 msgid ""
 "Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off "
-"if it is not. Disable with --noprogress."
+"if it is not. Disable with --no-progress."
 msgstr ""
 "Flagga för om en aktivitets-indikator skall användas. Normalt på om STDOUT "
-"är en tty, och av annars. Inaktivera med --noprogress."
+"är en tty, och av annars. Inaktivera med --no-progress."
 
 msgid "Name of the character encoding used for command line arguments"
 msgstr "Namnet på den teckenkodning som används för kommandoradsargumenten."
@@ -141,20 +135,12 @@ msgid "Print the effective profile used in JSON format, then exit."
 msgstr "Print the effective profile used in JSON format, then exit."
 
 msgid ""
-"Print the effective configuration used in JSON format, then exit. "
-"(TERMINATED)"
+"Source IP address used to send queries. Setting an IP address not correctly "
+"configured on a local network interface causes cryptic error messages."
 msgstr ""
-"Skriv ut den effektiva konfigurationen i JSON-format, sedan avsluta. (Ej "
-"längre implementerad.)"
-
-msgid "Print the effective policy used in JSON format, then exit. (TERMINATED)"
-msgstr ""
-"Skriv ut den effektiva policyn i JSON-format, sedan avsluta. (Ej längre "
-"implementerad.)"
-
-msgid ""
-"Local IP address that the test engine should try to send its requests from."
-msgstr "Lokal IP adress som testmotorn skall skicka sin trafik från."
+"Källadress (\"source address\") som används för att skicka DNS-frågor från. "
+"Att välja en IP-adress som inte är korrekt konfigurerad i de lokala "
+"nätverksinställningarna kommer att ge ett kryptiskt felmeddelande."
 
 #, perl-format
 msgid ""
@@ -177,28 +163,8 @@ msgstr ""
 "\n"
 
 #, perl-brace-format
-msgid "Address {address} cannot be used as source address for DNS queries.\n"
-msgstr "IP-adress {address} kan inte användas som källadress för DNS-frågor.\n"
-
-#, perl-brace-format
 msgid "Loading profile from {path}."
 msgstr "Laddar profil från {path}."
-
-#, perl-brace-format
-msgid "Loading policy from {path}."
-msgstr "Laddar policy från {path}."
-
-msgid "Use of config and policy have been TERMINATED, use profile instead."
-msgstr ""
-"Växlarna --config och --policy är inte längre implementerade, använd --"
-"profile istället."
-
-#, perl-brace-format
-msgid "Loading configuration from {path}."
-msgstr "Laddar konfiguration från {path}."
-
-msgid "TERMINATED, use dump_profile instead."
-msgstr "Ej längre implementerad, använd --dump_profile istället."
 
 msgid "Failed to recognize stop level '"
 msgstr "Kände inte igen avslutsnivån '"
