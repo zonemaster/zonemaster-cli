@@ -39,11 +39,11 @@ sub MY::postamble {
         # Make FreeBSD use gmake for share
         $pure_all = "GMAKE ?= \"gmake\"\n"
             . "pure_all :: $sharemakefile\n"
-            . "\tcd share && \$(GMAKE) touch-po all\n";
+            . "\tcd share && \$(GMAKE) all\n";
     } else {
         # Here Linux and GNU Make is assumed
         $pure_all = "pure_all :: $sharemakefile\n"
-            . "\tcd share && \$(MAKE) touch-po all\n";
+            . "\tcd share && \$(MAKE) all\n";
     };
 
     my $docker = <<'END_DOCKER';
