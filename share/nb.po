@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-28 14:31+0200\n"
-"PO-Revision-Date: 2021-05-28 14:35+0200\n"
+"POT-Creation-Date: 2021-11-17 11:52+0100\n"
+"PO-Revision-Date: 2021-11-17 11:51+0100\n"
 "Last-Translator: Richard Persson <richard.persson@norid.no>\n"
 "Language-Team: Zonemaster Team\n"
 "Language: nb\n"
@@ -105,12 +105,6 @@ msgstr ""
 msgid "Name of profile file to load. (DEFAULT)"
 msgstr "Filnavn på fil med profildata som skal leses. (DEFAULT)"
 
-msgid "Name of configuration file to load. (TERMINATED)"
-msgstr "Filnavn på fil med konfigurasjonsdata som skal leses. (DEPRECATED)"
-
-msgid "Name of policy file to load. (TERMINATED)"
-msgstr "Filnavn på fil med policydata som skal leses. (DEPRECATED)"
-
 msgid "Strings with DS data on the form \"keytag,algorithm,type,digest\""
 msgstr ""
 "En tekststreng med DS-data på formatet: \"keytag,algorithm,type,digest\""
@@ -120,10 +114,10 @@ msgstr "Skriv en summering av antall meldinger på hvert nivå."
 
 msgid ""
 "Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off "
-"if it is not. Disable with --noprogress."
+"if it is not. Disable with --no-progress."
 msgstr ""
 "Flagg som angir om fremdriftsindikator skal vises. Normalt på dersom STDOUT "
-"er en tty, ellers av. Slå av med --noprogress."
+"er en TTY, ellers av. Slå av med --no-progress."
 
 msgid "Name of the character encoding used for command line arguments"
 msgstr "Navn på tegnsett som er brukt for kommandolinjeargumenter"
@@ -139,16 +133,12 @@ msgid "Print the effective profile used in JSON format, then exit."
 msgstr "Skriv ut profilen som er brukt i JSON-format."
 
 msgid ""
-"Print the effective configuration used in JSON format, then exit. "
-"(TERMINATED)"
-msgstr "Skriv ut konfigurasjoene som er brukt i JSON-format. (DEPRECATED)"
-
-msgid "Print the effective policy used in JSON format, then exit. (TERMINATED)"
-msgstr "Skriv ut policy som er brukt i JSON-format. (DEPRECATED)"
-
-msgid ""
-"Local IP address that the test engine should try to send its requests from."
-msgstr "Lokal IP-adresse som testmotoren skal bruke for å sende meldinger fra."
+"Source IP address used to send queries. Setting an IP address not correctly "
+"configured on a local network interface causes cryptic error messages."
+msgstr ""
+"Fra-IP-adresse brukt til å sende spørringer. Ved å bruke en IP-adresse som "
+"ikke er korrekt satt opp på et lokalt nett forårsakes kryptiske "
+"feilmeldinger."
 
 #, perl-format
 msgid ""
@@ -171,26 +161,8 @@ msgstr ""
 "\n"
 
 #, perl-brace-format
-msgid "Address {address} cannot be used as source address for DNS queries.\n"
-msgstr "Adresse {address} kan ikke brukes som fra-adresse for DNS-spørringer.\n"
-
-#, perl-brace-format
 msgid "Loading profile from {path}."
 msgstr "Laster profil fra {path}."
-
-#, perl-brace-format
-msgid "Loading policy from {path}."
-msgstr "Laster policy fra {path}."
-
-msgid "Use of config and policy have been TERMINATED, use profile instead."
-msgstr "Bruk av konfigurasjon og policy er DEPRECATED. Bruk profil istedenfor."
-
-#, perl-brace-format
-msgid "Loading configuration from {path}."
-msgstr "Laster konfigurasjon fra {path}."
-
-msgid "TERMINATED, use dump_profile instead."
-msgstr "DEPRECATED. Bruk dump_profile istedenfor."
 
 msgid "Failed to recognize stop level '"
 msgstr "Kunne ikke gjenkjenne stop-nivå '"
@@ -275,3 +247,4 @@ msgstr "FEIL"
 
 msgid "CRITICAL"
 msgstr "KRITISK"
+
