@@ -79,9 +79,10 @@ Zonemaster::CLI, see the [declaration of prerequisites].
 Using pre-built packages is the preferred method for Debian. If you prefer to
 install from CPAN instead, follow the steps for Ubuntu.
 
-1) Configure Zonemaster packages repository
+1) Add Zonemaster packages repository to repository list
    ```sh
-   curl -Ls https://package.zonemaster.net/setup.sh | sudo sh
+   curl -Ls https://package.zonemaster.net/setup.sh
+   sudo sh setup.sh
    ```
 2) Install Zonemaster CLI
    ```sh
