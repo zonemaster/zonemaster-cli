@@ -32,23 +32,7 @@ Docker are found there.
 The rest of this document is about doing a local installation of Zonemaster-CLI,
 not relevant for running Zonemaster-CLI on Docker.
 
-## Pre-built packages
-
-Pre-built packages are available for Debian and Ubuntu (architecture amd64 only).
-
-> Note: In order to use algorithm 15 and 16 on Ubuntu 20.04 the CPAN installation
-> must be used.
-
-1) Configure Zonemaster repository
-   ```sh
-   curl -Ls https://package.zonemaster.net/setup.sh | sudo bash
-   ```
-2) Install Zonemaster CLI
-   ```sh
-   sudo apt install zonemaster-cli
-   ```
-
-## Prerequisites
+## Prerequisites for CPAN installation
 
 Before installing Zonemaster::CLI, you should [install Zonemaster::Engine][
 Zonemaster::Engine installation].
@@ -90,7 +74,6 @@ Zonemaster::CLI, see the [declaration of prerequisites].
 
 
 ### Installation on Debian or Ubuntu
-
 1) Update configuration of "locale"
 
    ```sh
@@ -107,6 +90,19 @@ Zonemaster::CLI, see the [declaration of prerequisites].
    nb_NO.utf8
    sv_SE.utf8
    ```
+
+#### Pre-built packages (Debian only)
+
+2) Configure Zonemaster repository
+   ```sh
+   curl -Ls https://package.zonemaster.net/setup.sh | sudo sh
+   ```
+3) Install Zonemaster CLI
+   ```sh
+   sudo apt install zonemaster-cli
+   ```
+
+#### CPAN Installation
 
 2) Install dependencies:
 
