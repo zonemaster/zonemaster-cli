@@ -40,7 +40,7 @@ Pre-built packages are available for Debian and Ubuntu (architecture amd64 only)
 
 1) Configure Zonemaster repository
    ```sh
-   curl -Ls https://package.zonemaster.net/get.sh | sudo bash
+   curl -Ls https://package.zonemaster.net/setup.sh | sudo bash
    ```
 2) Install Zonemaster CLI
    ```sh
