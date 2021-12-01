@@ -81,7 +81,7 @@ install from CPAN instead, follow the steps for Ubuntu.
 
 1) Add Zonemaster packages repository to repository list
    ```sh
-   curl -Ls https://package.zonemaster.net/setup.sh
+   curl -LOs https://package.zonemaster.net/setup.sh
    sudo sh setup.sh
    ```
 2) Install Zonemaster CLI
