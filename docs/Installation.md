@@ -4,7 +4,7 @@
 
 * [Overview](#Overview)
 * [Docker](#Docker)
-* [Prerequisites](#Prerequisites)
+* [Prerequisites for CPAN installation](#Prerequisites-for-CPAN-installation)
 * [Local installation](#Local-installation)
   * [Installation on Rocky Linux](#Installation-on-Rocky-Linux)
   * [Installation on Debian or Ubuntu](#Installation-on-Debian-or-Ubuntu)
