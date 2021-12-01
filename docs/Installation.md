@@ -4,6 +4,7 @@
 
 * [Overview](#Overview)
 * [Docker](#Docker)
+* [Pre-built packages](#Pre-built-packages)
 * [Prerequisites](#Prerequisites)
 * [Local installation](#Local-installation)
   * [Installation on Rocky Linux](#Installation-on-Rocky-Linux)
