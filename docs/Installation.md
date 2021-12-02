@@ -4,10 +4,11 @@
 
 * [Overview](#Overview)
 * [Docker](#Docker)
-* [Prerequisites](#Prerequisites)
+* [Prerequisites for CPAN installation](#Prerequisites-for-CPAN-installation)
 * [Local installation](#Local-installation)
   * [Installation on Rocky Linux](#Installation-on-Rocky-Linux)
-  * [Installation on Debian or Ubuntu](#Installation-on-Debian-or-Ubuntu)
+  * [Installation on Debian](#Installation-on-Debian)
+  * [Installation on Ubuntu](#Installation-on-Ubuntu)
   * [Installation on FreeBSD](#Installation-on-FreeBSD)
 * [Post-installation sanity check](#Post-installation-sanity-check)
 * [Using zonemaster-cli](#Using-zonemaster-cli)
@@ -31,10 +32,11 @@ Docker are found there.
 The rest of this document is about doing a local installation of Zonemaster-CLI,
 not relevant for running Zonemaster-CLI on Docker.
 
-## Prerequisites
+## Prerequisites for CPAN installation
 
-Before installing Zonemaster::CLI, you should [install Zonemaster::Engine][
-Zonemaster::Engine installation].
+Before installing Zonemaster::CLI from CPAN, you should [install
+Zonemaster::Engine][ Zonemaster::Engine installation], unless you are
+to install on Debian using pre-built packages (see below).
 
 > **Note:** [Zonemaster::Engine] and [Zonemaster::LDNS] are dependencies of
 > Zonemaster::CLI. Zonemaster::LDNS has a special installation requirement,
@@ -72,9 +74,21 @@ Zonemaster::CLI, see the [declaration of prerequisites].
    ```
 
 
-### Installation on Debian or Ubuntu
+### Installation on Debian
 
-1) Update configuration of "locale"
+Using pre-built packages is the preferred method for Debian. If you prefer to
+install from CPAN instead, follow the steps for Ubuntu.
+
+1) Add Zonemaster packages repository to repository list
+   ```sh
+   curl -LOs https://package.zonemaster.net/setup.sh
+   sudo sh setup.sh
+   ```
+2) Install Zonemaster CLI
+   ```sh
+   sudo apt install zonemaster-cli
+   ```
+3) Update configuration of "locale"
 
    ```sh
    sudo perl -pi -e 's/^# (da_DK\.UTF-8.*|en_US\.UTF-8.*|fi_FI\.UTF-8.*|fr_FR\.UTF-8.*|nb_NO\.UTF-8.*|sv_SE\.UTF-8.*)/$1/' /etc/locale.gen
@@ -91,16 +105,34 @@ Zonemaster::CLI, see the [declaration of prerequisites].
    sv_SE.utf8
    ```
 
-2) Install dependencies:
+### Installation on Ubuntu
+
+1) Install dependencies:
 
    ```sh
-   sudo apt-get install libmoosex-getopt-perl libtext-reflow-perl libmodule-install-perl
+   sudo apt-get install locales libmoosex-getopt-perl libtext-reflow-perl libmodule-install-perl
    ```
 
-3) Install Zonemaster::CLI:
+2) Install Zonemaster::CLI:
 
    ```sh
    sudo cpanm Zonemaster::CLI
+   ```
+3) Update configuration of "locale"
+
+   ```sh
+   sudo perl -pi -e 's/^# (da_DK\.UTF-8.*|en_US\.UTF-8.*|fi_FI\.UTF-8.*|fr_FR\.UTF-8.*|nb_NO\.UTF-8.*|sv_SE\.UTF-8.*)/$1/' /etc/locale.gen
+   sudo locale-gen
+   ```
+
+   After the update, `locale -a` should at least list the following locales:
+   ```
+   da_DK.utf8
+   en_US.utf8
+   fi_FI.utf8
+   fr_FR.utf8
+   nb_NO.utf8
+   sv_SE.utf8
    ```
 
 ### Installation on FreeBSD
@@ -159,4 +191,3 @@ See the [USING] Zonemaster-CLI document for an overview on how to use
 [Zonemaster::Engine]:                             https://github.com/zonemaster/zonemaster-engine/blob/master/README.md
 [Zonemaster::GUI installation]:                   https://github.com/zonemaster/zonemaster-gui/blob/master/docs/Installation.md
 [Zonemaster::LDNS]:                               https://github.com/zonemaster/zonemaster-ldns/blob/master/README.md
-
