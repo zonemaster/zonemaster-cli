@@ -1,5 +1,23 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
+v3.1.1 2021-12-03 (public release version)
+
+ [Features]
+ - Deb packages are available for Debian (#233)
+ - Adds support for Docker (#221, #218, #216)
+ - Replaces CentOS with Rocky Linux (#220)
+
+ [Fixes]
+ - Updates Finnish translation (#230, #224)
+ - Updates Norwegian translation (#228, #226)
+ - Updates Swedish translation (#227)
+ - Updates dependencies (#217)
+ - Improves DEBUG3 output (#215, #111)
+ - Improves output when option is incorrect (#214, #160)
+ - Clean-up removing unused options (#213, #145)
+ - More user-friendly options (#212, #159)
+
+
 v3.1.0 2021-05-28 (public release version)
 
  [Features]

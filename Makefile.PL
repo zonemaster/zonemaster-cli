@@ -22,7 +22,7 @@ requires(
     'Locale::TextDomain' => 1.23,
     'MooseX::Getopt'     => 0,
     'Text::Reflow'       => 0,
-    'Zonemaster::Engine' => 4.002,
+    'Zonemaster::Engine' => 4.003,
     'Zonemaster::LDNS'   => 2.002,
 );
 
