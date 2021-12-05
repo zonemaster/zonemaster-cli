@@ -11,11 +11,11 @@ use 5.014002;
 use strict;
 use warnings;
 
-use version; our $VERSION = version->declare( "v3.1.0" );
+use version; our $VERSION = version->declare( "v3.1.1" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
-with 'MooseX::Getopt';
+with 'MooseX::Getopt::GLD' => { getopt_conf => [ 'pass_through' ] };
 
 use Zonemaster::Engine;
 use Zonemaster::Engine::Logger::Entry;
@@ -32,7 +32,6 @@ use List::Util qw[max];
 use Text::Reflow qw[reflow_string];
 use JSON::XS;
 use File::Slurp;
-use Net::Interface;
 use Socket qw[AF_INET AF_INET6];
 
 our %numeric = Zonemaster::Engine::Logger::Entry->levels;
@@ -49,11 +48,11 @@ has 'version' => (
 );
 
 has 'level' => (
-    is          => 'ro',
-    isa         => 'Str',
-    required    => 0,
-    default     => 'NOTICE',
-    initializer => sub {
+    is            => 'ro',
+    isa           => 'Str',
+    required      => 0,
+    default       => 'NOTICE',
+    initializer   => sub {
         my ( $self, $value, $set, $attr ) = @_;
         $set->( uc $value );
     },
@@ -76,16 +75,22 @@ has 'json' => (
 );
 
 has 'json_stream' => (
+    traits        => [ 'Getopt' ],
     is            => 'ro',
     isa           => 'Bool',
     default       => 0,
+    cmd_aliases   => 'json_stream',
+    cmd_flag      => 'json-stream',
     documentation => __( 'Flag indicating if output should be streaming JSON or not.' ),
 );
 
 has 'json_translate' => (
+    traits        => [ 'Getopt' ],
     is            => 'ro',
     isa           => 'Bool',
     default       => 0,
+    cmd_aliases   => 'json_translate',
+    cmd_flag      => 'json-translate',
     documentation => __( 'Flag indicating if streaming JSON output should include the translated message of the tag or not.' ),
 );
 
@@ -104,22 +109,31 @@ has 'time' => (
 );
 
 has 'show_level' => (
+    traits        => [ 'Getopt' ],
     is            => 'ro',
     isa           => 'Bool',
+    cmd_aliases   => 'show_level',
+    cmd_flag      => 'show-level',
     documentation => __( 'Print level on entries.' ),
     default       => 1,
 );
 
 has 'show_module' => (
+    traits        => [ 'Getopt' ],
     is            => 'ro',
     isa           => 'Bool',
+    cmd_aliases   => 'show_module',
+    cmd_flag      => 'show-module',
     documentation => __( 'Print the name of the module on entries.' ),
     default       => 0,
 );
 
 has 'show_testcase' => (
+    traits        => [ 'Getopt' ],
     is            => 'ro',
     isa           => 'Bool',
+    cmd_aliases   => 'show_testcase',
+    cmd_flag      => 'show-testcase',
     documentation => __( 'Print the name of the test case on entries.' ),
     default       => 0,
 );
@@ -145,23 +159,26 @@ has 'restore' => (
 );
 
 has 'ipv4' => (
-    is      => 'ro',
-    isa     => 'Bool',
+    is            => 'ro',
+    isa           => 'Bool',
     documentation =>
       __( 'Flag to permit or deny queries being sent via IPv4. --ipv4 permits IPv4 traffic, --no-ipv4 forbids it.' ),
 );
 
 has 'ipv6' => (
-    is      => 'ro',
-    isa     => 'Bool',
+    is            => 'ro',
+    isa           => 'Bool',
     documentation =>
       __( 'Flag to permit or deny queries being sent via IPv6. --ipv6 permits IPv6 traffic, --no-ipv6 forbids it.' ),
 );
 
 has 'list_tests' => (
+    traits        => [ 'Getopt' ],
     is            => 'ro',
     isa           => 'Bool',
     default       => 0,
+    cmd_aliases   => 'list_tests',
+    cmd_flag      => 'list-tests',
     documentation => __( 'Instead of running a test, list all available tests.' ),
 );
 
@@ -175,13 +192,16 @@ has 'test' => (
 );
 
 has 'stop_level' => (
-    is          => 'ro',
-    isa         => 'Str',
-    required    => 0,
-    initializer => sub {
+    traits        => [ 'Getopt' ],
+    is            => 'ro',
+    isa           => 'Str',
+    required      => 0,
+    initializer   => sub {
         my ( $self, $value, $set, $attr ) = @_;
         $set->( uc $value );
     },
+    cmd_aliases   => 'stop_level',
+    cmd_flag      => 'stop-level',
     documentation => __(
 'As soon as a message at this level or higher is logged, execution will stop. Must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO or DEBUG.'
     )
@@ -192,20 +212,6 @@ has 'profile' => (
     isa           => 'Str',
     required      => 0,
     documentation => __( 'Name of profile file to load. (DEFAULT)' ),
-);
-
-has 'config' => (
-    is            => 'ro',
-    isa           => 'Str',
-    required      => 0,
-    documentation => __( 'Name of configuration file to load. (TERMINATED)' ),
-);
-
-has 'policy' => (
-    is            => 'ro',
-    isa           => 'Str',
-    required      => 0,
-    documentation => __( 'Name of policy file to load. (TERMINATED)' ),
 );
 
 has 'ds' => (
@@ -226,13 +232,13 @@ has 'progress' => (
     is            => 'ro',
     isa           => 'Bool',
     default       => !!( -t STDOUT ),
-    documentation => __( 'Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off if it is not. Disable with --noprogress.' ),
+    documentation => __( 'Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off if it is not. Disable with --no-progress.' ),
 );
 
 has 'encoding' => (
-    is      => 'ro',
-    isa     => 'Str',
-    default => sub {
+    is            => 'ro',
+    isa           => 'Str',
+    default       => sub {
         my $locale = $ENV{LC_CTYPE} // 'C';
         my ( $e ) = $locale =~ m|\.(.*)$|;
         $e //= 'UTF-8';
@@ -250,41 +256,31 @@ has 'nstimes' => (
 );
 
 has 'dump_profile' => (
-    is => 'ro',
-    isa => 'Bool',
-    required => 0,
-    default => 0,
+    traits        => [ 'Getopt' ],
+    is            => 'ro',
+    isa           => 'Bool',
+    required      => 0,
+    default       => 0,
+    cmd_aliases   => 'dump_profile',
+    cmd_flag      => 'dump-profile',
     documentation => __( 'Print the effective profile used in JSON format, then exit.' ),
 );
 
-has 'dump_config' => (
-    is => 'ro',
-    isa => 'Bool',
-    required => 0,
-    default => 0,
-    documentation => __( 'Print the effective configuration used in JSON format, then exit. (TERMINATED)' ),
-);
-
-has 'dump_policy' => (
-    is => 'ro',
-    isa => 'Bool',
-    required => 0,
-    default => 0,
-    documentation => __( 'Print the effective policy used in JSON format, then exit. (TERMINATED)' ),
-);
-
 has 'sourceaddr' => (
-    is => 'ro',
-    isa => 'Str',
-    required => 0,
-    documentation => __( 'Local IP address that the test engine should try to send its requests from.' ),
+    is            => 'ro',
+    isa           => 'Str',
+    required      => 0,
+    documentation => __(
+            'Source IP address used to send queries. '
+          . 'Setting an IP address not correctly configured on a local network interface causes cryptic error messages.'
+    ),
 );
 
 has 'elapsed' => (
-    is => 'ro',
-    isa => 'Bool',
-    required => 0,
-    default => 0,
+    is            => 'ro',
+    isa           => 'Bool',
+    required      => 0,
+    default       => 0,
     documentation => 'Print elapsed time at end of run.',
 );
 
@@ -293,6 +289,12 @@ sub run {
     my @accumulator;
     my %counter;
     my $printed_something;
+
+    if ( grep /^-/, @{ $self->extra_argv } ) {
+        print "Unknown option: ", join( q{ }, grep /^-/, @{ $self->extra_argv } ), "\n";
+        print "Run \"zonemaster-cli -h\" to get the valid options\n";
+        exit;
+    }
 
     if ( $self->locale ) {
         undef $ENV{LANGUAGE};
@@ -319,16 +321,12 @@ sub run {
     }
 
     if ($self->sourceaddr) {
-        if ($self->check_sourceaddress_exists ) {
-            Zonemaster::Engine::Profile->effective->set( q{resolver.source}, $self->sourceaddr );
-        }
-        else {
-            die __x( "Address {address} cannot be used as source address for DNS queries.\n", address => $self->sourceaddr );
-        }
+
+        Zonemaster::Engine::Profile->effective->set( q{resolver.source}, $self->sourceaddr );
     }
 
     # Filehandle for diagnostics output
-    my $fh_diag = ( $self->json or $self->json_stream or $self->raw or $self->dump_config or $self->dump_policy )
+    my $fh_diag = ( $self->json or $self->json_stream or $self->raw )
       ? *STDERR     # Structured output mode (e.g. JSON)
       : *STDOUT;    # Human readable output mode
 
@@ -339,20 +337,6 @@ sub run {
         my $profile = Zonemaster::Engine::Profile->default;
         $profile->merge( $foo );
         Zonemaster::Engine::Profile->effective->merge( $profile );
-    }
-    else {
-
-        if ( $self->policy ) {
-            say $fh_diag __x( "Loading policy from {path}.", path => $self->policy );
-            say $fh_diag __x( "Use of config and policy have been TERMINATED, use profile instead." );
-            exit( 1 );
-        }
-
-        if ( $self->config ) {
-            say $fh_diag __x( "Loading configuration from {path}.", path => $self->config );
-            say $fh_diag __x( "Use of config and policy have been TERMINATED, use profile instead." );
-            exit( 1 );
-        }
     }
 
     # These two must come after any profile from command line has been loaded
@@ -367,14 +351,6 @@ sub run {
 
     if ( $self->dump_profile ) {
         do_dump_profile();
-    }
-    else {
-
-        if ( $self->dump_config or $self->dump_policy ) {
-            say $fh_diag __x( "TERMINATED, use dump_profile instead." );
-            exit( 1 );
-        }
-
     }
 
     if ( $self->stop_level and not defined( $numeric{ $self->stop_level } ) ) {
@@ -412,23 +388,37 @@ sub run {
                 $printed_something = 1;
 
                 if ( $translator ) {
+                    my $header = q{};
                     if ( $self->time ) {
-                        printf "%7.2f ", $entry->timestamp;
+                        $header .= sprintf "%7.2f ", $entry->timestamp;
                     }
 
                     if ( $self->show_level ) {
-                        printf "%-9s ", translate_severity( $entry->level );
+                        $header .= sprintf "%-9s ", translate_severity( $entry->level );
                     }
 
                     if ( $self->show_module ) {
-                        printf "%-12s ", $entry->module;
+                        $header .= sprintf "%-12s ", $entry->module;
                     }
 
                     if ( $self->show_testcase ) {
-                        printf "%-14s ", $entry->testcase;
+                        $header .= sprintf "%-14s ", $entry->testcase;
                     }
 
-                    say $translator->translate_tag( $entry );
+                    print $header;
+
+                    if ( $entry->level eq q{DEBUG3} and scalar( keys %{$entry->args} ) == 1 and defined $entry->args->{packet} ) {
+                        my $packet = $entry->args->{packet};
+                        my $padding = q{ } x length $header;
+                        $entry->args->{packet} = q{};
+                        say $translator->translate_tag( $entry );
+                        foreach my $line ( split /\n/, $packet ) {
+                            print $padding, $line, "\n";
+                        }
+                    }
+                    else {
+                        say $translator->translate_tag( $entry );
+                    }
                 }
                 elsif ( $self->json_stream ) {
                     my %r;
@@ -472,7 +462,7 @@ sub run {
         }
     );
 
-    if ( $self->profile or $self->config or $self->policy ) {
+    if ( $self->profile ) {
         # Separate initialization from main output in human readable output mode
         print "\n" if $fh_diag eq *STDOUT;
     }
@@ -597,32 +587,6 @@ sub run {
 
     return;
 } ## end sub run
-
-sub check_sourceaddress_exists {
-    my ( $self ) = @_;
-    my $address = Zonemaster::Engine::Net::IP->new($self->sourceaddr);
-    my $exists = 0;
-    foreach my $if ( Net::Interface->interfaces() ) {
-        foreach my $family ( AF_INET, AF_INET6 ) {
-            foreach my $ifaddr ( $if->address($family) ) {
-                my $zm_ifaddr;
-                if ( $family == AF_INET ) {
-                    $zm_ifaddr = Zonemaster::Engine::Net::IP->new(Net::Interface::inet_ntoa($ifaddr));
-                }
-                elsif ( $family == AF_INET6 ) {
-                    $zm_ifaddr = Zonemaster::Engine::Net::IP->new(Net::Interface::inet_ntop($ifaddr));
-                }
-                if ( $address->short eq $zm_ifaddr->short ) {
-                    $exists = 1;
-                    last;
-                }
-            }
-            last if $exists;
-        }
-        last if $exists;
-    }
-    return $exists;
-}
 
 sub add_fake_delegation {
     my ( $self, $domain ) = @_;

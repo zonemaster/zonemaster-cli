@@ -2,6 +2,7 @@
 ^\.perlcriticrc$
 ^\.travis\.yml$
 ^MANIFEST\.SKIP$
+^Dockerfile$
 
 \.tar\.gz$
 \.bak$
@@ -9,6 +10,7 @@
 # Skip MO files directly under share
 ^share/[^/]*\.mo$
 ^share/Zonemaster-CLI.pot$
+^share/update-po$         # PO files are exluded from dist, which makes this script meaningless in dist
 
 # Exclude Github control files
 ^\.github/

@@ -1,5 +1,20 @@
 # Installation
 
+## Table of contents
+
+* [Overview](#Overview)
+* [Docker](#Docker)
+* [Prerequisites for CPAN installation](#Prerequisites-for-CPAN-installation)
+* [Local installation](#Local-installation)
+  * [Installation on Rocky Linux](#Installation-on-Rocky-Linux)
+  * [Installation on Debian](#Installation-on-Debian)
+  * [Installation on Ubuntu](#Installation-on-Ubuntu)
+  * [Installation on FreeBSD](#Installation-on-FreeBSD)
+* [Post-installation sanity check](#Post-installation-sanity-check)
+* [Using zonemaster-cli](#Using-zonemaster-cli)
+* [What to do next?](#What-to-do-next)
+
+
 ## Overview
 
 This document describes prerequisites, installation and post-install sanity
@@ -7,11 +22,21 @@ checking for Zonemaster::CLI. The final section wraps up with a few pointer to
 other interfaces to Zonemaster. For an overview of the Zonemaster product,
 please see the [main Zonemaster Repository].
 
+## Docker
 
-## Prerequisites
+Zonemaster-CLI is available on Docker Hub and can be run on Docker without any
+installation, besides that Docker must be installed. See the [USING]
+Zonemaster-CLI document for how to run it on Docker. Links for installation of
+Docker are found there.
 
-Before installing Zonemaster::CLI, you should [install Zonemaster::Engine][
-Zonemaster::Engine installation].
+The rest of this document is about doing a local installation of Zonemaster-CLI,
+not relevant for running Zonemaster-CLI on Docker.
+
+## Prerequisites for CPAN installation
+
+Before installing Zonemaster::CLI from CPAN, you should [install
+Zonemaster::Engine][ Zonemaster::Engine installation], unless you are
+to install on Debian using pre-built packages (see below).
 
 > **Note:** [Zonemaster::Engine] and [Zonemaster::LDNS] are dependencies of
 > Zonemaster::CLI. Zonemaster::LDNS has a special installation requirement,
@@ -26,45 +51,23 @@ For details on supported versions of Perl and operating system for
 Zonemaster::CLI, see the [declaration of prerequisites].
 
 
-## Installation
+## Local installation
 
-This instruction covers the following operating systems:
-
- * [Installation on CentOS]
- * [Installation on Debian]
- * [Installation on FreeBSD]
- * [Installation on Ubuntu]
-
-### Installation on CentOS
+### Installation on Rocky Linux
 
 1) Install binary dependencies:
 
    ```sh
-   sudo yum install perl-JSON-XS perl-MooseX-Getopt
+   sudo dnf install perl-JSON-XS perl-MooseX-Getopt
    ```
 
 2) Install dependencies from CPAN:
 
-   * CentOS 7:
+   ```sh
+   sudo cpanm Text::Reflow
+   ```
 
-     ```sh
-     sudo cpanm Net::Interface Text::Reflow
-     ```
-
-   * CentOS 8:
-
-     ```sh
-     sudo cpanm Text::Reflow
-     curl -O https://cpan.metacpan.org/authors/id/M/MI/MIKER/Net-Interface-1.016.tar.gz
-     tar xf Net-Interface-1.016.tar.gz
-     cd Net-Interface-1.016
-     ./configure
-     perl -I. Makefile.PL
-     make
-     sudo make install
-     ```
-
-3) Install Zonemaster::CLI 
+3) Install Zonemaster::CLI
 
    ```sh
    sudo cpanm Zonemaster::CLI
@@ -73,7 +76,19 @@ This instruction covers the following operating systems:
 
 ### Installation on Debian
 
-1) Update configuration of "locale"
+Using pre-built packages is the preferred method for Debian. If you prefer to
+install from CPAN instead, follow the steps for Ubuntu.
+
+1) Add Zonemaster packages repository to repository list
+   ```sh
+   curl -LOs https://package.zonemaster.net/setup.sh
+   sudo sh setup.sh
+   ```
+2) Install Zonemaster CLI
+   ```sh
+   sudo apt install zonemaster-cli
+   ```
+3) Update configuration of "locale"
 
    ```sh
    sudo perl -pi -e 's/^# (da_DK\.UTF-8.*|en_US\.UTF-8.*|fi_FI\.UTF-8.*|fr_FR\.UTF-8.*|nb_NO\.UTF-8.*|sv_SE\.UTF-8.*)/$1/' /etc/locale.gen
@@ -90,16 +105,34 @@ This instruction covers the following operating systems:
    sv_SE.utf8
    ```
 
-2) Install dependencies:
+### Installation on Ubuntu
+
+1) Install dependencies:
 
    ```sh
-   sudo apt-get install libmoosex-getopt-perl libtext-reflow-perl libmodule-install-perl libnet-interface-perl
+   sudo apt-get install locales libmoosex-getopt-perl libtext-reflow-perl libmodule-install-perl
    ```
 
-3) Install Zonemaster::CLI:
+2) Install Zonemaster::CLI:
 
    ```sh
    sudo cpanm Zonemaster::CLI
+   ```
+3) Update configuration of "locale"
+
+   ```sh
+   sudo perl -pi -e 's/^# (da_DK\.UTF-8.*|en_US\.UTF-8.*|fi_FI\.UTF-8.*|fr_FR\.UTF-8.*|nb_NO\.UTF-8.*|sv_SE\.UTF-8.*)/$1/' /etc/locale.gen
+   sudo locale-gen
+   ```
+
+   After the update, `locale -a` should at least list the following locales:
+   ```
+   da_DK.utf8
+   en_US.utf8
+   fi_FI.utf8
+   fr_FR.utf8
+   nb_NO.utf8
+   sv_SE.utf8
    ```
 
 ### Installation on FreeBSD
@@ -113,7 +146,7 @@ This instruction covers the following operating systems:
 2) Install dependencies available from binary packages:
 
    ```sh
-   pkg install devel/gmake p5-JSON-XS p5-Locale-libintl p5-MooseX-Getopt p5-Text-Reflow p5-Net-Interface
+   pkg install devel/gmake p5-JSON-XS p5-Locale-libintl p5-MooseX-Getopt p5-Text-Reflow
    ```
 
 3) Install Zonemaster::CLI:
@@ -121,11 +154,6 @@ This instruction covers the following operating systems:
    ```sh
    cpanm Zonemaster::CLI
    ```
-
-
-### Installation on Ubuntu
-
-Use the procedure for installation on [Debian][Installation on Debian].
 
 
 ## Post-installation sanity check
@@ -136,7 +164,14 @@ Run the zonemaster-cli command:
 zonemaster-cli --test basic zonemaster.net
 ```
 
-The command is expected to take a few seconds and print some results about the delegation of zonemaster.net.
+The command is expected to take a few seconds and print some results about the
+delegation of zonemaster.net.
+
+
+## Using zonemaster-cli
+
+See the [USING] Zonemaster-CLI document for an overview on how to use
+`zonemaster-cli` after installation.
 
 
 ## What to do next?
@@ -146,17 +181,13 @@ The command is expected to take a few seconds and print some results about the d
  * For a [JSON-RPC][JSON-RPC API] frontend, follow the [Zonemaster::Backend
    installation] instruction.
 
-[Installation on CentOS]: #installation-on-centos
-[Installation on Debian]: #installation-on-debian
-[Installation on FreeBSD]: #installation-on-freebsd
-[Installation on Ubuntu]: #installation-on-ubuntu
 
-[Declaration of prerequisites]: https://github.com/zonemaster/zonemaster/blob/master/README.md#prerequisites
-[JSON-RPC API]: https://github.com/zonemaster/zonemaster-backend/blob/master/docs/API.md
-[Main Zonemaster repository]: https://github.com/zonemaster/zonemaster/blob/master/README.md
-[Zonemaster::Backend installation]: https://github.com/zonemaster/zonemaster-backend/blob/master/docs/Installation.md
-[Zonemaster::Engine installation]: https://github.com/zonemaster/zonemaster-engine/blob/master/docs/Installation.md
-[Zonemaster::Engine]: https://github.com/zonemaster/zonemaster-engine/blob/master/README.md
-[Zonemaster::GUI installation]: https://github.com/zonemaster/zonemaster-gui/blob/master/docs/Installation.md
-[Zonemaster::LDNS]: https://github.com/zonemaster/zonemaster-ldns/blob/master/README.md
-
+[Declaration of prerequisites]:                   https://github.com/zonemaster/zonemaster/blob/master/README.md#prerequisites
+[JSON-RPC API]:                                   https://github.com/zonemaster/zonemaster-backend/blob/master/docs/API.md
+[Main Zonemaster repository]:                     https://github.com/zonemaster/zonemaster/blob/master/README.md
+[USING]:                                          ../USING.md
+[Zonemaster::Backend installation]:               https://github.com/zonemaster/zonemaster-backend/blob/master/docs/Installation.md
+[Zonemaster::Engine installation]:                https://github.com/zonemaster/zonemaster-engine/blob/master/docs/Installation.md
+[Zonemaster::Engine]:                             https://github.com/zonemaster/zonemaster-engine/blob/master/README.md
+[Zonemaster::GUI installation]:                   https://github.com/zonemaster/zonemaster-gui/blob/master/docs/Installation.md
+[Zonemaster::LDNS]:                               https://github.com/zonemaster/zonemaster-ldns/blob/master/README.md
