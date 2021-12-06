@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-12 17:36+0100\n"
-"PO-Revision-Date: 2021-02-13 17:28+0100\n"
+"POT-Creation-Date: 2021-11-20 15:12+0100\n"
+"PO-Revision-Date: 2021-11-20 15:10+0100\n"
 "Last-Translator: sami.salmensuo@traficom.fi\n"
 "Language-Team: Traficom domain team\n"
 "Language: fi\n"
@@ -115,12 +115,6 @@ msgstr ""
 msgid "Name of profile file to load. (DEFAULT)"
 msgstr "Ladattavan profiilitiedoston nimi. (DEFAULT (oletus))"
 
-msgid "Name of configuration file to load. (TERMINATED)"
-msgstr "Ladattavan konfiguraatiotiedoston nimi. (TERMINATED (lopetettu))"
-
-msgid "Name of policy file to load. (TERMINATED)"
-msgstr "Ladattavan politiikkatiedoston nimi. (TERMINATED (lopetettu))"
-
 msgid "Strings with DS data on the form \"keytag,algorithm,type,digest\""
 msgstr ""
 "Merkkijonot, jotka sisältävät DS-tietoja muodossa \"keytag,algorithm,type,"
@@ -131,11 +125,11 @@ msgstr "Tulosta viestien lukumäärä kullakin tasolla"
 
 msgid ""
 "Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off "
-"if it is not. Disable with --noprogress."
+"if it is not. Disable with --no-progress."
 msgstr ""
 "Looginen lippu toiminnan merkitsemiseen. Oletusarvoisesti päällä, jos STDOUT "
 "on tty, muussa tapauksessa poissa päältä. Poistetaan käytöstä parametrilla --"
-"noprogress."
+"no-progress."
 
 msgid "Name of the character encoding used for command line arguments"
 msgstr "Komentorivin parametreissä käytetty merkistökoodaus"
@@ -151,22 +145,12 @@ msgid "Print the effective profile used in JSON format, then exit."
 msgstr "Tulosta käytössä oleva profiili JSON-muodossa ja poistu."
 
 msgid ""
-"Print the effective configuration used in JSON format, then exit. "
-"(TERMINATED)"
+"Source IP address used to send queries. Setting an IP address not correctly "
+"configured on a local network interface causes cryptic error messages."
 msgstr ""
-"Tulosta käytössä oleva konfiguraatio JSON-muodossa ja poistu. (TERMINATED "
-"(lopetettu))"
-
-msgid "Print the effective policy used in JSON format, then exit. (TERMINATED)"
-msgstr ""
-"Tulosta käytössä oleva politiikka JSON-muodossa ja poistu. (TERMINATED "
-"(lopetettu))"
-
-msgid ""
-"Local IP address that the test engine should try to send its requests from."
-msgstr ""
-"Paikallinen IP-osoite, jota testimoottorin tulisi yrittää käyttää "
-"pyyntöjensä lähettämiseen."
+"Kyselyjen lähettämiseen käytetty IP-lähdeosoite. IP-osoitetta ei ole "
+"määritetty oikein määriteltynä paikalliseen verkkoliitäntään aiheuttaa "
+"poikkeuksellisia virheitä."
 
 #, perl-format
 msgid ""
@@ -189,28 +173,8 @@ msgstr ""
 "\n"
 
 #, perl-brace-format
-msgid "Address {address} cannot be used as source address for DNS queries.\n"
-msgstr "Osoitetta {address} ei voi käyttää lähdeosoitteena DNS kyselyille.\n"
-
-#, perl-brace-format
 msgid "Loading profile from {path}."
 msgstr "Ladataan profiili kohteesta {path}."
-
-#, perl-brace-format
-msgid "Loading policy from {path}."
-msgstr "Ladataan politiikka kohteesta {path}."
-
-msgid "Use of config and policy have been TERMINATED, use profile instead."
-msgstr ""
-"Konfiguraation (config) ja politiikan (policy) käyttö on lopetettu "
-"(TERMINATED), käytä profiilia niiden sijasta."
-
-#, perl-brace-format
-msgid "Loading configuration from {path}."
-msgstr "Ladataan konfiguraatio kohteesta {path}."
-
-msgid "TERMINATED, use dump_profile instead."
-msgstr "Lopetettu (TERMINATED), käytä sen sijaan: dump_profile."
 
 msgid "Failed to recognize stop level '"
 msgstr "Ei tunnistettu lopetustasoa '"
