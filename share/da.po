@@ -118,7 +118,7 @@ msgid ""
 "if it is not. Disable with --no-progress."
 msgstr ""
 "Boolsk flag til aktivitetsindikator. Aktiveret hvis STDOUT er en tty, ellers "
-"deaktiveret. Deaktiver med --noprogress."
+"deaktiveret. Deaktiver med --no-progress."
 
 msgid "Name of the character encoding used for command line arguments"
 msgstr "Navn på tegnkodningen, der skal anvendes for kommandolinje-argumenter."
