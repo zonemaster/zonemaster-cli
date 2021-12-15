@@ -27,10 +27,17 @@ on the computer and that you can run Docker on it.
 When Docker has been correctly installed, no more installation is needed to run
 `zonemaster-cli`. Just follow the examples below.
 
+There is a limitation in Docker regarding IPv6. Unless IPv6 has been enabled in
+the Docker daemon, there is no support for IPv6. To avoid meaningless errors,
+use `--no-ipv6` if there is no IPv6 support. Also see "[Enable IPv6 support]".
+
 ### Local installation
 
 To have an local installation of Zonemaster-CLI follow the
 [installation instruction]. When installed, the examples below can be followed.
+
+If the network has no IPv6 support (common in home networks) then turn off IPv6.
+Use `--no-ipv6` to avoid meaningless errors if there is no IPv6 support.
 
 
 ## Invoking the command line tool
@@ -38,14 +45,24 @@ To have an local installation of Zonemaster-CLI follow the
 The most basic use of the `zonemaster-cli` command is to just test a domain, e.g.
 "zonemaster.net".
 
-With Docker:
+Using Docker (usually there is no IPv6 support):
+```sh
+docker run -t --rm zonemaster/cli zonemaster.net --no-ipv6
+```
+
+Using Docker with IPv6 support:
 ```sh
 docker run -t --rm zonemaster/cli zonemaster.net
 ```
 
-With local installation:
+With local installation and IPv6 support:
 ```sh
 zonemaster-cli zonemaster.net
+```
+
+With local installation with no IPv6 support:
+```sh
+zonemaster-cli zonemaster.net --no-ipv6
 ```
 
 The output comes continuously as the tests are performed.
@@ -59,8 +76,8 @@ Seconds Level     Message
 
 The test and output can be modified with different options:
 
-* If your machine is for some reason not configured for use with IPv6 you want to
-  disable the use of IPv6 with the `--no-ipv6` option.
+* If your machine is not configured for use with IPv6 you want to disable the
+  use of IPv6 with the `--no-ipv6` option.
 * If you want to have the test case from which the message is printed then
   include the `--show-testcase` option.
 * If you want to see the messages translated into another language (see
@@ -223,4 +240,4 @@ DS record and no NS records on the command line.
 [Installation instruction]:        docs/Installation.md
 [Severity Level Definitions]:      https://github.com/zonemaster/zonemaster/blob/master/docs/specifications/tests/SeverityLevelDefinitions.md
 [Translation]:                     #Translation
-
+[Enable IPv6 support]:             https://docs.docker.com/config/daemon/ipv6/
