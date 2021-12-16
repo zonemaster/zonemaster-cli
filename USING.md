@@ -45,22 +45,20 @@ Use `--no-ipv6` to avoid meaningless errors if there is no IPv6 support.
 The most basic use of the `zonemaster-cli` command is to just test a domain, e.g.
 "zonemaster.net".
 
-Using Docker (usually there is no IPv6 support):
+Using Docker:
 ```sh
 docker run -t --rm zonemaster/cli zonemaster.net --no-ipv6
 ```
-
-Using Docker with IPv6 support:
+or
 ```sh
 docker run -t --rm zonemaster/cli zonemaster.net
 ```
 
-With local installation and IPv6 support:
+With local installation:
 ```sh
 zonemaster-cli zonemaster.net
 ```
-
-With local installation with no IPv6 support:
+or
 ```sh
 zonemaster-cli zonemaster.net --no-ipv6
 ```
