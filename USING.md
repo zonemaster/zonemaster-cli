@@ -2,7 +2,9 @@
 
 ## Table of contents
 * [Docker or local installation](#Docker-or-local-installation)
-* [Invoking the command line tool](#Invoking-the-command-line-tool)
+* [Invoking the command line tool using Docker](#Invoking-the-command-line-tool-using-Docker)
+* [Invoking the command line tool using local installation](#Invoking-the-command-line-tool-using-local-installation)
+* [More details on the command line tool invocation](#More-details-on-the-command-line-tool-invocation)
 * [Test reports](#Test-reports)
 * [Translation]
 * [Advanced use](#Advanced-use)
@@ -40,12 +42,11 @@ If the network has no IPv6 support (common in home networks) then turn off IPv6.
 Use `--no-ipv6` to avoid meaningless errors if there is no IPv6 support.
 
 
-## Invoking the command line tool
+## Invoking the command line tool using Docker
 
 The most basic use of the `zonemaster-cli` command is to just test a domain, e.g.
 "zonemaster.net".
 
-Using Docker:
 ```sh
 docker run -t --rm zonemaster/cli zonemaster.net --no-ipv6
 ```
@@ -54,7 +55,22 @@ or
 docker run -t --rm zonemaster/cli zonemaster.net
 ```
 
-With local installation:
+To make sure that Docker uses the latest version, add `--pull always`, e.g.
+
+```sh
+docker run -t --rm --pull always zonemaster/cli zonemaster.net --no-ipv6
+```
+
+If `--pull always` is skipped, the invocation is quicker. The recommendation is
+to include `--pull always` in the first command of a session to make sure latest
+version is used, and then to exclude it to improve performance.
+
+
+## Invoking the command line tool using local installation
+
+The most basic use of the `zonemaster-cli` command is to just test a domain, e.g.
+"zonemaster.net".
+
 ```sh
 zonemaster-cli zonemaster.net
 ```
@@ -63,7 +79,11 @@ or
 zonemaster-cli zonemaster.net --no-ipv6
 ```
 
-The output comes continuously as the tests are performed.
+## More details on the command line tool invocation
+
+The output of any of the commands above comes continuously as the tests (test
+cases) are performed.
+
 ```
 Seconds Level     Message
 ======= ========= =======
@@ -91,17 +111,20 @@ docker run -t --rm zonemaster/cli zonemaster.net --no-ipv6 --show-testcase --loc
 zonemaster-cli zonemaster.net --no-ipv6 --show-testcase --locale=da_DK.UTF-8
 ```
 
+To see all available command line options, use the `--help` command.
+
+```
+zonemaster-cli --help
+```
+
+### Using Docker or local installation
+
 The difference between running `zonemaster-cli` on Docker or local installation
 is the invocation string, `docker run -t --rm zonemaster/cli` vs.
 `zonemaster-cli`. To simplify this document, from now on the shorter
 `zonemaster-cli` will be used and for Docker the longer string will be assumed.
 To simplify repeated invocation on Docker an alias can be created for the shell.
 
-To see all available command line options, use the `--help` command.
-
-```
-zonemaster-cli --help
-```
 
 ## Test reports
 
