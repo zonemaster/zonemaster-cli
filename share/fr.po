@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-27 18:58+0200\n"
+"POT-Creation-Date: 2021-12-07 17:54+0100\n"
 "PO-Revision-Date: 2014-08-28\n"
 "Last-Translator: pion@afnic.fr\n"
 "Language-Team: Zonemaster Team\n"
@@ -124,16 +124,6 @@ msgid "Name of profile file to load. (DEFAULT)"
 msgstr ""
 "Option avec comme argument le nom du fichier profile à charger. (DEFAULT)"
 
-msgid "Name of configuration file to load. (TERMINATED)"
-msgstr ""
-"Option avec comme argument le nom du fichier de configuration à charger. "
-"(TERMINATED)"
-
-msgid "Name of policy file to load. (TERMINATED)"
-msgstr ""
-"Option avec comme argument le nom du fichier contenant la politique de tests "
-"qui sera appliquée. (TERMINATED)"
-
 msgid "Strings with DS data on the form \"keytag,algorithm,type,digest\""
 msgstr ""
 "Option avec comme argument les informations pour le traitement de la DS. Le "
@@ -146,10 +136,10 @@ msgstr ""
 
 msgid ""
 "Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off "
-"if it is not. Disable with --noprogress."
+"if it is not. Disable with --no-progress."
 msgstr ""
 "Cette option permet d'activer ou non l'indicateur de progression "
-"(défaut=activé si STDOUT est un terminal). Désactiver avec --noprogress."
+"(défaut=activé si STDOUT est un terminal). Désactiver avec --no-progress."
 
 msgid "Name of the character encoding used for command line arguments"
 msgstr ""
@@ -167,21 +157,12 @@ msgid "Print the effective profile used in JSON format, then exit."
 msgstr "Affichage du \"profile\" réellement utilisé au format JSON."
 
 msgid ""
-"Print the effective configuration used in JSON format, then exit. "
-"(TERMINATED)"
+"Source IP address used to send queries. Setting an IP address not correctly "
+"configured on a local network interface causes cryptic error messages."
 msgstr ""
-"Affichage de la configuration réellement utilisée au format JSON. "
-"(TERMINATED)"
-
-msgid "Print the effective policy used in JSON format, then exit. (TERMINATED)"
-msgstr ""
-"Affichage de la politique réellement utilisée au format JSON. (TERMINATED)"
-
-msgid ""
-"Local IP address that the test engine should try to send its requests from."
-msgstr ""
-"Adresse IP locale depuis laquelle le moteur de test doit essayer d'envoyer "
-"ses requêtes."
+"Positionne l'adresse IP source qui sera utilisée lors de l'envoi des "
+"requêtes. Indiquer une adresse mal configurée sur une interface réseau "
+"locale peut conduire à des messages d'erreur peu compréhensibles."
 
 #, perl-format
 msgid ""
@@ -204,32 +185,8 @@ msgstr ""
 "\n"
 
 #, perl-brace-format
-msgid "Address {address} cannot be used as source address for DNS queries.\n"
-msgstr ""
-"L'adresse {address} ne peut pas être utilisée comme adresse source pour les "
-"requêtes DNS.\n"
-
-#, perl-brace-format
 msgid "Loading profile from {path}."
 msgstr "Chargement de la politique de tests depuis le fichier {path}."
-
-#, perl-brace-format
-msgid "Loading policy from {path}."
-msgstr "Chargement de la politique de tests depuis le fichier {path}."
-
-msgid "Use of config and policy have been TERMINATED, use profile instead."
-msgstr ""
-"L'utilisation d'un fichier de configuration ou contenant la politique n'est "
-"plus supporté, utiliser un fichier \"profile\" en lieu et place."
-
-#, perl-brace-format
-msgid "Loading configuration from {path}."
-msgstr "Chargement de la configuration depuis le fichier {path}."
-
-msgid "TERMINATED, use dump_profile instead."
-msgstr ""
-"Ce mode de configuration n'est plus supporté, utiliser un fichier \"profile"
-"\" en lieu et place."
 
 msgid "Failed to recognize stop level '"
 msgstr ""
