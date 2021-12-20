@@ -1,0 +1,285 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-12-10 12:07-0300\n"
+"PO-Revision-Date: 2021-12-10 13:38-0300\n"
+"Last-Translator: hsalgado@vulcano.cl\n"
+"Language-Team: Zonemaster Team\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0\n"
+
+msgid "Print version information and exit."
+msgstr "Despliega información de la versión y termina."
+
+msgid ""
+"The minimum severity level to display. Must be one of CRITICAL, ERROR, "
+"WARNING, NOTICE, INFO or DEBUG."
+msgstr ""
+"El nivel de severidad mínimo para mostrar. Debe ser alguno entre CRITICAL, "
+"ERROR, WARNING, NOTICE, INFO o DEBUG."
+
+msgid "The locale to use for messages translation."
+msgstr "Localización (locale) para la traducción de los mensajes."
+
+msgid "Flag indicating if output should be in JSON or not."
+msgstr "Opción que indica si la salida será en JSON o no."
+
+msgid "Flag indicating if output should be streaming JSON or not."
+msgstr "Opción que indica si la salida debiera ser transmisión de JSON o no."
+
+msgid ""
+"Flag indicating if streaming JSON output should include the translated "
+"message of the tag or not."
+msgstr ""
+"Opción que indica si la salida de transmisión de JSON debiera incluir el "
+"mensaje traducido del tag o no."
+
+msgid ""
+"Flag indicating if output should be translated to human language or dumped "
+"raw."
+msgstr ""
+"Opción que indica si la salida se traducirá a idioma humano o en formato "
+"crudo."
+
+msgid "Print timestamp on entries."
+msgstr "Despliega marcas de tiempo en los registros."
+
+msgid "Print level on entries."
+msgstr "Despliega el nivel en los registros."
+
+msgid "Print the name of the module on entries."
+msgstr "Despliega el nombre del módulo en los registros."
+
+msgid "Print the name of the test case on entries."
+msgstr "Despliega el nombre del caso de prueba en los registros."
+
+msgid ""
+"A name/ip string giving a nameserver for undelegated tests, or just a name "
+"which will be looked up for IP addresses. Can be given multiple times."
+msgstr ""
+"Una etiqueta nombre/IP para el servidor de nombres en las pruebas no-"
+"delegadas, o solo un nombre que será resuelto para buscar la dirección IP. "
+"Puede repetirse varias veces."
+
+msgid "Name of a file to save DNS data to after running tests."
+msgstr ""
+"Nombre de un archivo para guardar los datos DNS después de ejecutar las "
+"pruebas."
+
+msgid "Name of a file to restore DNS data from before running test."
+msgstr ""
+"Nombre de un archivo para recuperar los datos DNS antes de ejecutar la "
+"prueba."
+
+msgid ""
+"Flag to permit or deny queries being sent via IPv4. --ipv4 permits IPv4 "
+"traffic, --no-ipv4 forbids it."
+msgstr ""
+"Opción para permitir o prohibir el envío de consultas vía IPv4. --ipv4 "
+"autoriza el tráfico IPv4, --no-ipv4 lo prohíbe."
+
+msgid ""
+"Flag to permit or deny queries being sent via IPv6. --ipv6 permits IPv6 "
+"traffic, --no-ipv6 forbids it."
+msgstr ""
+"Opción para permitir o prohibir el envío de consultas vía IPv6. --ipv6 "
+"autoriza el tráfico IPv6, --no-ipv6 lo prohíbe."
+
+msgid "Instead of running a test, list all available tests."
+msgstr ""
+"En vez de ejecutar una prueba, despliega todas las pruebas disponibles."
+
+msgid ""
+"Specify test to run. Should be either the name of a module, or the name of a "
+"module and the name of a method in that module separated by a \"/\" "
+"character (Example: \"Basic/basic1\"). The method specified must be one that "
+"takes a zone object as its single argument. This switch can be repeated."
+msgstr ""
+"Indica la prueba a ejecutar. Debe ser el nombre de un módulo, o el nombre de "
+"un módulo y el nombre de un método de ese módulo separado por el caracter \"/"
+"\" (por ejemplo: \"Basic/basic1\"). El método especificado debe ser uno que "
+"recibe un objecto de zona como su único argumento. Esta opción puede "
+"repetirse."
+
+msgid ""
+"As soon as a message at this level or higher is logged, execution will stop. "
+"Must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO or DEBUG."
+msgstr ""
+"Tan pronto como se registra un mensaje en este nivel o uno superior, la "
+"ejecución se detendrá. Debe ser alguno entre CRITICAL, ERROR, WARNING, "
+"NOTICE, INFO o DEBUG."
+
+msgid "Name of profile file to load. (DEFAULT)"
+msgstr "Nombre del archivo de perfiles a cargar. (DEFAULT)"
+
+msgid "Strings with DS data on the form \"keytag,algorithm,type,digest\""
+msgstr ""
+"Etiquetas con los datos DS en la forma \"tag,algoritmo,tipo,resumen"
+"\" (\"keytag,algorithm,type,digest\")"
+
+msgid "Print a count of the number of messages at each level"
+msgstr "Despliega un contador de la cantidad de mensajes en cada nivel"
+
+msgid ""
+"Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off "
+"if it is not. Disable with --no-progress."
+msgstr ""
+"Opción booleana para el indicador de actividad. El predeterminado es "
+"encendido si la salida estándar (STDOUT) es un terminal, apagado si no lo "
+"es. Se puede deshabilitar con --no-progress."
+
+msgid "Name of the character encoding used for command line arguments"
+msgstr ""
+"Nombre de la codificación de caracteres (\"encoding\") que se usa para los "
+"argumentos en la línea de comandos"
+
+msgid ""
+"At the end of a run, print a summary of the times the zone's name servers "
+"took to answer."
+msgstr ""
+"Al finalizar una ejecución, despliega un resumen del tiempo que le tomó "
+"responder a los servidores de nombre de la zona."
+
+msgid "Print the effective profile used in JSON format, then exit."
+msgstr "Despliega el perfil definitivo usado en formato JSON, luego termina."
+
+msgid ""
+"Source IP address used to send queries. Setting an IP address not correctly "
+"configured on a local network interface causes cryptic error messages."
+msgstr ""
+"Dirección IP de origen usada para enviar las consultas. Indicar una "
+"dirección IP que no esté correctamente configurada en una interfaz de red "
+"local puede causar mensajes de error confusos."
+
+#, perl-format
+msgid ""
+"Warning: setting locale category LC_MESSAGES to %s failed (is it installed "
+"on this system?).\n"
+"\n"
+msgstr ""
+"Advertencia: fallo en definir la categoría de localización LC_MESSAGES como "
+"%s (¿está instalada en este sistema?).\n"
+"\n"
+
+#, perl-format
+msgid ""
+"Warning: setting locale category LC_CTYPE to %s failed (is it installed on "
+"this system?).\n"
+"\n"
+msgstr ""
+"Advertencia: fallo en definir la categoría de localización LC_CTYPE como %s "
+"(¿está instalada en este sistema?).\n"
+"\n"
+
+#, perl-brace-format
+msgid "Loading profile from {path}."
+msgstr "Cargando perfil desde {path}."
+
+msgid "Failed to recognize stop level '"
+msgstr "Fallo en identificar el nivel de detención '"
+
+msgid ""
+"--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 "
+"or DEBUG3.\n"
+msgstr ""
+"--level debe ser alguno entre CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, "
+"DEBUG2 o DEBUG3.\n"
+
+msgid "Must give the name of a domain to test.\n"
+msgstr "Debe indicar el nombre de un dominio a probar.\n"
+
+msgid "Seconds "
+msgstr "Segundos "
+
+msgid "Level     "
+msgstr "Nivel     "
+
+msgid "Module       "
+msgstr "Módulo       "
+
+msgid "Testcase       "
+msgstr "Caso de prueba       "
+
+msgid "Message"
+msgstr "Mensaje"
+
+msgid "======= "
+msgstr "======= "
+
+msgid "========= "
+msgstr "========= "
+
+msgid "============ "
+msgstr "============ "
+
+msgid "============== "
+msgstr "============== "
+
+msgid "======="
+msgstr "======="
+
+msgid "Looks OK."
+msgstr "Se ve bien."
+
+msgid ""
+"\n"
+"\n"
+"   Level\tNumber of log entries"
+msgstr ""
+"\n"
+"\n"
+"   Nivel\tNúmero de registros"
+
+#, perl-format
+msgid "%8s\t%5d entries.\n"
+msgstr "%8s\t%5d registros.\n"
+
+msgid ""
+"Warning: Zonemaster::LDNS not compiled with libidn, cannot handle non-ASCII "
+"names correctly."
+msgstr ""
+"Advertencia: Zonemaster::LDNS no fue compilado con libidn, no puede manejar "
+"correctamente nombres no-ASCII."
+
+msgid "DEBUG"
+msgstr "DEPURACIÓN"
+
+msgid "INFO"
+msgstr "INFO"
+
+msgid "NOTICE"
+msgstr "AVISO"
+
+msgid "WARNING"
+msgstr "ADVERTENCIA"
+
+msgid "ERROR"
+msgstr "ERROR"
+
+msgid "CRITICAL"
+msgstr "CRÍTICO"
+
+#~ msgid "The minimum severity level to display"
+#~ msgstr "El nivel mínimo de gravedad que despliega"
+
+#~ msgid "Name of configuration file to load."
+#~ msgstr "Nombre del archivo de configuración a cargar."
+
+#~ msgid "Loading configuration from {path}."
+#~ msgstr "Cargando configuración desde {path}."
+
+#~ msgid "Print the effective configuration used in JSON format, then exit."
+#~ msgstr ""
+#~ "Despliega la configuración definitiva usada en formato JSON, luego "
+#~ "termina."
+
+#~ msgid ""
+#~ "Local IP address that the test engine should try to send its requests "
+#~ "from."
+#~ msgstr ""
+#~ "Dirección IP local que debería usar el motor de pruebas como origen de "
+#~ "sus solicitudes."
