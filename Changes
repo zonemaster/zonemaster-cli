@@ -1,5 +1,17 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
+
+v3.2.0 2021-12-20 (public fix version)
+
+ [Features]
+ - Adds translation to Spanish language (#219)
+
+ [Fixes]
+ - Clarifies IPv6 limitations in Docker (#238)
+ - Updates Danish translation (#236, #233)
+ - Updates French translation (#237, #225)
+
+
 v3.1.1 2021-12-03 (public release version)
 
  [Features]
