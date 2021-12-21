@@ -171,7 +171,7 @@ en_US.UTF-8 | English
 fi_FI.UTF-8 | Finnish
 fr_FR.UTF-8 | French
 nb_NO.UTF-8 | Norwegian
-es-CL.UTF-8 | Spanish
+es_ES.UTF-8 | Spanish
 sv_SE.UTF-8 | Swedish
 
 E.g.:
