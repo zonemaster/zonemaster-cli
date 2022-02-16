@@ -237,10 +237,10 @@ msgid "%8s\t%5d entries.\n"
 msgstr "%8s\t%5d merkintää.\n"
 
 msgid ""
-"Warning: Zonemaster::LDNS not compiled with libidn, cannot handle non-ASCII "
+"Warning: Zonemaster::LDNS not compiled with libidn2, cannot handle non-ASCII "
 "names correctly."
 msgstr ""
-"Varoitus: Zonemaster::LDNS:n kääntämisessä ei ole käytetty libidn:iä, ei "
+"Varoitus: Zonemaster::LDNS:n kääntämisessä ei ole käytetty libidn2:iä, ei "
 "käsittele muussa kuin ASCII-muodossa olevia nimiä oikein."
 
 msgid "DEBUG"

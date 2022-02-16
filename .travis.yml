@@ -20,7 +20,7 @@ addons:
     - libdevel-checklib-perl
     - libfile-sharedir-perl
     - libfile-slurp-perl
-    - libidn11-dev
+    - libidn2-dev
     - libintl-perl
     - libjson-pp-perl
     - liblist-moreutils-perl

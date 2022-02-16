@@ -669,7 +669,7 @@ sub to_idn {
         return Zonemaster::LDNS::to_idn( decode( $self->encoding, $str ) );
     }
     else {
-        say STDERR __( "Warning: Zonemaster::LDNS not compiled with libidn, cannot handle non-ASCII names correctly." );
+        say STDERR __( "Warning: Zonemaster::LDNS not compiled with libidn2, cannot handle non-ASCII names correctly." );
         return $str;
     }
 }
