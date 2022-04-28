@@ -224,10 +224,10 @@ msgid "%8s\t%5d entries.\n"
 msgstr "%8s\t%5d meldinger.\n"
 
 msgid ""
-"Warning: Zonemaster::LDNS not compiled with libidn, cannot handle non-ASCII "
+"Warning: Zonemaster::LDNS not compiled with libidn2, cannot handle non-ASCII "
 "names correctly."
 msgstr ""
-"Advarsel: Zonemaster::LDNS er ikke kompilert med libidn som gir IDNA-støtte. "
+"Advarsel: Zonemaster::LDNS er ikke kompilert med libidn2 som gir IDNA-støtte. "
 "Kan bare håndtere ASCII-navn."
 
 msgid "DEBUG"

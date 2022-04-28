@@ -250,10 +250,10 @@ msgid "%8s\t%5d entries.\n"
 msgstr "%8s\t%5d entrées.\n"
 
 msgid ""
-"Warning: Zonemaster::LDNS not compiled with libidn, cannot handle non-ASCII "
+"Warning: Zonemaster::LDNS not compiled with libidn2, cannot handle non-ASCII "
 "names correctly."
 msgstr ""
-"Attention: Zonemaster::LDNS n'est pas compilé avec libidn, impossible de "
+"Attention: Zonemaster::LDNS n'est pas compilé avec libidn2, impossible de "
 "traiter correctement les noms non ASCII."
 
 msgid "DEBUG"
