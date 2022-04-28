@@ -472,6 +472,8 @@ sub run {
         die __( "Must give the name of a domain to test.\n" );
     }
 
+    $domain =~ s/\.$// unless $domain eq '.';
+
     if ( $translator ) {
         if ( $self->time ) {
             print __( 'Seconds ' );
@@ -601,6 +603,8 @@ sub add_fake_delegation {
             exit( 1 );
         }
 
+        $name =~ s/\.$//;
+
         if ($ip) {
             push @{ $data{ $self->to_idn( $name ) } }, $ip;
         }
@@ -704,7 +708,7 @@ sub print_test_list {
 
 sub do_dump_profile {
     my $json = JSON::XS->new->canonical->pretty;
-    
+
     print $json->encode( Zonemaster::Engine::Profile->effective->{ q{profile} } );
 
     exit;
