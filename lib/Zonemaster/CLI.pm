@@ -603,7 +603,7 @@ sub add_fake_delegation {
             exit( 1 );
         }
 
-        $name =~ s/\.$//;
+        $name =~ s/\.$// unless $name eq '.';;
 
         if ($ip) {
             push @{ $data{ $self->to_idn( $name ) } }, $ip;
