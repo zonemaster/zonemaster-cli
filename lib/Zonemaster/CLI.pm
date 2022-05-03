@@ -472,6 +472,10 @@ sub run {
         die __( "Must give the name of a domain to test.\n" );
     }
 
+    if ( $domain =~ m/\.\./i ) {
+        die __( "The domain name contains consecutive dots.\n" );
+    }
+
     $domain =~ s/\.$// unless $domain eq '.';
 
     if ( $translator ) {
@@ -599,11 +603,16 @@ sub add_fake_delegation {
         my ( $name, $ip ) = split( '/', $pair, 2 );
 
         if ( not $name ) {
-            say STDERR "--ns must have be a name or a name/ip pair.";
+            say STDERR __( "--ns must have be a name or a name/ip pair." );
             exit( 1 );
         }
 
-        $name =~ s/\.$// unless $name eq '.';;
+        if ( $name =~ m/\.\./i ) {
+            say STDERR __x( "The name of the nameserver '{ns}' contains consecutive dots.", ns => $name );
+            exit ( 1 );
+        }
+
+        $name =~ s/\.$// unless $name eq '.';
 
         if ($ip) {
             push @{ $data{ $self->to_idn( $name ) } }, $ip;
