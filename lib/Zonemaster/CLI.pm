@@ -603,7 +603,7 @@ sub add_fake_delegation {
         my ( $name, $ip ) = split( '/', $pair, 2 );
 
         if ( not $name ) {
-            say STDERR __( "--ns must have be a name or a name/ip pair." );
+            say STDERR __( "--ns must be a name or a name/ip pair." );
             exit( 1 );
         }
 

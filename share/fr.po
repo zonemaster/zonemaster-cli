@@ -252,7 +252,7 @@ msgstr ""
 msgid "%8s\t%5d entries.\n"
 msgstr "%8s\t%5d entrées.\n"
 
-msgid "--ns must have be a name or a name/ip pair."
+msgid "--ns must be a name or a name/ip pair."
 msgstr "--ns doit être un nom ou un couple nom/ip."
 
 #, perl-brace-format
