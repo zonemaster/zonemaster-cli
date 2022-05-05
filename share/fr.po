@@ -256,8 +256,8 @@ msgid "--ns must be a name or a name/ip pair."
 msgstr "--ns doit être un nom ou un couple nom/ip."
 
 #, perl-brace-format
-msgid "The name of the nameserver '{ns}' contains consecutive dots."
-msgstr "Le nom du serveur de noms '{ns}' contient des points consécutifs."
+msgid "The name of the nameserver '{nsname}' contains consecutive dots."
+msgstr "Le nom du serveur de noms '{nsname}' contient des points consécutifs."
 
 msgid ""
 "Warning: Zonemaster::LDNS not compiled with IDN support, cannot handle non-"

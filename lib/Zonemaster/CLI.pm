@@ -608,7 +608,7 @@ sub add_fake_delegation {
         }
 
         if ( $name =~ m/\.\./i ) {
-            say STDERR __x( "The name of the nameserver '{ns}' contains consecutive dots.", ns => $name );
+            say STDERR __x( "The name of the nameserver '{nsname}' contains consecutive dots.", nsname => $name );
             exit ( 1 );
         }
 
