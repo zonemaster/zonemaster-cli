@@ -7,50 +7,50 @@ use Zonemaster::CLI;
 use File::Spec;
 use autodie;
 
-# Load default arguments from file in home directory, if any
-# This must be loaded before any global file to make the local
-# file take precedence
-my $homedir  = ((getpwuid($<))[7]) || $ENV{HOME};
-my $homeconffile = File::Spec->catfile($homedir, '.zonemaster', 'cli.args');
-
-if (-r $homeconffile) {
-    open my $fh, '<', $homeconffile;
+sub read_conf_file {
+    # Returns list of command line parameters. List can be empty.
+    my ($conf_file) = @_;
     my @lines;
+    open my $fh, '<', $conf_file;
     while (<$fh>) {
         chomp;
         next if /^\s*$/;
         next if /^\s*#/;
         push @lines, $_;
     };
+    return @lines;
+}
+
+# Load default arguments from file in home directory, if any
+# This must be loaded before any global file to make the local
+# file take precedence
+my $home_dir  = ((getpwuid($<))[7]) || $ENV{HOME};
+my $home_conf_file = File::Spec->catfile($home_dir, '.zonemaster', 'cli.args');
+
+if (-r $home_conf_file) {
+    my @lines = read_conf_file ($home_conf_file);
     unshift @ARGV, @lines;
 }
 
 # Load default arguments from global file, if any
-my @globalconf = (
+my @global_conf = (
     '/etc/zonemaster/cli.args',
     '/usr/local/etc/zonemaster/cli.args'
     ); # Order is significant.
-my $globalconffile;
+my $global_conf_file;
 
-for my $p (@globalconf) {
+for my $p (@global_conf) {
     if ( -e $p and -r $p ) {
-        $globalconffile = $p;
+        $global_conf_file = $p;
         last;
     }
 }
 
-if ( defined $globalconffile ) {
-    open my $fh, '<', $globalconffile;
-    my @lines;
-    while (<$fh>) {
-        chomp;
-        next if /^\s*$/;
-        next if /^\s*#/;
-        push @lines, $_;
-    };
+if ( defined $global_conf_file ) {
+    my @lines = read_conf_file ($global_conf_file);
     unshift @ARGV, @lines;
-}
 
+}
 
 Zonemaster::CLI->new_with_options->run;
 
@@ -256,7 +256,7 @@ one could put this in the config file:
    --level=DEBUG
 
 Only one argument per line. If the argument has a value there must be a "="
-between argument and value. A line starting with "#" is a Comment. Comments
+between argument and value. A line starting with "#" is a comment. Comments
 cannot be added on lines with arguments.
 
 Any arguments actually given on the command line will override what is in any of
