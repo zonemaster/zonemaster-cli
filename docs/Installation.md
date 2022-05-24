@@ -7,8 +7,7 @@
 * [Prerequisites for CPAN installation](#Prerequisites-for-CPAN-installation)
 * [Local installation](#Local-installation)
   * [Installation on Rocky Linux](#Installation-on-Rocky-Linux)
-  * [Installation on Debian](#Installation-on-Debian)
-  * [Installation on Ubuntu](#Installation-on-Ubuntu)
+  * [Installation on Debian and Ubuntu](#Installation-on-Debian-and-Ubuntu)
   * [Installation on FreeBSD](#Installation-on-FreeBSD)
 * [Post-installation sanity check](#Post-installation-sanity-check)
 * [Using zonemaster-cli](#Using-zonemaster-cli)
@@ -74,10 +73,11 @@ Zonemaster::CLI, see the [declaration of prerequisites].
    ```
 
 
-### Installation on Debian
+### Installation on Debian and Ubuntu
 
-Using pre-built packages is the preferred method for Debian. If you prefer to
-install from CPAN instead, follow the steps for Ubuntu.
+Using pre-built packages is the preferred method for Debian and Ubuntu.
+
+#### Installation from pre-built packages
 
 1) Add Zonemaster packages repository to repository list
    ```sh
@@ -106,7 +106,7 @@ install from CPAN instead, follow the steps for Ubuntu.
    sv_SE.utf8
    ```
 
-### Installation on Ubuntu
+#### Installation from CPAN
 
 1) Install dependencies:
 
