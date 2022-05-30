@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-17 11:52+0100\n"
-"PO-Revision-Date: 2021-11-17 11:51+0100\n"
+"POT-Creation-Date: 2022-05-23 12:32+0200\n"
+"PO-Revision-Date: 2022-05-23 15:27+0200\n"
 "Last-Translator: Richard Persson <richard.persson@norid.no>\n"
 "Language-Team: Zonemaster Team\n"
 "Language: nb\n"
@@ -77,9 +77,7 @@ msgstr ""
 msgid ""
 "Flag to permit or deny queries being sent via IPv6. --ipv6 permits IPv6 "
 "traffic, --no-ipv6 forbids it."
-msgstr ""
-"Flagg som angir om spørringer skal sendes vha. IPv6. \"--ipv6\" slår på og "
-"\"--no-ipv6\" slår av.<"
+msgstr "Flagg som angir om spørringer skal sendes vha. IPv6. \"--ipv6\" slår på og \"--no-ipv6\" slår av."
 
 msgid "Instead of running a test, list all available tests."
 msgstr "Liste tilgjengelige tester."
@@ -110,7 +108,7 @@ msgstr ""
 "En tekststreng med DS-data på formatet: \"keytag,algorithm,type,digest\""
 
 msgid "Print a count of the number of messages at each level"
-msgstr "Skriv en summering av antall meldinger på hvert nivå."
+msgstr "Skriv en summering av antall meldinger på hvert nivå"
 
 msgid ""
 "Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off "
@@ -177,6 +175,9 @@ msgstr ""
 msgid "Must give the name of a domain to test.\n"
 msgstr "Må angi navnet på domenet som skal testes.\n"
 
+msgid "The domain name contains consecutive dots.\n"
+msgstr "Domenenavnet inneholder flere punkter på rad.\n"
+
 msgid "Seconds "
 msgstr "Sekunder "
 
@@ -223,12 +224,17 @@ msgstr ""
 msgid "%8s\t%5d entries.\n"
 msgstr "%8s\t%5d meldinger.\n"
 
+msgid "--ns must be a name or a name/ip pair."
+msgstr "--ns må være et navn eller et navn/ip par."
+
+#, perl-brace-format
+msgid "The name of the nameserver '{nsname}' contains consecutive dots."
+msgstr "Navnet til navnetjeneren '{nsname}' inneholder flere punkter på rad."
+
 msgid ""
-"Warning: Zonemaster::LDNS not compiled with libidn2, cannot handle non-ASCII "
-"names correctly."
-msgstr ""
-"Advarsel: Zonemaster::LDNS er ikke kompilert med libidn2 som gir IDNA-støtte. "
-"Kan bare håndtere ASCII-navn."
+"Warning: Zonemaster::LDNS not compiled with IDN support, cannot handle non-"
+"ASCII names correctly."
+msgstr "Advarsel: Zonemaster::LDNS er ikke kompilert med IDN-støtte. Kan bare håndtere ASCII-navn."
 
 msgid "DEBUG"
 msgstr "DEBUG"
@@ -247,4 +253,3 @@ msgstr "FEIL"
 
 msgid "CRITICAL"
 msgstr "KRITISK"
-
