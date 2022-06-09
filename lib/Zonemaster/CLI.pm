@@ -11,7 +11,7 @@ use 5.014002;
 use strict;
 use warnings;
 
-use version; our $VERSION = version->declare( "v3.2.0" );
+use version; our $VERSION = version->declare( "v4.0.0" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
@@ -472,6 +472,12 @@ sub run {
         die __( "Must give the name of a domain to test.\n" );
     }
 
+    if ( $domain =~ m/\.\./i ) {
+        die __( "The domain name contains consecutive dots.\n" );
+    }
+
+    $domain =~ s/\.$// unless $domain eq '.';
+
     if ( $translator ) {
         if ( $self->time ) {
             print __( 'Seconds ' );
@@ -597,9 +603,16 @@ sub add_fake_delegation {
         my ( $name, $ip ) = split( '/', $pair, 2 );
 
         if ( not $name ) {
-            say STDERR "--ns must have be a name or a name/ip pair.";
+            say STDERR __( "--ns must be a name or a name/ip pair." );
             exit( 1 );
         }
+
+        if ( $name =~ m/\.\./i ) {
+            say STDERR __x( "The name of the nameserver '{nsname}' contains consecutive dots.", nsname => $name );
+            exit ( 1 );
+        }
+
+        $name =~ s/\.$// unless $name eq '.';
 
         if ($ip) {
             push @{ $data{ $self->to_idn( $name ) } }, $ip;
@@ -669,7 +682,7 @@ sub to_idn {
         return Zonemaster::LDNS::to_idn( decode( $self->encoding, $str ) );
     }
     else {
-        say STDERR __( "Warning: Zonemaster::LDNS not compiled with libidn, cannot handle non-ASCII names correctly." );
+        say STDERR __( "Warning: Zonemaster::LDNS not compiled with IDN support, cannot handle non-ASCII names correctly." );
         return $str;
     }
 }
@@ -704,7 +717,7 @@ sub print_test_list {
 
 sub do_dump_profile {
     my $json = JSON::XS->new->canonical->pretty;
-    
+
     print $json->encode( Zonemaster::Engine::Profile->effective->{ q{profile} } );
 
     exit;

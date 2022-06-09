@@ -7,8 +7,7 @@
 * [Prerequisites for CPAN installation](#Prerequisites-for-CPAN-installation)
 * [Local installation](#Local-installation)
   * [Installation on Rocky Linux](#Installation-on-Rocky-Linux)
-  * [Installation on Debian](#Installation-on-Debian)
-  * [Installation on Ubuntu](#Installation-on-Ubuntu)
+  * [Installation on Debian and Ubuntu](#Installation-on-Debian-and-Ubuntu)
   * [Installation on FreeBSD](#Installation-on-FreeBSD)
 * [Post-installation sanity check](#Post-installation-sanity-check)
 * [Using zonemaster-cli](#Using-zonemaster-cli)
@@ -74,10 +73,11 @@ Zonemaster::CLI, see the [declaration of prerequisites].
    ```
 
 
-### Installation on Debian
+### Installation on Debian and Ubuntu
 
-Using pre-built packages is the preferred method for Debian. If you prefer to
-install from CPAN instead, follow the steps for Ubuntu.
+Using pre-built packages is the preferred method for Debian and Ubuntu.
+
+#### Installation from pre-built packages
 
 1) Add Zonemaster packages repository to repository list
    ```sh
@@ -91,7 +91,7 @@ install from CPAN instead, follow the steps for Ubuntu.
 3) Update configuration of "locale"
 
    ```sh
-   sudo perl -pi -e 's/^# (da_DK\.UTF-8.*|en_US\.UTF-8.*|fi_FI\.UTF-8.*|fr_FR\.UTF-8.*|nb_NO\.UTF-8.*|sv_SE\.UTF-8.*)/$1/' /etc/locale.gen
+   sudo perl -pi -e 's/^# (da_DK\.UTF-8.*|en_US\.UTF-8.*|es_ES\.UTF-8.*|fi_FI\.UTF-8.*|fr_FR\.UTF-8.*|nb_NO\.UTF-8.*|sv_SE\.UTF-8.*)/$1/' /etc/locale.gen
    sudo locale-gen
    ```
 
@@ -99,13 +99,14 @@ install from CPAN instead, follow the steps for Ubuntu.
    ```
    da_DK.utf8
    en_US.utf8
+   es_ES.utf8
    fi_FI.utf8
    fr_FR.utf8
    nb_NO.utf8
    sv_SE.utf8
    ```
 
-### Installation on Ubuntu
+#### Installation from CPAN
 
 1) Install dependencies:
 
@@ -121,7 +122,7 @@ install from CPAN instead, follow the steps for Ubuntu.
 3) Update configuration of "locale"
 
    ```sh
-   sudo perl -pi -e 's/^# (da_DK\.UTF-8.*|en_US\.UTF-8.*|fi_FI\.UTF-8.*|fr_FR\.UTF-8.*|nb_NO\.UTF-8.*|sv_SE\.UTF-8.*)/$1/' /etc/locale.gen
+   sudo perl -pi -e 's/^# (da_DK\.UTF-8.*|en_US\.UTF-8.*|es_ES\.UTF-8.*|fi_FI\.UTF-8.*|fr_FR\.UTF-8.*|nb_NO\.UTF-8.*|sv_SE\.UTF-8.*)/$1/' /etc/locale.gen
    sudo locale-gen
    ```
 
@@ -129,6 +130,7 @@ install from CPAN instead, follow the steps for Ubuntu.
    ```
    da_DK.utf8
    en_US.utf8
+   es_ES.utf8
    fi_FI.utf8
    fr_FR.utf8
    nb_NO.utf8

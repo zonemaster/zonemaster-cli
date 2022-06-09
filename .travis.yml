@@ -1,12 +1,12 @@
+dist: focal
+
 language: perl
 
 perl:
-- "5.30"
-- "5.28"
-- "5.26"
-- "5.24"
-- "5.22"
-- "5.16"
+    - "5.32"
+    - "5.30.2"
+    - "5.26"
+    - "5.14.4"
 
 addons:
   apt:
@@ -20,7 +20,7 @@ addons:
     - libdevel-checklib-perl
     - libfile-sharedir-perl
     - libfile-slurp-perl
-    - libidn11-dev
+    - libidn2-dev
     - libintl-perl
     - libjson-pp-perl
     - liblist-moreutils-perl
@@ -46,7 +46,8 @@ before_install:
 - export PERL5LIB=/usr/share/perl5
 
   # Provide cpanm helper
-- eval $(curl https://travis-perl.github.io/init) --auto
+  # quoting preserves newlines in the script and then avoid error if the script contains comments
+- eval "$(curl https://travis-perl.github.io/init)" --auto
 
   # Zonemaster LDNS needs a newer version of Module::Install
 - cpan-install Module::Install Module::Install::XSUtil

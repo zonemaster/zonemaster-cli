@@ -7,14 +7,49 @@ use Zonemaster::CLI;
 use File::Spec;
 use autodie;
 
-my $homedir  = ((getpwuid($<))[7]) || $ENV{HOME};
-my $conffile = File::Spec->catfile($homedir, '.zonemaster', 'cli.args');
+sub read_conf_file {
+    # Returns list of command line parameters. List can be empty.
+    my ($conf_file) = @_;
+    my @lines;
+    open my $fh, '<', $conf_file;
+    while (<$fh>) {
+        chomp;
+        next if /^\s*$/;
+        next if /^\s*#/;
+        push @lines, $_;
+    };
+    return @lines;
+}
 
-if (-r $conffile) {
-    open my $fh, '<', $conffile;
-    my @lines = $fh->getlines;
-    chomp(@lines);
+# Load default arguments from file in home directory, if any
+# This must be loaded before any global file to make the local
+# file take precedence
+my $home_dir  = ((getpwuid($<))[7]) || $ENV{HOME};
+my $home_conf_file = File::Spec->catfile($home_dir, '.zonemaster', 'cli.args');
+
+if (-r $home_conf_file) {
+    my @lines = read_conf_file ($home_conf_file);
     unshift @ARGV, @lines;
+}
+
+# Load default arguments from global file, if any
+my @global_conf = (
+    '/etc/zonemaster/cli.args',
+    '/usr/local/etc/zonemaster/cli.args'
+    ); # Order is significant.
+my $global_conf_file;
+
+for my $p (@global_conf) {
+    if ( -e $p and -r $p ) {
+        $global_conf_file = $p;
+        last;
+    }
+}
+
+if ( defined $global_conf_file ) {
+    my @lines = read_conf_file ($global_conf_file);
+    unshift @ARGV, @lines;
+
 }
 
 Zonemaster::CLI->new_with_options->run;
@@ -202,17 +237,30 @@ L<Zonemaster::Engine::Profile>.
 
 =head1 CONFIGURATION
 
+If there is a readable file F</etc/zonemaster/cli.args> (Linux style), each line
+in that file will be prepended as an argument on the command line. If no
+F</etc/zonemaster/cli.args> is found (or is not readable) but
+F</usr/local/etc/zonemaster/cli.args> (FreeBSD style) is found and readable then
+that file will be used instead. Only one global file is loaded.
+
 If there is a readable file F<.zonemaster/cli.args> in the user's home
-directory, each line in that file will be prepended as an argument on the
-command line. For example, if one would like to by default run with the log
+directory, it will be used in the same way even when a global file has been
+loaded. Any argument in user's F<cli.args> will override the same argument in the
+global config file.
+
+For example, if one would like to by default run with the log
 level set to DEBUG and with translation to human-readable messages turned off,
 one could put this in the config file:
 
    --raw
    --level=DEBUG
 
-Any arguments actually given on the command line will override what's in the
-config file.
+Only one argument per line. If the argument has a value there must be a "="
+between argument and value. A line starting with "#" is a comment. Comments
+cannot be added on lines with arguments.
+
+Any arguments actually given on the command line will override what is in any of
+the loaded config files.
 
 =head1 SEE ALSO
 
@@ -220,4 +268,4 @@ L<Zonemaster>
 
 =head1 AUTHOR
 
-Calle Dybedahl <calle@init.se>
+Calle Dybedahl <calle@init.se> and others from the Zonemaster project
