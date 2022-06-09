@@ -23,7 +23,7 @@ requires(
     'MooseX::Getopt'     => 0,
     'Text::Reflow'       => 0,
     'Zonemaster::Engine' => 4.005,
-    'Zonemaster::LDNS'   => 2.003,
+    'Zonemaster::LDNS'   => 2.002002,
 );
 
 # Make all platforms include inc/Module/Install/External.pm
