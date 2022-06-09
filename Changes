@@ -1,6 +1,6 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
-v4.0.0 2022-06-09 (public fix version)
+v4.0.0 2022-06-09 (public release version)
 
  [Breaking changes]
  - Updates how trailing dots of domain name or name
