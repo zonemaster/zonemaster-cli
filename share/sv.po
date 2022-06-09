@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-17 09:03+0100\n"
-"PO-Revision-Date: 2021-11-17 09:02+0100\n"
+"POT-Creation-Date: 2022-05-21 17:54+0000\n"
+"PO-Revision-Date: 2022-05-21 17:54+0000\n"
 "Last-Translator: mats.dufberg@iis.se\n"
 "Language-Team: Zonemaster Team\n"
 "Language: sv\n"
@@ -179,8 +179,12 @@ msgstr ""
 msgid "Must give the name of a domain to test.\n"
 msgstr "Måste ange namnet på en domän att testa.\n"
 
+msgid "The domain name contains consecutive dots.\n"
+msgstr "Domännamnet innehåller flera punkter i följd.\n"
+
+#, fuzzy
 msgid "Seconds "
-msgstr " Sekund "
+msgstr "Sekund  "
 
 msgid "Level     "
 msgstr "Nivå      "
@@ -225,9 +229,17 @@ msgstr ""
 msgid "%8s\t%5d entries.\n"
 msgstr "%8s\t%5d meddelanden.\n"
 
+msgid "--ns must be a name or a name/ip pair."
+msgstr "--ns måste vara ett namn eller namn/ip i det formatet.\""
+
+#, perl-brace-format
+msgid "The name of the nameserver '{nsname}' contains consecutive dots."
+msgstr "Namnet på namnserver \"{nsname}\" innehåller flera punkter i följd."
+
+#, fuzzy
 msgid ""
-"Warning: Zonemaster::LDNS not compiled with libidn, cannot handle non-ASCII "
-"names correctly."
+"Warning: Zonemaster::LDNS not compiled with IDN support, cannot handle non-"
+"ASCII names correctly."
 msgstr ""
 "Varning: Zonemaster::LDNS är inte kompilerad med IDNA-stöd, så enbart ASCII-"
 "namn kan hanteras."

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-07 17:54+0100\n"
+"POT-Creation-Date: 2022-05-03 10:32+0200\n"
 "PO-Revision-Date: 2014-08-28\n"
 "Last-Translator: pion@afnic.fr\n"
 "Language-Team: Zonemaster Team\n"
@@ -203,6 +203,9 @@ msgstr ""
 msgid "Must give the name of a domain to test.\n"
 msgstr "Il est nécessaire d'indiquer un nom de domaine pour lancer le test.\n"
 
+msgid "The domain name contains consecutive dots.\n"
+msgstr "Le nom de domaine contient des points consécutifs.\n"
+
 msgid "Seconds "
 msgstr "Durée   "
 
@@ -249,12 +252,19 @@ msgstr ""
 msgid "%8s\t%5d entries.\n"
 msgstr "%8s\t%5d entrées.\n"
 
+msgid "--ns must be a name or a name/ip pair."
+msgstr "--ns doit être un nom ou un couple nom/ip."
+
+#, perl-brace-format
+msgid "The name of the nameserver '{nsname}' contains consecutive dots."
+msgstr "Le nom du serveur de noms '{nsname}' contient des points consécutifs."
+
 msgid ""
-"Warning: Zonemaster::LDNS not compiled with libidn, cannot handle non-ASCII "
-"names correctly."
+"Warning: Zonemaster::LDNS not compiled with IDN support, cannot handle non-"
+"ASCII names correctly."
 msgstr ""
-"Attention: Zonemaster::LDNS n'est pas compilé avec libidn, impossible de "
-"traiter correctement les noms non ASCII."
+"Attention: Zonemaster::LDNS n'est pas compilé avec le support IDN, "
+"impossible de traiter correctement les noms non ASCII."
 
 msgid "DEBUG"
 msgstr "DEBUG"
