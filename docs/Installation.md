@@ -9,6 +9,7 @@
   * [Installation on Rocky Linux](#Installation-on-Rocky-Linux)
   * [Installation on Debian and Ubuntu](#Installation-on-Debian-and-Ubuntu)
   * [Installation on FreeBSD](#Installation-on-FreeBSD)
+  * [Installation on CentOS Linux 7](#Installation-on-CentOS-Linux-7)
 * [Post-installation sanity check](#Post-installation-sanity-check)
 * [Using zonemaster-cli](#Using-zonemaster-cli)
 * [What to do next?](#What-to-do-next)
@@ -157,6 +158,28 @@ Using pre-built packages is the preferred method for Debian and Ubuntu.
    cpanm Zonemaster::CLI
    ```
 
+### Installation on CentOS Linux 7
+
+> **Please note!** CentOS 7 will only be supported until the release of
+> v2023.1, which is expected to happen during the spring of 2023.
+
+1) Install binary dependencies:
+
+   ```sh
+   sudo yum install perl-JSON-XS perl-MooseX-Getopt
+   ```
+
+2) Install dependencies from CPAN:
+
+     ```sh
+     sudo cpanm Text::Reflow Locale::TextDomain
+     ```
+
+3) Install Zonemaster::CLI
+
+   ```sh
+   sudo cpanm Zonemaster::CLI
+   ```
 
 ## Post-installation sanity check
 
