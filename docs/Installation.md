@@ -161,7 +161,7 @@ Using pre-built packages is the preferred method for Debian and Ubuntu.
 ### Installation on CentOS Linux 7
 
 > **Please note!** CentOS 7 will only be supported until the release of
-> v2023.1, which is expected to happen during the spring of 2023.
+> v2023.1, which is planned to happen during the spring of 2023.
 
 1) Install binary dependencies:
 
