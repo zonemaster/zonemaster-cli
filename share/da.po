@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-07 14:55+0000\n"
-"PO-Revision-Date: 2021-12-07 14:55+0000\n"
+"POT-Creation-Date: 2022-06-08 14:12+0000\n"
+"PO-Revision-Date: 2022-06-08 14:01+0000\n"
 "Last-Translator: haarbo@dk-hostmaster.dk\n"
 "Language-Team: Zonemaster Team\n"
 "Language: da\n"
@@ -136,8 +136,9 @@ msgstr "Udskriv den effektive profil benyttet i JSON-format, og afslut."
 msgid ""
 "Source IP address used to send queries. Setting an IP address not correctly "
 "configured on a local network interface causes cryptic error messages."
-msgstr "IP-adresse brugt til at sende forespørgsler fra. En ikke korrekt "
-"konfiguret IP-adresse på et lokalt interface medfører kryptiske fejlbeskeder."
+msgstr ""
+"IP-adresse brugt til at sende forespørgsler fra. En ikke korrekt konfiguret "
+"IP-adresse på et lokalt interface medfører kryptiske fejlbeskeder."
 
 #, perl-format
 msgid ""
@@ -156,6 +157,7 @@ msgid ""
 msgstr ""
 "Advarsel: Kunne ikke sætte locale kategori LC_CTYPE til %s (er det "
 "installeret på dette system?).\n"
+"\n"
 
 #, perl-brace-format
 msgid "Loading profile from {path}."
@@ -173,6 +175,9 @@ msgstr ""
 
 msgid "Must give the name of a domain to test.\n"
 msgstr "Domænenavn, der skal testes, skal angives.\n"
+
+msgid "The domain name contains consecutive dots.\n"
+msgstr "Domænenavnet indeholder flere dots (.) efter hinanden."
 
 msgid "Seconds "
 msgstr "Sekunder "
@@ -220,12 +225,20 @@ msgstr ""
 msgid "%8s\t%5d entries.\n"
 msgstr "%8s\t%5d beskeder.\n"
 
-msgid ""
-"Warning: Zonemaster::LDNS not compiled with libidn2, cannot handle non-ASCII "
-"names correctly."
+msgid "--ns must be a name or a name/ip pair."
+msgstr "--ns skal være et navn eller et navn/IP-adresse par."
+
+#, perl-brace-format
+msgid "The name of the nameserver '{nsname}' contains consecutive dots."
 msgstr ""
-"Advarser: Zonemaster::LDNS er ikke kompileret med libidn2, kan derfor ikke "
-"benytte ikke-ASCII navne."
+"Navnet på navneserveren '{nsname}' indeholder flere dots (.) efter hinanden."
+
+msgid ""
+"Warning: Zonemaster::LDNS not compiled with IDN support, cannot handle non-"
+"ASCII names correctly."
+msgstr ""
+"Advarsel: Zonemaster::LDNS er ikke kompileret med IDN-support, og kan derfor "
+"ikke håndtere ikke-ASCII navne korrekt."
 
 msgid "DEBUG"
 msgstr "FEJLSØG"
@@ -244,4 +257,3 @@ msgstr "FEJL"
 
 msgid "CRITICAL"
 msgstr "KRITISK"
-
