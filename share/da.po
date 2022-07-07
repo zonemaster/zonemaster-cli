@@ -148,6 +148,7 @@ msgid ""
 msgstr ""
 "Advarsel: Kunne ikke sætte locale kategori LC_MESSAGES til %s (er det "
 "installeret på dette system?).\n"
+"\n"
 
 #, perl-format
 msgid ""
@@ -177,7 +178,7 @@ msgid "Must give the name of a domain to test.\n"
 msgstr "Domænenavn, der skal testes, skal angives.\n"
 
 msgid "The domain name contains consecutive dots.\n"
-msgstr "Domænenavnet indeholder flere dots (.) efter hinanden."
+msgstr "Domænenavnet indeholder flere dots (.) efter hinanden.\n"
 
 msgid "Seconds "
 msgstr "Sekunder "
