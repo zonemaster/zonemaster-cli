@@ -1,5 +1,13 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
+v4.0.1 2022-07-08 (public fix version)
+
+ [Fixes]
+ - Adds missing installation instructions for CentOS Linux 7
+   (#275)
+ - Updates translation to Danish (#271)
+
+
 v4.0.0 2022-06-09 (public release version)
 
  [Breaking changes]
