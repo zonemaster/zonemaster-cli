@@ -29,7 +29,7 @@ use Zonemaster::Engine;
 use Zonemaster::Engine::Exception;
 use Zonemaster::Engine::Logger::Entry;
 use Zonemaster::Engine::Translator;
-use Zonemaster::Engine::Util qw[pod_extract_for];
+use Zonemaster::Engine::Util qw[parse_hints pod_extract_for];
 use Zonemaster::Engine::Zone;
 use Zonemaster::LDNS;
 
@@ -141,6 +141,13 @@ has 'ns' => (
     is            => 'ro',
     isa           => 'ArrayRef',
     documentation => __( 'A name/ip string giving a nameserver for undelegated tests, or just a name which will be looked up for IP addresses. Can be given multiple times.' ),
+);
+
+has 'hints' => (
+    is            => 'ro',
+    isa           => 'Str',
+    required      => 0,
+    documentation => __( 'Name of a root hints file to override the defaults.' ),
 );
 
 has 'save' => (
@@ -508,6 +515,13 @@ sub run {
     } ## end if ( $translator )
 
     $domain = $self->to_idn( $domain );
+
+    if ( $self->hints ) {
+        my $hints_text = read_file( $self->hints );
+        my $hints_data = parse_hints( $hints_text );
+        Zonemaster::Engine::Recursor->remove_fake_addresses( '.' );
+        Zonemaster::Engine::Recursor->add_fake_addresses( '.', $hints_data );
+    }
 
     if ( $self->ns and @{ $self->ns } > 0 ) {
         $self->add_fake_delegation( $domain );
