@@ -484,6 +484,28 @@ sub run {
     }
 
     $domain =~ s/\.$// unless $domain eq '.';
+    $domain = $self->to_idn( $domain );
+
+    if ( $self->hints ) {
+        my $hints_data;
+        try {
+            my $hints_text = read_file( $self->hints );
+            $hints_data = parse_hints( $hints_text )
+        }
+        catch {
+            die "Error loading hints file: $_";
+        }
+        Zonemaster::Engine::Recursor->remove_fake_addresses( '.' );
+        Zonemaster::Engine::Recursor->add_fake_addresses( '.', $hints_data );
+    }
+
+    if ( $self->ns and @{ $self->ns } > 0 ) {
+        $self->add_fake_delegation( $domain );
+    }
+
+    if ( $self->ds and @{ $self->ds } ) {
+        $self->add_fake_ds( $domain );
+    }
 
     if ( $translator ) {
         if ( $self->time ) {
@@ -514,29 +536,6 @@ sub run {
         }
         say __( '=======' );
     } ## end if ( $translator )
-
-    $domain = $self->to_idn( $domain );
-
-    if ( $self->hints ) {
-        my $hints_data;
-        try {
-            my $hints_text = read_file( $self->hints );
-            $hints_data = parse_hints( $hints_text )
-        }
-        catch {
-            die "Error loading hints file: $_";
-        }
-        Zonemaster::Engine::Recursor->remove_fake_addresses( '.' );
-        Zonemaster::Engine::Recursor->add_fake_addresses( '.', $hints_data );
-    }
-
-    if ( $self->ns and @{ $self->ns } > 0 ) {
-        $self->add_fake_delegation( $domain );
-    }
-
-    if ( $self->ds and @{ $self->ds } ) {
-        $self->add_fake_ds( $domain );
-    }
 
     # Actually run tests!
     eval {
