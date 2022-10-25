@@ -25,6 +25,7 @@ use POSIX qw[setlocale LC_MESSAGES LC_CTYPE];
 use Scalar::Util qw[blessed];
 use Socket qw[AF_INET AF_INET6];
 use Text::Reflow qw[reflow_string];
+use Try::Tiny;
 use Zonemaster::Engine;
 use Zonemaster::Engine::Exception;
 use Zonemaster::Engine::Logger::Entry;
@@ -517,8 +518,14 @@ sub run {
     $domain = $self->to_idn( $domain );
 
     if ( $self->hints ) {
-        my $hints_text = read_file( $self->hints );
-        my $hints_data = parse_hints( $hints_text );
+        my $hints_data;
+        try {
+            my $hints_text = read_file( $self->hints );
+            $hints_data = parse_hints( $hints_text )
+        }
+        catch {
+            die "Error loading hints file: $_";
+        }
         Zonemaster::Engine::Recursor->remove_fake_addresses( '.' );
         Zonemaster::Engine::Recursor->add_fake_addresses( '.', $hints_data );
     }
