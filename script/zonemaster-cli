@@ -148,6 +148,10 @@ This switch can (and probably should) be given multiple times. As long as any
 of these switches are present, their aggregate content will be used as the
 entirety of the parent-side delegation information.
 
+=item --hints=FILENAME
+
+Name of a root hints file to override the defaults.
+
 =item --save=FILENAME
 
 After the entire test has finished running, write the contents of the
