@@ -474,6 +474,10 @@ sub run {
         print "\n" if $fh_diag eq *STDOUT;
     }
 
+    if ( scalar @{ $self->extra_argv } > 1 ) {
+        die __( "Only one domain can be given for testing. Did you forget to prepend an option with '--<OPTION>'?\n" );
+    }
+
     my ( $domain ) = @{ $self->extra_argv };
     if ( not $domain ) {
         die __( "Must give the name of a domain to test.\n" );
