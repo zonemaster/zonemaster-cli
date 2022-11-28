@@ -48,6 +48,12 @@ For participation, contact and bug reporting, please see the main
 [Zonemaster README].
 
 
+## License
+
+This is free software under a 2-clause BSD license. The full text of the license can
+be found in the [LICENSE](LICENSE) file included in this respository.
+
+
 [Docker Image Creation]:                          https://github.com/zonemaster/zonemaster/blob/master/docs/internal-documentation/maintenance/ReleaseProcess-create-docker-image.md
 [Docker Hub]:                                     https://hub.docker.com/u/zonemaster
 [Installation]:                                   docs/Installation.md
