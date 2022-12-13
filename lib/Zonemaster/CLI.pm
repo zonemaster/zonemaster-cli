@@ -490,7 +490,7 @@ sub run {
     $domain =~ s/\.$// unless $domain eq '.';
     $domain = $self->to_idn( $domain );
 
-    if ( $self->hints ) {
+    if ( defined $self->hints ) {
         my $hints_data;
         try {
             my $hints_text = read_file( $self->hints );
