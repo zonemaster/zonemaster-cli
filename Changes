@@ -1,5 +1,24 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
+
+v5.0.0 2022-12-19 (public release version)
+
+ [Breaking changes]
+ - Makes zonemaster-cli fail if there are multiple domain
+   names in entry (#287, #286)
+
+ [Features]
+ - Adds --hints option (#284, #293, #292)
+
+ [Fixes]
+ - Updates installation instruction (#291, #289)
+ - Corrects the license statement in CLI.pm (#288)
+ - Sets lowercase fragments to refer to internal headings in
+   markdown documents (#282)
+ - Cleans-up unused import (#283)
+ - Adds Mac note on USING.md when it comes to Docker (#281)
+
+
 v4.0.1 2022-07-08 (public fix version)
 
  [Fixes]
