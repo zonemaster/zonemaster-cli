@@ -22,8 +22,9 @@ requires(
     'Locale::TextDomain' => 1.23,
     'MooseX::Getopt'     => 0,
     'Text::Reflow'       => 0,
-    'Zonemaster::Engine' => 4.005001,
-    'Zonemaster::LDNS'   => 2.002002,
+    'Try::Tiny'          => 0,
+    'Zonemaster::Engine' => 4.006000,
+    'Zonemaster::LDNS'   => 3.000000,
 );
 
 # Make all platforms include inc/Module/Install/External.pm

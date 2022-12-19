@@ -2,17 +2,17 @@
 
 ## Table of contents
 
-* [Overview](#Overview)
-* [Docker](#Docker)
-* [Prerequisites for CPAN installation](#Prerequisites-for-CPAN-installation)
-* [Local installation](#Local-installation)
-  * [Installation on Rocky Linux](#Installation-on-Rocky-Linux)
-  * [Installation on Debian and Ubuntu](#Installation-on-Debian-and-Ubuntu)
-  * [Installation on FreeBSD](#Installation-on-FreeBSD)
-  * [Installation on CentOS Linux 7](#Installation-on-CentOS-Linux-7)
-* [Post-installation sanity check](#Post-installation-sanity-check)
-* [Using zonemaster-cli](#Using-zonemaster-cli)
-* [What to do next?](#What-to-do-next)
+* [Overview](#overview)
+* [Docker](#docker)
+* [Prerequisites for CPAN installation](#prerequisites-for-cpan-installation)
+* [Local installation](#local-installation)
+  * [Installation on Rocky Linux](#installation-on-rocky-linux)
+  * [Installation on Debian and Ubuntu](#installation-on-debian-and-ubuntu)
+  * [Installation on FreeBSD](#installation-on-freebsd)
+  * [Installation on CentOS Linux 7](#installation-on-centos-linux-7)
+* [Post-installation sanity check](#post-installation-sanity-check)
+* [Using zonemaster-cli](#using-zonemaster-cli)
+* [What to do next?](#what-to-do-next)
 
 
 ## Overview
@@ -58,7 +58,7 @@ Zonemaster::CLI, see the [declaration of prerequisites].
 1) Install binary dependencies:
 
    ```sh
-   sudo dnf install perl-JSON-XS perl-MooseX-Getopt
+   sudo dnf install perl-JSON-XS perl-MooseX-Getopt perl-Try-Tiny
    ```
 
 2) Install dependencies from CPAN:
@@ -112,7 +112,7 @@ Using pre-built packages is the preferred method for Debian and Ubuntu.
 1) Install dependencies:
 
    ```sh
-   sudo apt-get install locales libmoosex-getopt-perl libtext-reflow-perl libmodule-install-perl
+   sudo apt-get install locales libmoosex-getopt-perl libtext-reflow-perl libmodule-install-perl libtry-tiny-perl
    ```
 
 2) Install Zonemaster::CLI:
@@ -149,7 +149,7 @@ Using pre-built packages is the preferred method for Debian and Ubuntu.
 2) Install dependencies available from binary packages:
 
    ```sh
-   pkg install devel/gmake p5-JSON-XS p5-Locale-libintl p5-MooseX-Getopt p5-Text-Reflow
+   pkg install devel/gmake p5-JSON-XS p5-Locale-libintl p5-MooseX-Getopt p5-Text-Reflow p5-Try-Tiny
    ```
 
 3) Install Zonemaster::CLI:
@@ -166,7 +166,7 @@ Using pre-built packages is the preferred method for Debian and Ubuntu.
 1) Install binary dependencies:
 
    ```sh
-   sudo yum install perl-JSON-XS perl-MooseX-Getopt
+   sudo yum install perl-JSON-XS perl-MooseX-Getopt perl-Try-Tiny
    ```
 
 2) Install dependencies from CPAN:

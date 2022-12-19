@@ -11,28 +11,28 @@ use 5.014002;
 use strict;
 use warnings;
 
-use version; our $VERSION = version->declare( "v4.0.1" );
+use version; our $VERSION = version->declare( "v5.0.0" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
 with 'MooseX::Getopt::GLD' => { getopt_conf => [ 'pass_through' ] };
 
+use Encode;
+use File::Slurp;
+use JSON::XS;
+use List::Util qw[max];
+use POSIX qw[setlocale LC_MESSAGES LC_CTYPE];
+use Scalar::Util qw[blessed];
+use Socket qw[AF_INET AF_INET6];
+use Text::Reflow qw[reflow_string];
+use Try::Tiny;
 use Zonemaster::Engine;
+use Zonemaster::Engine::Exception;
 use Zonemaster::Engine::Logger::Entry;
 use Zonemaster::Engine::Translator;
-use Zonemaster::Engine::Util qw[pod_extract_for];
-use Zonemaster::Engine::Exception;
+use Zonemaster::Engine::Util qw[parse_hints pod_extract_for];
 use Zonemaster::Engine::Zone;
-use Zonemaster::Engine::Net::IP;
-use Scalar::Util qw[blessed];
-use Encode;
 use Zonemaster::LDNS;
-use POSIX qw[setlocale LC_MESSAGES LC_CTYPE];
-use List::Util qw[max];
-use Text::Reflow qw[reflow_string];
-use JSON::XS;
-use File::Slurp;
-use Socket qw[AF_INET AF_INET6];
 
 our %numeric = Zonemaster::Engine::Logger::Entry->levels;
 our $JSON    = JSON::XS->new->allow_blessed->convert_blessed->canonical;
@@ -142,6 +142,13 @@ has 'ns' => (
     is            => 'ro',
     isa           => 'ArrayRef',
     documentation => __( 'A name/ip string giving a nameserver for undelegated tests, or just a name which will be looked up for IP addresses. Can be given multiple times.' ),
+);
+
+has 'hints' => (
+    is            => 'ro',
+    isa           => 'Str',
+    required      => 0,
+    documentation => __( 'Name of a root hints file to override the defaults.' ),
 );
 
 has 'save' => (
@@ -467,6 +474,10 @@ sub run {
         print "\n" if $fh_diag eq *STDOUT;
     }
 
+    if ( scalar @{ $self->extra_argv } > 1 ) {
+        die __( "Only one domain can be given for testing. Did you forget to prepend an option with '--<OPTION>'?\n" );
+    }
+
     my ( $domain ) = @{ $self->extra_argv };
     if ( not $domain ) {
         die __( "Must give the name of a domain to test.\n" );
@@ -477,6 +488,28 @@ sub run {
     }
 
     $domain =~ s/\.$// unless $domain eq '.';
+    $domain = $self->to_idn( $domain );
+
+    if ( defined $self->hints ) {
+        my $hints_data;
+        try {
+            my $hints_text = read_file( $self->hints );
+            $hints_data = parse_hints( $hints_text )
+        }
+        catch {
+            die "Error loading hints file: $_";
+        }
+        Zonemaster::Engine::Recursor->remove_fake_addresses( '.' );
+        Zonemaster::Engine::Recursor->add_fake_addresses( '.', $hints_data );
+    }
+
+    if ( $self->ns and @{ $self->ns } > 0 ) {
+        $self->add_fake_delegation( $domain );
+    }
+
+    if ( $self->ds and @{ $self->ds } ) {
+        $self->add_fake_ds( $domain );
+    }
 
     if ( $translator ) {
         if ( $self->time ) {
@@ -507,16 +540,6 @@ sub run {
         }
         say __( '=======' );
     } ## end if ( $translator )
-
-    $domain = $self->to_idn( $domain );
-
-    if ( $self->ns and @{ $self->ns } > 0 ) {
-        $self->add_fake_delegation( $domain );
-    }
-
-    if ( $self->ds and @{ $self->ds } ) {
-        $self->add_fake_ds( $domain );
-    }
 
     # Actually run tests!
     eval {
@@ -769,11 +792,7 @@ Calle Dybedahl <calle at init.se>
 
 =head1 LICENSE
 
-This is free software, licensed under:
-
-The (three-clause) BSD License
-
-The full text of the license can be found in the
-F<LICENSE> file included with this distribution.
+This is free software under a 2-clause BSD license. The full text of the license can
+be found in the F<LICENSE> file included with this distribution.
 
 =cut
