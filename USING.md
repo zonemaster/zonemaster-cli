@@ -8,6 +8,7 @@
 * [Test reports](#Test-reports)
 * [Translation]
 * [Advanced use](#Advanced-use)
+* [Docker on Mac with M1 chip](#Docker-on-Mac-with-M1-chip)
 
 
 ## Docker or local installation
@@ -231,6 +232,26 @@ the command line tool:
 zonemaster-cli --list_tests
 ```
 
+### Use custom root hints
+
+You can override the built-in list of root servers that `zonemaster-cli` uses
+by providing a path to a custom root hints file with the `--hints HINTS-FILE`
+option. For example:
+
+```sh
+zonemaster-cli --hints /path/to/custom.hints example.com
+```
+
+If you are running `zonemaster-cli` using Docker, you must mount your custom
+root hints file inside the container using a volume so that `zonemaster-cli`
+can access it, like so:
+
+```sh
+docker run -t --rm \
+    -v /path/to/custom.hints:/hints \
+    zonemaster/cli --hints /hints example.com
+```
+
 ## Undelegated test
 
 Before you do any delegation change at the parent, either changing the NS
@@ -254,6 +275,27 @@ both IPv4 and IPv6. The DS syntax is keytag,algorithm,type,digest.
 You can also choose to do a undelegated test using only the new DS
 record, but keep the NS records from the parent by only specifying the
 DS record and no NS records on the command line.
+
+
+## Docker on Mac with M1 chip
+
+If you run the Docker commands above on a Mac computer with the M1 chip, then you
+will get the following warning:
+
+> WARNING: The requested image's platform (linux/amd64) does not match the
+> detected host platform (linux/arm64/v8) and no specific platform was requested
+
+The warning says that the image is created for Intel/AMD64 architecture, and that
+is not what your computer has. To get rid of the warning, add
+`--platform linux/amd64` to `docker run`, e.g.
+
+```sh
+docker run --platform linux/amd64 -t --rm zonemaster/cli zonemaster.net --no-ipv6
+```
+
+If you search for the error messages you will get suggestions for how to
+automatically include the `--platform linux/amd64` option every time you run
+`docker run`.
 
 
 [Connectivity03]:                  https://github.com/zonemaster/zonemaster/blob/master/docs/specifications/tests/Connectivity-TP/connectivity03.md
