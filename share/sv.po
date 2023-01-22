@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-21 17:54+0000\n"
-"PO-Revision-Date: 2022-05-21 17:54+0000\n"
+"POT-Creation-Date: 2023-01-22 14:10+0000\n"
+"PO-Revision-Date: 2023-01-22 14:10+0000\n"
 "Last-Translator: mats.dufberg@iis.se\n"
 "Language-Team: Zonemaster Team\n"
 "Language: sv\n"
@@ -59,6 +59,10 @@ msgstr ""
 "Ett par av namn/IP som anger en namnserver att använda för odelegerade "
 "tester, eller bara ett namn som kan anges för att slå upp IP-adresser. Kan "
 "ges flera gånger."
+
+msgid "Name of a root hints file to override the defaults."
+msgstr ""
+"Namn på en fil med s.k. \"root hints\" att ersätta standard inställning."
 
 msgid "Name of a file to save DNS data to after running tests."
 msgstr "Namn på en fll att spara DNS-data i efter en körning."
@@ -176,13 +180,19 @@ msgstr ""
 "--level måste vara en av CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, "
 "DEBUG2 eller DEBUG3.\n"
 
+msgid ""
+"Only one domain can be given for testing. Did you forget to prepend an "
+"option with '--<OPTION>'?\n"
+msgstr ""
+"Endast ett domännamn kan anges för testning. Missade du att sätt '--"
+"<OPTION>' före en optionsparameter?\n"
+
 msgid "Must give the name of a domain to test.\n"
 msgstr "Måste ange namnet på en domän att testa.\n"
 
 msgid "The domain name contains consecutive dots.\n"
 msgstr "Domännamnet innehåller flera punkter i följd.\n"
 
-#, fuzzy
 msgid "Seconds "
 msgstr "Sekund  "
 
@@ -236,7 +246,6 @@ msgstr "--ns måste vara ett namn eller namn/ip i det formatet.\""
 msgid "The name of the nameserver '{nsname}' contains consecutive dots."
 msgstr "Namnet på namnserver \"{nsname}\" innehåller flera punkter i följd."
 
-#, fuzzy
 msgid ""
 "Warning: Zonemaster::LDNS not compiled with IDN support, cannot handle non-"
 "ASCII names correctly."
