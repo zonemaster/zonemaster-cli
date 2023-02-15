@@ -673,13 +673,6 @@ sub print_versions {
     say 'Engine version: ' . $Zonemaster::Engine::VERSION;
     say 'LDNS version: ' . $Zonemaster::LDNS::VERSION;
     say 'libldns version: ' . Zonemaster::LDNS::lib_version();
-    say "\nTest module versions:";
-
-    my %methods = Zonemaster::Engine->all_methods;
-    foreach my $module ( sort keys %methods ) {
-        my $mod = "Zonemaster::Engine::Test::$module";
-        say "\t$module: " . $mod->version;
-    }
 
     return;
 }
