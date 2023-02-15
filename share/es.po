@@ -206,35 +206,20 @@ msgstr "Debe indicar el nombre de un dominio a probar.\n"
 msgid "The domain name contains consecutive dots.\n"
 msgstr "El nombre de dominio contiene puntos consecutivos.\n"
 
-msgid "Seconds "
-msgstr "Segundos "
+msgid "Seconds"
+msgstr "Segundos"
 
-msgid "Level     "
-msgstr "Nivel     "
+msgid "Level"
+msgstr "Nivel"
 
-msgid "Module       "
-msgstr "Módulo       "
+msgid "Module"
+msgstr "Módulo"
 
-msgid "Testcase       "
-msgstr "Caso de prueba       "
+msgid "Testcase"
+msgstr "Caso de prueba"
 
 msgid "Message"
 msgstr "Mensaje"
-
-msgid "======= "
-msgstr "======= "
-
-msgid "========= "
-msgstr "========= "
-
-msgid "============ "
-msgstr "============ "
-
-msgid "============== "
-msgstr "============== "
-
-msgid "======="
-msgstr "======="
 
 msgid "Looks OK."
 msgstr "Se ve bien."
@@ -284,24 +269,3 @@ msgstr "ERROR"
 
 msgid "CRITICAL"
 msgstr "CRÍTICO"
-
-#~ msgid "The minimum severity level to display"
-#~ msgstr "El nivel mínimo de gravedad que despliega"
-
-#~ msgid "Name of configuration file to load."
-#~ msgstr "Nombre del archivo de configuración a cargar."
-
-#~ msgid "Loading configuration from {path}."
-#~ msgstr "Cargando configuración desde {path}."
-
-#~ msgid "Print the effective configuration used in JSON format, then exit."
-#~ msgstr ""
-#~ "Despliega la configuración definitiva usada en formato JSON, luego "
-#~ "termina."
-
-#~ msgid ""
-#~ "Local IP address that the test engine should try to send its requests "
-#~ "from."
-#~ msgstr ""
-#~ "Dirección IP local que debería usar el motor de pruebas como origen de "
-#~ "sus solicitudes."
