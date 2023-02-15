@@ -512,7 +512,7 @@ sub run {
     }
 
     if ( $translator ) {
-        my %header = (
+        my %header_names = (
             seconds  => __( 'Seconds' ),
             level    => __( 'Level    ' ),
             module   => __( 'Module      ' ),
@@ -520,33 +520,37 @@ sub run {
             message  => __( 'Message' )
         );
 
-        if ( $self->time ) {
-            printf "%s ", $header{seconds};
-        }
-        if ( $self->show_level ) {
-            printf "%s ", $header{level};
-        }
-        if ( $self->show_module ) {
-            printf "%s ", $header{module};
-        }
-        if ( $self->show_testcase ) {
-            printf "%s ", $header{testcase};
-        }
-        printf "%s\n", $header{message};
+        my $header = q{};
 
         if ( $self->time ) {
-            printf "%s ", __( '=======' );
+            $header .= sprintf "%s ", $header_names{seconds};
         }
         if ( $self->show_level ) {
-            printf "%s ", __( '=========' );
+            $header .= sprintf "%s ", $header_names{level};
         }
         if ( $self->show_module ) {
-            printf "%s ", __( '============' );
+            $header .= sprintf "%s ", $header_names{module};
         }
         if ( $self->show_testcase ) {
-            printf "%s ", __( '==============' );
+            $header .= sprintf "%s ", $header_names{testcase};
         }
-        say __( '=======' );
+        $header .= sprintf "%s\n", $header_names{message};
+
+        if ( $self->time ) {
+            $header .= sprintf "%s ", __( '=======' );
+        }
+        if ( $self->show_level ) {
+            $header .= sprintf "%s ", __( '=========' );
+        }
+        if ( $self->show_module ) {
+            $header .= sprintf "%s ", __( '============' );
+        }
+        if ( $self->show_testcase ) {
+            $header .= sprintf "%s ", __( '==============' );
+        }
+        $header .= sprintf "%s\n", __( '=======' );
+
+        print $header;
     } ## end if ( $translator )
 
     # Actually run tests!
