@@ -527,8 +527,8 @@ sub run {
         );
         my %remaining_space = ();
         foreach ( keys %header_names ) {
-            $header_width{$_} = _max( $header_width{$_}, length( $header_names{$_} ) );
-            $remaining_space{$_} = $header_width{$_} - length( $header_names{$_} );
+            $header_width{$_} = _max( $header_width{$_}, length( decode( 'UTF-8', $header_names{$_} ) ) );
+            $remaining_space{$_} = $header_width{$_} - length( decode( 'UTF-8', $header_names{$_} ) );
         }
 
         my $header = q{};
