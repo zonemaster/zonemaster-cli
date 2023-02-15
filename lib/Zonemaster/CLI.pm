@@ -669,10 +669,10 @@ sub add_fake_ds {
 }
 
 sub print_versions {
-    say 'CLI version:    ' . __PACKAGE__->VERSION;
-    say 'Engine version: ' . $Zonemaster::Engine::VERSION;
-    say 'LDNS version: ' . $Zonemaster::LDNS::VERSION;
-    say 'libldns version: ' . Zonemaster::LDNS::lib_version();
+    say 'Zonemaster-CLI version ' . __PACKAGE__->VERSION;
+    say 'Zonemaster-Engine version ' . $Zonemaster::Engine::VERSION;
+    say 'Zonemaster-LDNS version ' . $Zonemaster::LDNS::VERSION;
+    say 'NL NetLabs LDNS version ' . Zonemaster::LDNS::lib_version();
 
     return;
 }
