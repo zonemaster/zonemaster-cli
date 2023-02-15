@@ -514,41 +514,52 @@ sub run {
     if ( $translator ) {
         my %header_names = (
             seconds  => __( 'Seconds' ),
-            level    => __( 'Level    ' ),
-            module   => __( 'Module      ' ),
-            testcase => __( 'Testcase      ' ),
+            level    => __( 'Level' ),
+            module   => __( 'Module' ),
+            testcase => __( 'Testcase' ),
             message  => __( 'Message' )
         );
+        my %header_width = (
+            seconds  =>  7,
+            level    =>  9,
+            module   => 12,
+            testcase => 14
+        );
+        my %remaining_space = ();
+        foreach ( keys %header_names ) {
+            $header_width{$_} = _max( $header_width{$_}, length( $header_names{$_} ) );
+            $remaining_space{$_} = $header_width{$_} - length( $header_names{$_} );
+        }
 
         my $header = q{};
 
         if ( $self->time ) {
-            $header .= sprintf "%s ", $header_names{seconds};
+            $header .= sprintf "%s%s ", $header_names{seconds}, " " x $remaining_space{seconds};
         }
         if ( $self->show_level ) {
-            $header .= sprintf "%s ", $header_names{level};
+            $header .= sprintf "%s%s ", $header_names{level}, " " x $remaining_space{level};
         }
         if ( $self->show_module ) {
-            $header .= sprintf "%s ", $header_names{module};
+            $header .= sprintf "%s%s ", $header_names{module}, " " x $remaining_space{module};
         }
         if ( $self->show_testcase ) {
-            $header .= sprintf "%s ", $header_names{testcase};
+            $header .= sprintf "%s%s ", $header_names{testcase}, " " x $remaining_space{testcase};
         }
         $header .= sprintf "%s\n", $header_names{message};
 
         if ( $self->time ) {
-            $header .= sprintf "%s ", __( '=======' );
+            $header .= sprintf "%s ", "=" x $header_width{seconds};
         }
         if ( $self->show_level ) {
-            $header .= sprintf "%s ", __( '=========' );
+            $header .= sprintf "%s ", "=" x $header_width{level};
         }
         if ( $self->show_module ) {
-            $header .= sprintf "%s ", __( '============' );
+            $header .= sprintf "%s ", "=" x $header_width{module};
         }
         if ( $self->show_testcase ) {
-            $header .= sprintf "%s ", __( '==============' );
+            $header .= sprintf "%s ", "=" x $header_width{testcase};
         }
-        $header .= sprintf "%s\n", __( '=======' );
+        $header .= sprintf "%s\n", "=" x $header_width{message};
 
         print $header;
     } ## end if ( $translator )
@@ -789,6 +800,13 @@ sub translate_severity {
     else {
         return $severity;
     }
+}
+
+sub _max {
+    my ( $a, $b ) = @_;
+    $a //= 0;
+    $b //= 0;
+    return ( $a > $b ? $a : $b ) ;
 }
 
 1;
