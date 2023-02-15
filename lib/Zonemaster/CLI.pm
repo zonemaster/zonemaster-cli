@@ -512,31 +512,39 @@ sub run {
     }
 
     if ( $translator ) {
-        if ( $self->time ) {
-            print __( 'Seconds ' );
-        }
-        if ( $self->show_level ) {
-            print __( 'Level     ' );
-        }
-        if ( $self->show_module ) {
-            print __( 'Module       ' );
-        }
-        if ( $self->show_testcase ) {
-            print __( 'Testcase       ' );
-        }
-        say __( 'Message' );
+        my %header = (
+            seconds  => __( 'Seconds' ),
+            level    => __( 'Level    ' ),
+            module   => __( 'Module      ' ),
+            testcase => __( 'Testcase      ' ),
+            message  => __( 'Message' )
+        );
 
         if ( $self->time ) {
-            print __( '======= ' );
+            printf "%s ", $header{seconds};
         }
         if ( $self->show_level ) {
-            print __( '========= ' );
+            printf "%s ", $header{level};
         }
         if ( $self->show_module ) {
-            print __( '============ ' );
+            printf "%s ", $header{module};
         }
         if ( $self->show_testcase ) {
-            print __( '============== ' );
+            printf "%s ", $header{testcase};
+        }
+        printf "%s\n", $header{message};
+
+        if ( $self->time ) {
+            printf "%s ", __( '=======' );
+        }
+        if ( $self->show_level ) {
+            printf "%s ", __( '=========' );
+        }
+        if ( $self->show_module ) {
+            printf "%s ", __( '============' );
+        }
+        if ( $self->show_testcase ) {
+            printf "%s ", __( '==============' );
         }
         say __( '=======' );
     } ## end if ( $translator )
