@@ -430,11 +430,11 @@ sub run {
                 elsif ( $self->json_stream ) {
                     my %r;
 
-                    $r{timestamp} = $entry->timestamp;
-                    $r{module}    = $entry->module;
-                    $r{testcase}  = $entry->testcase;
+                    $r{timestamp} = $entry->timestamp if $self->time;
+                    $r{module}    = $entry->module if $self->show_module;
+                    $r{testcase}  = $entry->testcase if $self->show_testcase;
                     $r{tag}       = $entry->tag;
-                    $r{level}     = $entry->level;
+                    $r{level}     = $entry->level if $self->show_level;
                     $r{args}      = $entry->args if $entry->args;
                     $r{message}   = $json_translator->translate_tag( $entry ) if $json_translator;
 
@@ -607,7 +607,15 @@ sub run {
     }
 
     if ( $self->json ) {
-        say Zonemaster::Engine->logger->json( $self->level );
+        my $res = Zonemaster::Engine->logger->json( $self->level );
+        $res = $JSON->decode( $res );
+        foreach ( @$res ) {
+            delete $_->{timestamp} unless $self->time;
+            delete $_->{level} unless $self->show_level;
+            delete $_->{module} unless $self->show_module;
+            delete $_->{testcase} unless $self->show_testcase;
+        }
+        say $JSON->encode( $res );
     }
 
     if ( $self->save ) {
