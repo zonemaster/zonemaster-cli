@@ -91,7 +91,7 @@ has 'json_translate' => (
     default       => 0,
     cmd_aliases   => 'json_translate',
     cmd_flag      => 'json-translate',
-    documentation => __( 'Flag indicating if JSON output should include the translated message of the tag or not.' ),
+    documentation => __( 'Deprecated. Flag indicating if JSON output should include the translated message of the tag or not.' ),
 );
 
 has 'raw' => (
@@ -334,7 +334,7 @@ sub run {
 
     # align values
     $self->json( 1 ) if $self->json_stream;
-    $self->raw( 0 ) if $self->json_translate;
+    $self->raw( 0 ) if $self->json_translate; # deprecated
 
     # Filehandle for diagnostics output
     my $fh_diag = ( $self->json or $self->raw )
