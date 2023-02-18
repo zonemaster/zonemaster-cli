@@ -91,7 +91,7 @@ has 'json_translate' => (
     default       => 0,
     cmd_aliases   => 'json_translate',
     cmd_flag      => 'json-translate',
-    documentation => __( 'Flag indicating if streaming JSON output should include the translated message of the tag or not.' ),
+    documentation => __( 'Flag indicating if JSON output should include the translated message of the tag or not.' ),
 );
 
 has 'raw' => (
@@ -610,6 +610,11 @@ sub run {
         my $res = Zonemaster::Engine->logger->json( $self->level );
         $res = $JSON->decode( $res );
         foreach ( @$res ) {
+            if ( $self->json_translate ) {
+                my %e = %$_;
+                my $entry = Zonemaster::Engine::Logger::Entry->new( \%e );
+                $_->{message} = $json_translator->translate_tag( $entry );
+            }
             delete $_->{timestamp} unless $self->time;
             delete $_->{level} unless $self->show_level;
             delete $_->{module} unless $self->show_module;
