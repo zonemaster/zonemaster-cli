@@ -419,7 +419,7 @@ sub run {
             if ( $numeric{ uc $entry->level } >= $numeric{ $self->level } ) {
                 $printed_something = 1;
 
-                if ( $translator ) {
+                if ( not $self->raw and not $self->json ) {
                     my $header = q{};
                     if ( $self->time ) {
                         $header .= sprintf "%*.2f ", ${field_width{seconds}}, $entry->timestamp;
@@ -487,7 +487,7 @@ sub run {
                         printf "%s%s %s\n", $prefix, '>', $line;
                     }
                 }
-            } ## end if ( $numeric{ uc $entry...})
+            }
             if ( $self->stop_level and $numeric{ uc $entry->level } >= $numeric{ $self->stop_level } ) {
                 die( Zonemaster::Engine::Exception::NormalExit->new( { message => "Saw message at level " . $entry->level } ) );
             }
@@ -536,7 +536,7 @@ sub run {
         $self->add_fake_ds( $domain );
     }
 
-    if ( $translator ) {
+    if ( not $self->raw and not $self->json ) {
         my $header = q{};
 
         if ( $self->time ) {
@@ -568,7 +568,7 @@ sub run {
         $header .= sprintf "%s\n", "=" x $field_width{message};
 
         print $header;
-    } ## end if ( $translator )
+    }
 
     # Actually run tests!
     eval {
@@ -587,7 +587,7 @@ sub run {
             Zonemaster::Engine->test_zone( $domain );
         }
     };
-    if ( $translator ) {
+    if ( not $self->raw and not $self->json ) {
         if ( not $printed_something ) {
             say __( "Looks OK." );
         }
@@ -657,7 +657,7 @@ sub run {
     }
 
     return;
-} ## end sub run
+}
 
 sub add_fake_delegation {
     my ( $self, $domain ) = @_;
@@ -773,7 +773,7 @@ sub print_test_list {
         print "\n";
     }
     exit( 0 );
-} ## end sub print_test_list
+}
 
 sub do_dump_profile {
     my $json = JSON::XS->new->canonical->pretty;
