@@ -95,7 +95,7 @@ has 'json_translate' => (
 );
 
 has 'raw' => (
-    is            => 'ro',
+    is            => 'rw',
     isa           => 'Bool',
     default       => 0,
     documentation => __( 'Flag indicating if output should be translated to human language or dumped raw.' ),
@@ -332,8 +332,9 @@ sub run {
         Zonemaster::Engine::Profile->effective->set( q{resolver.source}, $self->sourceaddr );
     }
 
-    # align value
+    # align values
     $self->json( 1 ) if $self->json_stream;
+    $self->raw( 0 ) if $self->json_translate;
 
     # Filehandle for diagnostics output
     my $fh_diag = ( $self->json or $self->raw )
@@ -372,14 +373,8 @@ sub run {
     }
 
     my $translator;
-    $translator = Zonemaster::Engine::Translator->new unless ( $self->raw or $self->json );
+    $translator = Zonemaster::Engine::Translator->new unless $self->raw;
     $translator->locale( $self->locale ) if $translator and $self->locale;
-
-    my $json_translator;
-    if ( $self->json_translate ) {
-        $json_translator = Zonemaster::Engine::Translator->new;
-        $json_translator->locale( $self->locale ) if $self->locale;
-    }
 
     if ( $self->restore ) {
         Zonemaster::Engine->preload_cache( $self->restore );
@@ -428,7 +423,7 @@ sub run {
                     $r{tag}       = $entry->tag;
                     $r{level}     = $entry->level if $self->show_level;
                     $r{args}      = $entry->args if $entry->args;
-                    $r{message}   = $json_translator->translate_tag( $entry ) if $json_translator;
+                    $r{message}   = $translator->translate_tag( $entry ) unless $self->raw;
 
                     say $JSON->encode( \%r );
                 }
@@ -632,10 +627,10 @@ sub run {
         my $res = Zonemaster::Engine->logger->json( $self->level );
         $res = $JSON->decode( $res );
         foreach ( @$res ) {
-            if ( $self->json_translate ) {
+            unless ( $self->raw ) {
                 my %e = %$_;
                 my $entry = Zonemaster::Engine::Logger::Entry->new( \%e );
-                $_->{message} = $json_translator->translate_tag( $entry );
+                $_->{message} = $translator->translate_tag( $entry );
             }
             delete $_->{timestamp} unless $self->time;
             delete $_->{level} unless $self->show_level;
