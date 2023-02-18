@@ -419,40 +419,7 @@ sub run {
             if ( $numeric{ uc $entry->level } >= $numeric{ $self->level } ) {
                 $printed_something = 1;
 
-                if ( not $self->raw and not $self->json ) {
-                    my $header = q{};
-                    if ( $self->time ) {
-                        $header .= sprintf "%*.2f ", ${field_width{seconds}}, $entry->timestamp;
-                    }
-
-                    if ( $self->show_level ) {
-                        $header .= sprintf "%-*s ", ${field_width{level}}, translate_severity( $entry->level );
-                    }
-
-                    if ( $self->show_module ) {
-                        $header .= sprintf "%-*s ", ${field_width{module}}, $entry->module;
-                    }
-
-                    if ( $self->show_testcase ) {
-                        $header .= sprintf "%-*s ", ${field_width{testcase}}, $entry->testcase;
-                    }
-
-                    print $header;
-
-                    if ( $entry->level eq q{DEBUG3} and scalar( keys %{$entry->args} ) == 1 and defined $entry->args->{packet} ) {
-                        my $packet = $entry->args->{packet};
-                        my $padding = q{ } x length $header;
-                        $entry->args->{packet} = q{};
-                        say $translator->translate_tag( $entry );
-                        foreach my $line ( split /\n/, $packet ) {
-                            print $padding, $line, "\n";
-                        }
-                    }
-                    else {
-                        say $translator->translate_tag( $entry );
-                    }
-                }
-                elsif ( $self->json and $self->json_stream ) {
+                if ( $self->json and $self->json_stream ) {
                     my %r;
 
                     $r{timestamp} = $entry->timestamp if $self->time;
@@ -469,22 +436,48 @@ sub run {
                     # Don't do anything
                 }
                 else {
-                    my $prefix = sprintf "%*.2f %-*s ", ${field_width{seconds}}, $entry->timestamp, ${field_width{level}}, $entry->level;
+                    my $prefix = q{};
+                    if ( $self->time ) {
+                        $prefix .= sprintf "%*.2f ", ${field_width{seconds}}, $entry->timestamp;
+                    }
+
+                    if ( $self->show_level ) {
+                        $prefix .= sprintf "%-*s ", ${field_width{level}}, $self->raw ? $entry->level : translate_severity( $entry->level );
+                    }
+
                     if ( $self->show_module ) {
                         $prefix .= sprintf "%-*s ", ${field_width{module}}, $entry->module;
                     }
+
                     if ( $self->show_testcase ) {
                         $prefix .= sprintf "%-*s ", ${field_width{testcase}}, $entry->testcase;
                     }
-                    $prefix .= $entry->tag;
 
-                    my $message = $entry->string;
-                    $message =~ s/^[A-Z0-9:_]+//;    # strip MODULE:TAG, they're coming in $prefix instead
-                    my @lines = split /\n/, $message;
+                    if ( $self->raw ) {
+                        $prefix .= $entry->tag;
 
-                    printf "%s%s %s\n", $prefix, ' ', shift @lines;
-                    for my $line ( @lines ) {
-                        printf "%s%s %s\n", $prefix, '>', $line;
+                        my $message = $entry->string;
+                        $message =~ s/^[A-Z0-9:_]+//;    # strip MODULE:TAG, they're coming in $prefix instead
+                        my @lines = split /\n/, $message;
+
+                        printf "%s%s %s\n", $prefix, ' ', shift @lines;
+                        for my $line ( @lines ) {
+                            printf "%s%s %s\n", $prefix, '>', $line;
+                        }
+                    }
+                    else {
+                        if ( $entry->level eq q{DEBUG3} and scalar( keys %{$entry->args} ) == 1 and defined $entry->args->{packet} ) {
+                            my $packet = $entry->args->{packet};
+                            my $padding = q{ } x length $prefix;
+                            $entry->args->{packet} = q{};
+                            printf "%s%s\n", $prefix, $translator->translate_tag( $entry );
+                            foreach my $line ( split /\n/, $packet ) {
+                                printf "%s%s\n", $padding, $line;
+                            }
+                        }
+                        else {
+                            printf "%s%s\n", $prefix, $translator->translate_tag( $entry );
+                        }
                     }
                 }
             }
