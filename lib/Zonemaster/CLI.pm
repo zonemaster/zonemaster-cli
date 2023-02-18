@@ -68,7 +68,7 @@ has 'locale' => (
 );
 
 has 'json' => (
-    is            => 'ro',
+    is            => 'rw',
     isa           => 'Bool',
     default       => 0,
     documentation => __( 'Flag indicating if output should be in JSON or not.' ),
@@ -332,8 +332,11 @@ sub run {
         Zonemaster::Engine::Profile->effective->set( q{resolver.source}, $self->sourceaddr );
     }
 
+    # align value
+    $self->json( 1 ) if $self->json_stream;
+
     # Filehandle for diagnostics output
-    my $fh_diag = ( $self->json or $self->json_stream or $self->raw )
+    my $fh_diag = ( $self->json or $self->raw )
       ? *STDERR     # Structured output mode (e.g. JSON)
       : *STDOUT;    # Human readable output mode
 
@@ -369,7 +372,7 @@ sub run {
     }
 
     my $translator;
-    $translator = Zonemaster::Engine::Translator->new unless ( $self->raw or $self->json or $self->json_stream );
+    $translator = Zonemaster::Engine::Translator->new unless ( $self->raw or $self->json );
     $translator->locale( $self->locale ) if $translator and $self->locale;
 
     my $json_translator;
@@ -449,7 +452,7 @@ sub run {
                         say $translator->translate_tag( $entry );
                     }
                 }
-                elsif ( $self->json_stream ) {
+                elsif ( $self->json and $self->json_stream ) {
                     my %r;
 
                     $r{timestamp} = $entry->timestamp if $self->time;
@@ -462,7 +465,7 @@ sub run {
 
                     say $JSON->encode( \%r );
                 }
-                elsif ( $self->json ) {
+                elsif ( $self->json and not $self->json_stream ) {
                     # Don't do anything
                 }
                 else {
@@ -632,7 +635,7 @@ sub run {
         printf "Total test run time: %0.1f seconds.\n", $last->timestamp;
     }
 
-    if ( $self->json ) {
+    if ( $self->json and not $self->json_stream ) {
         my $res = Zonemaster::Engine->logger->json( $self->level );
         $res = $JSON->decode( $res );
         foreach ( @$res ) {
