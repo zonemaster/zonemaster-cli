@@ -669,15 +669,10 @@ sub add_fake_ds {
 }
 
 sub print_versions {
-    say 'CLI version:    ' . __PACKAGE__->VERSION;
-    say 'Engine version: ' . $Zonemaster::Engine::VERSION;
-    say "\nTest module versions:";
-
-    my %methods = Zonemaster::Engine->all_methods;
-    foreach my $module ( sort keys %methods ) {
-        my $mod = "Zonemaster::Engine::Test::$module";
-        say "\t$module: " . $mod->version;
-    }
+    say 'Zonemaster-CLI version ' . __PACKAGE__->VERSION;
+    say 'Zonemaster-Engine version ' . $Zonemaster::Engine::VERSION;
+    say 'Zonemaster-LDNS version ' . $Zonemaster::LDNS::VERSION;
+    say 'NL NetLabs LDNS version ' . Zonemaster::LDNS::lib_version();
 
     return;
 }
