@@ -419,19 +419,19 @@ sub run {
                 if ( $translator ) {
                     my $header = q{};
                     if ( $self->time ) {
-                        $header .= sprintf "%${field_width{seconds}}.2f ", $entry->timestamp;
+                        $header .= sprintf "%*.2f ", ${field_width{seconds}}, $entry->timestamp;
                     }
 
                     if ( $self->show_level ) {
-                        $header .= sprintf "%-${field_width{level}}s ", translate_severity( $entry->level );
+                        $header .= sprintf "%-*s ", ${field_width{level}}, translate_severity( $entry->level );
                     }
 
                     if ( $self->show_module ) {
-                        $header .= sprintf "%-${field_width{module}}s ", $entry->module;
+                        $header .= sprintf "%-*s ", ${field_width{module}}, $entry->module;
                     }
 
                     if ( $self->show_testcase ) {
-                        $header .= sprintf "%-${field_width{testcase}}s ", $entry->testcase;
+                        $header .= sprintf "%-*s ", ${field_width{testcase}}, $entry->testcase;
                     }
 
                     print $header;
@@ -466,12 +466,12 @@ sub run {
                     # Don't do anything
                 }
                 else {
-                    my $prefix = sprintf "%${field_width{seconds}}.2f %-${field_width{level}}s ", $entry->timestamp, $entry->level;
+                    my $prefix = sprintf "%*.2f %-*s ", ${field_width{seconds}}, $entry->timestamp, ${field_width{level}}, $entry->level;
                     if ( $self->show_module ) {
-                        $prefix .= sprintf "%-${field_width{module}}s ", $entry->module;
+                        $prefix .= sprintf "%-*s ", ${field_width{module}}, $entry->module;
                     }
                     if ( $self->show_testcase ) {
-                        $prefix .= sprintf "%-${field_width{testcase}}s ", $entry->testcase;
+                        $prefix .= sprintf "%-*s ", ${field_width{testcase}}, $entry->testcase;
                     }
                     $prefix .= $entry->tag;
 
