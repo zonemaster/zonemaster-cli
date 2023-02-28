@@ -328,8 +328,27 @@ sub run {
     }
 
     if ($self->sourceaddr) {
-
         Zonemaster::Engine::Profile->effective->set( q{resolver.source}, $self->sourceaddr );
+    }
+
+    # errors and warnings
+    if ( $self->json_stream and not $self->json and grep( /^--no-json$/, @{ $self->ARGV } ) ) {
+        die __( "Error: --json-stream and --no-json can't be used together." ) . "\n";
+    }
+
+    if ( $self->json_translate ) {
+        unless ( $self->json or $self->json_stream ) {
+            printf STDERR __( "Warning: --json-translate has no effect without either --json or --json-stream." ) . "\n";
+        }
+        printf STDERR __( "Warning: deprecated --json-translate, use --no-raw instead." ) . "\n";
+    }
+    else {
+        if ( grep( /^--no-json-translate$/, @{ $self->ARGV } ) ) {
+            unless ( $self->json or $self->json_stream ) {
+                printf STDERR __( "Warning: --json-translate has no effect without either --json or --json-stream." ) . "\n";
+            }
+            printf STDERR __( "Warning: deprecated --no-json-translate, use --raw instead." ) . "\n";
+        }
     }
 
     # align values
