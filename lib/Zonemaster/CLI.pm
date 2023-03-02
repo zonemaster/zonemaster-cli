@@ -382,6 +382,28 @@ sub run {
         Zonemaster::Engine->preload_cache( $self->restore );
     }
 
+    my %field_width = (
+        seconds  =>  7,
+        level    =>  9,
+        module   => 12,
+        testcase => 14
+    );
+    my %header_names = ();
+    my %remaining_space = ();
+    if ( $translator ) {
+        %header_names = (
+            seconds  => __( 'Seconds' ),
+            level    => __( 'Level' ),
+            module   => __( 'Module' ),
+            testcase => __( 'Testcase' ),
+            message  => __( 'Message' )
+        );
+        foreach ( keys %header_names ) {
+            $field_width{$_} = _max( $field_width{$_}, length( decode( 'UTF-8', $header_names{$_} ) ) );
+            $remaining_space{$_} = $field_width{$_} - length( decode( 'UTF-8', $header_names{$_} ) );
+        }
+    }
+
     # Callback defined here so it closes over the setup above.
     Zonemaster::Engine->logger->callback(
         sub {
@@ -397,19 +419,19 @@ sub run {
                 if ( $translator ) {
                     my $header = q{};
                     if ( $self->time ) {
-                        $header .= sprintf "%7.2f ", $entry->timestamp;
+                        $header .= sprintf "%*.2f ", ${field_width{seconds}}, $entry->timestamp;
                     }
 
                     if ( $self->show_level ) {
-                        $header .= sprintf "%-9s ", translate_severity( $entry->level );
+                        $header .= sprintf "%-*s ", ${field_width{level}}, translate_severity( $entry->level );
                     }
 
                     if ( $self->show_module ) {
-                        $header .= sprintf "%-12s ", $entry->module;
+                        $header .= sprintf "%-*s ", ${field_width{module}}, $entry->module;
                     }
 
                     if ( $self->show_testcase ) {
-                        $header .= sprintf "%-14s ", $entry->testcase;
+                        $header .= sprintf "%-*s ", ${field_width{testcase}}, $entry->testcase;
                     }
 
                     print $header;
@@ -444,12 +466,12 @@ sub run {
                     # Don't do anything
                 }
                 else {
-                    my $prefix = sprintf "%7.2f %-9s ", $entry->timestamp, $entry->level;
+                    my $prefix = sprintf "%*.2f %-*s ", ${field_width{seconds}}, $entry->timestamp, ${field_width{level}}, $entry->level;
                     if ( $self->show_module ) {
-                        $prefix .= sprintf "%-12s ", $entry->module;
+                        $prefix .= sprintf "%-*s ", ${field_width{module}}, $entry->module;
                     }
                     if ( $self->show_testcase ) {
-                        $prefix .= sprintf "%-14s ", $entry->testcase;
+                        $prefix .= sprintf "%-*s ", ${field_width{testcase}}, $entry->testcase;
                     }
                     $prefix .= $entry->tag;
 
@@ -512,33 +534,37 @@ sub run {
     }
 
     if ( $translator ) {
-        if ( $self->time ) {
-            print __( 'Seconds ' );
-        }
-        if ( $self->show_level ) {
-            print __( 'Level     ' );
-        }
-        if ( $self->show_module ) {
-            print __( 'Module       ' );
-        }
-        if ( $self->show_testcase ) {
-            print __( 'Testcase       ' );
-        }
-        say __( 'Message' );
+        my $header = q{};
 
         if ( $self->time ) {
-            print __( '======= ' );
+            $header .= sprintf "%s%s ", $header_names{seconds}, " " x $remaining_space{seconds};
         }
         if ( $self->show_level ) {
-            print __( '========= ' );
+            $header .= sprintf "%s%s ", $header_names{level}, " " x $remaining_space{level};
         }
         if ( $self->show_module ) {
-            print __( '============ ' );
+            $header .= sprintf "%s%s ", $header_names{module}, " " x $remaining_space{module};
         }
         if ( $self->show_testcase ) {
-            print __( '============== ' );
+            $header .= sprintf "%s%s ", $header_names{testcase}, " " x $remaining_space{testcase};
         }
-        say __( '=======' );
+        $header .= sprintf "%s\n", $header_names{message};
+
+        if ( $self->time ) {
+            $header .= sprintf "%s ", "=" x $field_width{seconds};
+        }
+        if ( $self->show_level ) {
+            $header .= sprintf "%s ", "=" x $field_width{level};
+        }
+        if ( $self->show_module ) {
+            $header .= sprintf "%s ", "=" x $field_width{module};
+        }
+        if ( $self->show_testcase ) {
+            $header .= sprintf "%s ", "=" x $field_width{testcase};
+        }
+        $header .= sprintf "%s\n", "=" x $field_width{message};
+
+        print $header;
     } ## end if ( $translator )
 
     # Actually run tests!
@@ -777,6 +803,13 @@ sub translate_severity {
     else {
         return $severity;
     }
+}
+
+sub _max {
+    my ( $a, $b ) = @_;
+    $a //= 0;
+    $b //= 0;
+    return ( $a > $b ? $a : $b ) ;
 }
 
 1;

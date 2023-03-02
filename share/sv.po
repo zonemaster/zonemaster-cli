@@ -192,35 +192,20 @@ msgstr "Måste ange namnet på en domän att testa.\n"
 msgid "The domain name contains consecutive dots.\n"
 msgstr "Domännamnet innehåller flera punkter i följd.\n"
 
-msgid "Seconds "
-msgstr "Sekund  "
+msgid "Seconds"
+msgstr "Sekund"
 
-msgid "Level     "
-msgstr "Nivå      "
+msgid "Level"
+msgstr "Nivå"
 
-msgid "Module       "
-msgstr "Modul        "
+msgid "Module"
+msgstr "Modul"
 
-msgid "Testcase       "
-msgstr "Testfall       "
+msgid "Testcase"
+msgstr "Testfall"
 
 msgid "Message"
 msgstr "Meddelande"
-
-msgid "======= "
-msgstr "======= "
-
-msgid "========= "
-msgstr "====      "
-
-msgid "============ "
-msgstr "============ "
-
-msgid "============== "
-msgstr "============== "
-
-msgid "======="
-msgstr "=========="
 
 msgid "Looks OK."
 msgstr "Ser OK ut."

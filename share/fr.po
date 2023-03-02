@@ -218,35 +218,20 @@ msgstr "Il est nécessaire d'indiquer un nom de domaine pour lancer le test.\n"
 msgid "The domain name contains consecutive dots.\n"
 msgstr "Le nom de domaine contient des points consécutifs.\n"
 
-msgid "Seconds "
-msgstr "Durée   "
+msgid "Seconds"
+msgstr "Durée"
 
-msgid "Level     "
-msgstr "Niveau    "
+msgid "Level"
+msgstr "Niveau"
 
-msgid "Module       "
-msgstr "Module       "
+msgid "Module"
+msgstr "Module"
 
-msgid "Testcase       "
-msgstr "Plan de test   "
+msgid "Testcase"
+msgstr "Plan de test"
 
 msgid "Message"
 msgstr "Message"
-
-msgid "======= "
-msgstr "======= "
-
-msgid "========= "
-msgstr "========= "
-
-msgid "============ "
-msgstr "============ "
-
-msgid "============== "
-msgstr "============== "
-
-msgid "======="
-msgstr "======="
 
 msgid "Looks OK."
 msgstr "Le résultat semble concluant."

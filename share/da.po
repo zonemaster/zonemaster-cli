@@ -188,35 +188,20 @@ msgstr "Domænenavn, der skal testes, skal angives.\n"
 msgid "The domain name contains consecutive dots.\n"
 msgstr "Domænenavnet indeholder flere dots (.) efter hinanden.\n"
 
-msgid "Seconds "
-msgstr "Sekunder "
+msgid "Seconds"
+msgstr "Sekunder"
 
-msgid "Level     "
-msgstr "Niveau    "
+msgid "Level"
+msgstr "Niveau"
 
-msgid "Module       "
-msgstr "Modul        "
+msgid "Module"
+msgstr "Modul"
 
-msgid "Testcase       "
-msgstr "Testcase       "
+msgid "Testcase"
+msgstr "Testcase"
 
 msgid "Message"
 msgstr "Besked"
-
-msgid "======= "
-msgstr "======= "
-
-msgid "========= "
-msgstr "========= "
-
-msgid "============ "
-msgstr "============ "
-
-msgid "============== "
-msgstr "============== "
-
-msgid "======="
-msgstr "======="
 
 msgid "Looks OK."
 msgstr "Ser OK ud."

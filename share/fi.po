@@ -203,35 +203,20 @@ msgstr "Testattavan verkkoalueen nimi on annettava.\n"
 msgid "The domain name contains consecutive dots.\n"
 msgstr "Verkkotunnus sisältää peräkkäisiä pisteitä.\n"
 
-msgid "Seconds "
-msgstr "Sekuntia "
+msgid "Seconds"
+msgstr "Sekuntia"
 
-msgid "Level     "
-msgstr "Taso      "
+msgid "Level"
+msgstr "Taso"
 
-msgid "Module       "
-msgstr "Moduuli      "
+msgid "Module"
+msgstr "Moduuli"
 
-msgid "Testcase       "
-msgstr "Testitapaus    "
+msgid "Testcase"
+msgstr "Testitapaus"
 
 msgid "Message"
 msgstr "Viesti"
-
-msgid "======= "
-msgstr "======= "
-
-msgid "========= "
-msgstr "========= "
-
-msgid "============ "
-msgstr "============ "
-
-msgid "============== "
-msgstr "============== "
-
-msgid "======="
-msgstr "======="
 
 msgid "Looks OK."
 msgstr "Näyttää olevan OK."
