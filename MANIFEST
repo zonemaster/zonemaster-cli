@@ -29,4 +29,5 @@ share/locale/fr/LC_MESSAGES/Zonemaster-CLI.mo
 share/locale/nb/LC_MESSAGES/Zonemaster-CLI.mo
 share/locale/sv/LC_MESSAGES/Zonemaster-CLI.mo
 t/00-load.t
+t/po-files.t
 USING.md
