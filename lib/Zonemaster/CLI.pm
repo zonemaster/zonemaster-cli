@@ -68,7 +68,7 @@ has 'locale' => (
 );
 
 has 'json' => (
-    is            => 'ro',
+    is            => 'rw',
     isa           => 'Bool',
     default       => 0,
     documentation => __( 'Flag indicating if output should be in JSON or not.' ),
@@ -91,11 +91,11 @@ has 'json_translate' => (
     default       => 0,
     cmd_aliases   => 'json_translate',
     cmd_flag      => 'json-translate',
-    documentation => __( 'Flag indicating if JSON output should include the translated message of the tag or not.' ),
+    documentation => __( 'Deprecated. Flag indicating if JSON output should include the translated message of the tag or not.' ),
 );
 
 has 'raw' => (
-    is            => 'ro',
+    is            => 'rw',
     isa           => 'Bool',
     default       => 0,
     documentation => __( 'Flag indicating if output should be translated to human language or dumped raw.' ),
@@ -328,12 +328,35 @@ sub run {
     }
 
     if ($self->sourceaddr) {
-
         Zonemaster::Engine::Profile->effective->set( q{resolver.source}, $self->sourceaddr );
     }
 
+    # errors and warnings
+    if ( $self->json_stream and not $self->json and grep( /^--no-json$/, @{ $self->ARGV } ) ) {
+        die __( "Error: --json-stream and --no-json can't be used together." ) . "\n";
+    }
+
+    if ( $self->json_translate ) {
+        unless ( $self->json or $self->json_stream ) {
+            printf STDERR __( "Warning: --json-translate has no effect without either --json or --json-stream." ) . "\n";
+        }
+        printf STDERR __( "Warning: deprecated --json-translate, use --no-raw instead." ) . "\n";
+    }
+    else {
+        if ( grep( /^--no-json-translate$/, @{ $self->ARGV } ) ) {
+            unless ( $self->json or $self->json_stream ) {
+                printf STDERR __( "Warning: --json-translate has no effect without either --json or --json-stream." ) . "\n";
+            }
+            printf STDERR __( "Warning: deprecated --no-json-translate, use --raw instead." ) . "\n";
+        }
+    }
+
+    # align values
+    $self->json( 1 ) if $self->json_stream;
+    $self->raw( 0 ) if $self->json_translate; # deprecated
+
     # Filehandle for diagnostics output
-    my $fh_diag = ( $self->json or $self->json_stream or $self->raw )
+    my $fh_diag = ( $self->json or $self->raw )
       ? *STDERR     # Structured output mode (e.g. JSON)
       : *STDOUT;    # Human readable output mode
 
@@ -369,14 +392,8 @@ sub run {
     }
 
     my $translator;
-    $translator = Zonemaster::Engine::Translator->new unless ( $self->raw or $self->json or $self->json_stream );
+    $translator = Zonemaster::Engine::Translator->new unless $self->raw;
     $translator->locale( $self->locale ) if $translator and $self->locale;
-
-    my $json_translator;
-    if ( $self->json_translate ) {
-        $json_translator = Zonemaster::Engine::Translator->new;
-        $json_translator->locale( $self->locale ) if $self->locale;
-    }
 
     if ( $self->restore ) {
         Zonemaster::Engine->preload_cache( $self->restore );
@@ -416,40 +433,7 @@ sub run {
             if ( $numeric{ uc $entry->level } >= $numeric{ $self->level } ) {
                 $printed_something = 1;
 
-                if ( $translator ) {
-                    my $header = q{};
-                    if ( $self->time ) {
-                        $header .= sprintf "%*.2f ", ${field_width{seconds}}, $entry->timestamp;
-                    }
-
-                    if ( $self->show_level ) {
-                        $header .= sprintf "%-*s ", ${field_width{level}}, translate_severity( $entry->level );
-                    }
-
-                    if ( $self->show_module ) {
-                        $header .= sprintf "%-*s ", ${field_width{module}}, $entry->module;
-                    }
-
-                    if ( $self->show_testcase ) {
-                        $header .= sprintf "%-*s ", ${field_width{testcase}}, $entry->testcase;
-                    }
-
-                    print $header;
-
-                    if ( $entry->level eq q{DEBUG3} and scalar( keys %{$entry->args} ) == 1 and defined $entry->args->{packet} ) {
-                        my $packet = $entry->args->{packet};
-                        my $padding = q{ } x length $header;
-                        $entry->args->{packet} = q{};
-                        say $translator->translate_tag( $entry );
-                        foreach my $line ( split /\n/, $packet ) {
-                            print $padding, $line, "\n";
-                        }
-                    }
-                    else {
-                        say $translator->translate_tag( $entry );
-                    }
-                }
-                elsif ( $self->json_stream ) {
+                if ( $self->json and $self->json_stream ) {
                     my %r;
 
                     $r{timestamp} = $entry->timestamp if $self->time;
@@ -458,33 +442,59 @@ sub run {
                     $r{tag}       = $entry->tag;
                     $r{level}     = $entry->level if $self->show_level;
                     $r{args}      = $entry->args if $entry->args;
-                    $r{message}   = $json_translator->translate_tag( $entry ) if $json_translator;
+                    $r{message}   = $translator->translate_tag( $entry ) unless $self->raw;
 
                     say $JSON->encode( \%r );
                 }
-                elsif ( $self->json ) {
+                elsif ( $self->json and not $self->json_stream ) {
                     # Don't do anything
                 }
                 else {
-                    my $prefix = sprintf "%*.2f %-*s ", ${field_width{seconds}}, $entry->timestamp, ${field_width{level}}, $entry->level;
+                    my $prefix = q{};
+                    if ( $self->time ) {
+                        $prefix .= sprintf "%*.2f ", ${field_width{seconds}}, $entry->timestamp;
+                    }
+
+                    if ( $self->show_level ) {
+                        $prefix .= sprintf "%-*s ", ${field_width{level}}, $self->raw ? $entry->level : translate_severity( $entry->level );
+                    }
+
                     if ( $self->show_module ) {
                         $prefix .= sprintf "%-*s ", ${field_width{module}}, $entry->module;
                     }
+
                     if ( $self->show_testcase ) {
                         $prefix .= sprintf "%-*s ", ${field_width{testcase}}, $entry->testcase;
                     }
-                    $prefix .= $entry->tag;
 
-                    my $message = $entry->string;
-                    $message =~ s/^[A-Z0-9:_]+//;    # strip MODULE:TAG, they're coming in $prefix instead
-                    my @lines = split /\n/, $message;
+                    if ( $self->raw ) {
+                        $prefix .= $entry->tag;
 
-                    printf "%s%s %s\n", $prefix, ' ', shift @lines;
-                    for my $line ( @lines ) {
-                        printf "%s%s %s\n", $prefix, '>', $line;
+                        my $message = $entry->string;
+                        $message =~ s/^[A-Z0-9:_]+//;    # strip MODULE:TAG, they're coming in $prefix instead
+                        my @lines = split /\n/, $message;
+
+                        printf "%s%s %s\n", $prefix, ' ', shift @lines;
+                        for my $line ( @lines ) {
+                            printf "%s%s %s\n", $prefix, '>', $line;
+                        }
+                    }
+                    else {
+                        if ( $entry->level eq q{DEBUG3} and scalar( keys %{$entry->args} ) == 1 and defined $entry->args->{packet} ) {
+                            my $packet = $entry->args->{packet};
+                            my $padding = q{ } x length $prefix;
+                            $entry->args->{packet} = q{};
+                            printf "%s%s\n", $prefix, $translator->translate_tag( $entry );
+                            foreach my $line ( split /\n/, $packet ) {
+                                printf "%s%s\n", $padding, $line;
+                            }
+                        }
+                        else {
+                            printf "%s%s\n", $prefix, $translator->translate_tag( $entry );
+                        }
                     }
                 }
-            } ## end if ( $numeric{ uc $entry...})
+            }
             if ( $self->stop_level and $numeric{ uc $entry->level } >= $numeric{ $self->stop_level } ) {
                 die( Zonemaster::Engine::Exception::NormalExit->new( { message => "Saw message at level " . $entry->level } ) );
             }
@@ -533,7 +543,7 @@ sub run {
         $self->add_fake_ds( $domain );
     }
 
-    if ( $translator ) {
+    if ( not $self->raw and not $self->json ) {
         my $header = q{};
 
         if ( $self->time ) {
@@ -565,7 +575,7 @@ sub run {
         $header .= sprintf "%s\n", "=" x $field_width{message};
 
         print $header;
-    } ## end if ( $translator )
+    }
 
     # Actually run tests!
     eval {
@@ -584,7 +594,7 @@ sub run {
             Zonemaster::Engine->test_zone( $domain );
         }
     };
-    if ( $translator ) {
+    if ( not $self->raw and not $self->json ) {
         if ( not $printed_something ) {
             say __( "Looks OK." );
         }
@@ -632,14 +642,14 @@ sub run {
         printf "Total test run time: %0.1f seconds.\n", $last->timestamp;
     }
 
-    if ( $self->json ) {
+    if ( $self->json and not $self->json_stream ) {
         my $res = Zonemaster::Engine->logger->json( $self->level );
         $res = $JSON->decode( $res );
         foreach ( @$res ) {
-            if ( $self->json_translate ) {
+            unless ( $self->raw ) {
                 my %e = %$_;
                 my $entry = Zonemaster::Engine::Logger::Entry->new( \%e );
-                $_->{message} = $json_translator->translate_tag( $entry );
+                $_->{message} = $translator->translate_tag( $entry );
             }
             delete $_->{timestamp} unless $self->time;
             delete $_->{level} unless $self->show_level;
@@ -654,7 +664,7 @@ sub run {
     }
 
     return;
-} ## end sub run
+}
 
 sub add_fake_delegation {
     my ( $self, $domain ) = @_;
@@ -770,7 +780,7 @@ sub print_test_list {
         print "\n";
     }
     exit( 0 );
-} ## end sub print_test_list
+}
 
 sub do_dump_profile {
     my $json = JSON::XS->new->canonical->pretty;
