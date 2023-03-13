@@ -29,6 +29,9 @@ new-po: extract-pot
 		-e 's/^("Content-Type:.+charset=)CHARSET/$${1}UTF-8/;' $(POLANG).po
 	@perl -ni -e 'print unless /^#( |$$)/' $(POLANG).po
 
+# Check the msgid/msgstr pair for some inconsistencies between them in the
+# selected PO file and report on standard error any errors found. The PO file
+# is not updated.
 check-po:
 	@for f in $(POFILES) ; do msgfmt -c $$f ; done
 
