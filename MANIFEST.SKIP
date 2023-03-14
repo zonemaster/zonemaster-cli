@@ -4,6 +4,9 @@
 ^MANIFEST\.SKIP$
 ^Dockerfile$
 
+# PO files are not present in the distribution package, tests of those are irrelevant there.
+t/po-files.t
+
 \.tar\.gz$
 \.bak$
 \.po$
