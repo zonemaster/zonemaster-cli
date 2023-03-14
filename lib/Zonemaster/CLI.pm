@@ -259,7 +259,7 @@ has 'nstimes' => (
     isa           => 'Bool',
     required      => 0,
     default       => 0,
-    documentation => __('At the end of a run, print a summary of the times the zone\'s name servers took to answer.'),
+    documentation => __( 'At the end of a run, print a summary of the times (in milliseconds) the zone\'s name servers took to answer.' ),
 );
 
 has 'dump_profile' => (
@@ -312,7 +312,7 @@ has 'elapsed' => (
     isa           => 'Bool',
     required      => 0,
     default       => 0,
-    documentation => 'Print elapsed time at end of run.',
+    documentation => __( 'Print elapsed time (in seconds) at end of run.' ),
 );
 
 sub run {
@@ -674,7 +674,7 @@ sub run {
         }
         else {
             print "\n";
-            printf "%${max}s %s\n", 'Server', ' Max (ms)      Min      Avg   Stddev   Median     Total';
+            printf "%${max}s %s\n", 'Server', '      Max      Min      Avg   Stddev   Median     Total';
             printf "%${max}s %s\n", '=' x $max, ' ======== ======== ======== ======== ======== =========';
 
             foreach my $ns ( @{ $zone->ns } ) {
