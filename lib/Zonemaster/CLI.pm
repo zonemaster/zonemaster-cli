@@ -662,12 +662,12 @@ sub run {
             my %times = ();
             foreach my $ns ( @{ $zone->ns } ) {
                 $times{$ns} = {
-                    'max'    => sprintf( '%.2f', 1000 * $ns->max_time ),
-                    'min'    => sprintf( '%.2f', 1000 * $ns->min_time ),
-                    'avg'    => sprintf( '%.2f', 1000 * $ns->average_time ),
-                    'stddev' => sprintf( '%.2f', 1000 * $ns->stddev_time ),
-                    'median' => sprintf( '%.2f', 1000 * $ns->median_time ),
-                    'total'  => sprintf( '%.2f', 1000 * $ns->sum_time )
+                    'max'    => 1000 * $ns->max_time,
+                    'min'    => 1000 * $ns->min_time,
+                    'avg'    => 1000 * $ns->average_time,
+                    'stddev' => 1000 * $ns->stddev_time,
+                    'median' => 1000 * $ns->median_time,
+                    'total'  => 1000 * $ns->sum_time
                 };
             }
             say $JSON->encode( \%times );
@@ -694,7 +694,7 @@ sub run {
 
         if ( $self->json ) {
             my %elapsed = (
-                'elapsed' => sprintf( '%.2f', $last->timestamp )
+                'elapsed' => $last->timestamp
             );
             say $JSON->encode( \%elapsed );
         }
