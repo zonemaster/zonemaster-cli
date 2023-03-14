@@ -658,24 +658,49 @@ sub run {
         my $zone = Zonemaster::Engine->zone( $domain );
         my $max = max map { length( "$_" ) } ( @{ $zone->ns }, q{Server} );
 
-        print "\n";
-        printf "%${max}s %s\n", 'Server', ' Max (ms)      Min      Avg   Stddev   Median     Total';
-        printf "%${max}s %s\n", '=' x $max, ' ======== ======== ======== ======== ======== =========';
+        if ( $self->json ) {
+            my %times = ();
+            foreach my $ns ( @{ $zone->ns } ) {
+                $times{$ns} = {
+                    'max'    => sprintf( '%.2f', 1000 * $ns->max_time ),
+                    'min'    => sprintf( '%.2f', 1000 * $ns->min_time ),
+                    'avg'    => sprintf( '%.2f', 1000 * $ns->average_time ),
+                    'stddev' => sprintf( '%.2f', 1000 * $ns->stddev_time ),
+                    'median' => sprintf( '%.2f', 1000 * $ns->median_time ),
+                    'total'  => sprintf( '%.2f', 1000 * $ns->sum_time )
+                };
+            }
+            say $JSON->encode( \%times );
+        }
+        else {
+            print "\n";
+            printf "%${max}s %s\n", 'Server', ' Max (ms)      Min      Avg   Stddev   Median     Total';
+            printf "%${max}s %s\n", '=' x $max, ' ======== ======== ======== ======== ======== =========';
 
-        foreach my $ns ( @{ $zone->ns } ) {
-            printf "%${max}s ", $ns->string;
-            printf "%9.2f ",    1000 * $ns->max_time;
-            printf "%8.2f ",    1000 * $ns->min_time;
-            printf "%8.2f ",    1000 * $ns->average_time;
-            printf "%8.2f ",    1000 * $ns->stddev_time;
-            printf "%8.2f ",    1000 * $ns->median_time;
-            printf "%9.2f\n",   1000 * $ns->sum_time;
+            foreach my $ns ( @{ $zone->ns } ) {
+                printf "%${max}s ", $ns->string;
+                printf "%9.2f ",    1000 * $ns->max_time;
+                printf "%8.2f ",    1000 * $ns->min_time;
+                printf "%8.2f ",    1000 * $ns->average_time;
+                printf "%8.2f ",    1000 * $ns->stddev_time;
+                printf "%8.2f ",    1000 * $ns->median_time;
+                printf "%9.2f\n",   1000 * $ns->sum_time;
+            }
         }
     }
 
     if ($self->elapsed) {
         my $last = Zonemaster::Engine->logger->entries->[-1];
-        printf "Total test run time: %0.1f seconds.\n", $last->timestamp;
+
+        if ( $self->json ) {
+            my %elapsed = (
+                'elapsed' => sprintf( '%.2f', $last->timestamp )
+            );
+            say $JSON->encode( \%elapsed );
+        }
+        else {
+            printf "Total test run time: %0.1f seconds.\n", $last->timestamp;
+        }
     }
 
     if ( $self->json and not $self->json_stream ) {
