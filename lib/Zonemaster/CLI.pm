@@ -646,6 +646,8 @@ sub run {
         }
     }
 
+    my $json_output = {};
+
     if ( $self->count ) {
         say __( "\n\n   Level\tNumber of log entries" );
         say "   =====\t=====================";
@@ -659,9 +661,10 @@ sub run {
         my $max = max map { length( "$_" ) } ( @{ $zone->ns }, q{Server} );
 
         if ( $self->json ) {
-            my %times = ();
+            my @times = ();
             foreach my $ns ( @{ $zone->ns } ) {
-                $times{$ns} = {
+                push @times, {
+                    'ns'     => $ns->string,
                     'max'    => 1000 * $ns->max_time,
                     'min'    => 1000 * $ns->min_time,
                     'avg'    => 1000 * $ns->average_time,
@@ -670,7 +673,7 @@ sub run {
                     'total'  => 1000 * $ns->sum_time
                 };
             }
-            say $JSON->encode( \%times );
+            $json_output->{nstimes} = \@times;
         }
         else {
             print "\n";
@@ -693,10 +696,7 @@ sub run {
         my $last = Zonemaster::Engine->logger->entries->[-1];
 
         if ( $self->json ) {
-            my %elapsed = (
-                'elapsed' => $last->timestamp
-            );
-            say $JSON->encode( \%elapsed );
+            $json_output->{elapsed} = $last->timestamp;
         }
         else {
             printf "Total test run time: %0.1f seconds.\n", $last->timestamp;
@@ -717,7 +717,11 @@ sub run {
             delete $_->{module} unless $self->show_module;
             delete $_->{testcase} unless $self->show_testcase;
         }
-        say $JSON->encode( $res );
+        $json_output->{results} = $res;
+    }
+
+    if ( scalar keys %$json_output ) {
+        say $JSON->encode( $json_output );
     }
 
     if ( $self->save ) {
