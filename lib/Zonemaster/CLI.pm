@@ -649,10 +649,18 @@ sub run {
     my $json_output = {};
 
     if ( $self->count ) {
-        say __( "\n\n   Level\tNumber of log entries" );
-        say "   =====\t=====================";
-        foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
-            printf __( "%8s\t%5d entries.\n" ), translate_severity( $level ), $counter{$level};
+        if ( $self->json ) {
+            $json_output->{count} = {};
+            foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
+                $json_output->{count}{$level} = $counter{$level};
+            }
+        }
+        else {
+            say __( "\n\n   Level\tNumber of log entries" );
+            say "   =====\t=====================";
+            foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
+                printf __( "%8s\t%5d entries.\n" ), translate_severity( $level ), $counter{$level};
+            }
         }
     }
 
