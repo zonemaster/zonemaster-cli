@@ -259,7 +259,7 @@ has 'nstimes' => (
     isa           => 'Bool',
     required      => 0,
     default       => 0,
-    documentation => __('At the end of a run, print a summary of the times the zone\'s name servers took to answer.'),
+    documentation => __( 'At the end of a run, print a summary of the times (in milliseconds) the zone\'s name servers took to answer.' ),
 );
 
 has 'dump_profile' => (
@@ -312,7 +312,7 @@ has 'elapsed' => (
     isa           => 'Bool',
     required      => 0,
     default       => 0,
-    documentation => 'Print elapsed time at end of run.',
+    documentation => __( 'Print elapsed time (in seconds) at end of run.' ),
 );
 
 sub run {
@@ -646,11 +646,21 @@ sub run {
         }
     }
 
+    my $json_output = {};
+
     if ( $self->count ) {
-        say __( "\n\n   Level\tNumber of log entries" );
-        say "   =====\t=====================";
-        foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
-            printf __( "%8s\t%5d entries.\n" ), translate_severity( $level ), $counter{$level};
+        if ( $self->json ) {
+            $json_output->{count} = {};
+            foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
+                $json_output->{count}{$level} = $counter{$level};
+            }
+        }
+        else {
+            say __( "\n\n   Level\tNumber of log entries" );
+            say "   =====\t=====================";
+            foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
+                printf __( "%8s\t%5d entries.\n" ), translate_severity( $level ), $counter{$level};
+            }
         }
     }
 
@@ -658,24 +668,47 @@ sub run {
         my $zone = Zonemaster::Engine->zone( $domain );
         my $max = max map { length( "$_" ) } ( @{ $zone->ns }, q{Server} );
 
-        print "\n";
-        printf "%${max}s %s\n", 'Server', ' Max (ms)      Min      Avg   Stddev   Median     Total';
-        printf "%${max}s %s\n", '=' x $max, ' ======== ======== ======== ======== ======== =========';
+        if ( $self->json ) {
+            my @times = ();
+            foreach my $ns ( @{ $zone->ns } ) {
+                push @times, {
+                    'ns'     => $ns->string,
+                    'max'    => 1000 * $ns->max_time,
+                    'min'    => 1000 * $ns->min_time,
+                    'avg'    => 1000 * $ns->average_time,
+                    'stddev' => 1000 * $ns->stddev_time,
+                    'median' => 1000 * $ns->median_time,
+                    'total'  => 1000 * $ns->sum_time
+                };
+            }
+            $json_output->{nstimes} = \@times;
+        }
+        else {
+            print "\n";
+            printf "%${max}s %s\n", 'Server', '      Max      Min      Avg   Stddev   Median     Total';
+            printf "%${max}s %s\n", '=' x $max, ' ======== ======== ======== ======== ======== =========';
 
-        foreach my $ns ( @{ $zone->ns } ) {
-            printf "%${max}s ", $ns->string;
-            printf "%9.2f ",    1000 * $ns->max_time;
-            printf "%8.2f ",    1000 * $ns->min_time;
-            printf "%8.2f ",    1000 * $ns->average_time;
-            printf "%8.2f ",    1000 * $ns->stddev_time;
-            printf "%8.2f ",    1000 * $ns->median_time;
-            printf "%9.2f\n",   1000 * $ns->sum_time;
+            foreach my $ns ( @{ $zone->ns } ) {
+                printf "%${max}s ", $ns->string;
+                printf "%9.2f ",    1000 * $ns->max_time;
+                printf "%8.2f ",    1000 * $ns->min_time;
+                printf "%8.2f ",    1000 * $ns->average_time;
+                printf "%8.2f ",    1000 * $ns->stddev_time;
+                printf "%8.2f ",    1000 * $ns->median_time;
+                printf "%9.2f\n",   1000 * $ns->sum_time;
+            }
         }
     }
 
     if ($self->elapsed) {
         my $last = Zonemaster::Engine->logger->entries->[-1];
-        printf "Total test run time: %0.1f seconds.\n", $last->timestamp;
+
+        if ( $self->json ) {
+            $json_output->{elapsed} = $last->timestamp;
+        }
+        else {
+            printf "Total test run time: %0.1f seconds.\n", $last->timestamp;
+        }
     }
 
     if ( $self->json and not $self->json_stream ) {
@@ -692,7 +725,11 @@ sub run {
             delete $_->{module} unless $self->show_module;
             delete $_->{testcase} unless $self->show_testcase;
         }
-        say $JSON->encode( $res );
+        $json_output->{results} = $res;
+    }
+
+    if ( scalar keys %$json_output ) {
+        say $JSON->encode( $json_output );
     }
 
     if ( $self->save ) {
