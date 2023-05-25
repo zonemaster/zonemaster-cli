@@ -13,8 +13,8 @@ For an overview of the Zonemaster software, please see the
 ## Prerequisite
 
 Before you install the Zonemaster-CLI utility, you need the Zonemaster-Engine
-test framework installed. Please see the
-[Zonemaster Engine installation instructions]
+test framework installed. Please see the [Zonemaster Engine installation
+instructions][Zonemaster-Engine installation].
 
 
 ## Installation
@@ -54,11 +54,11 @@ This is free software under a 2-clause BSD license. The full text of the license
 be found in the [LICENSE](LICENSE) file included in this respository.
 
 
-[Docker Image Creation]:                          https://github.com/zonemaster/zonemaster/blob/master/docs/internal-documentation/maintenance/ReleaseProcess-create-docker-image.md
-[Docker Hub]:                                     https://hub.docker.com/u/zonemaster
-[Installation]:                                   docs/Installation.md
-[USING]:                                          USING.md
-[Zonemaster Engine installation instructions]:    https://github.com/zonemaster/zonemaster-engine/blob/master/docs/Installation.md
-[Zonemaster README]:                              https://github.com/zonemaster/zonemaster/blob/master/README.md
-[Zonemaster repository]:                          https://github.com/zonemaster/zonemaster
+[Docker Image Creation]:             https://github.com/zonemaster/zonemaster/blob/master/docs/internal/maintenance/ReleaseProcess-create-docker-image.md
+[Docker Hub]:                        https://hub.docker.com/u/zonemaster
+[Installation]:                      https://github.com/zonemaster/zonemaster/blob/master/docs/public/installation/zonemaster-cli.md
+[USING]:                             https://github.com/zonemaster/zonemaster/blob/master/docs/public/using/cli.md
+[Zonemaster-Engine installation]:    https://github.com/zonemaster/zonemaster/blob/master/docs/public/installation/zonemaster-engine.md
+[Zonemaster README]:                 https://github.com/zonemaster/zonemaster/blob/master/README.md
+[Zonemaster repository]:             https://github.com/zonemaster/zonemaster
 
