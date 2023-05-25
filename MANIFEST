@@ -1,6 +1,5 @@
 Changes
 CONTRIBUTING.md
-docs/Installation.md
 inc/Module/Install.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
@@ -29,4 +28,3 @@ share/locale/fr/LC_MESSAGES/Zonemaster-CLI.mo
 share/locale/nb/LC_MESSAGES/Zonemaster-CLI.mo
 share/locale/sv/LC_MESSAGES/Zonemaster-CLI.mo
 t/00-load.t
-USING.md
