@@ -438,7 +438,7 @@ sub run {
     my $level_width = 0;
     foreach ( keys %numeric ) {
         if ( $numeric{ $self->level } <= $numeric{$_} ) {
-            my $width_l10n = length( decode( 'UTF-8', __( $_ ) ) );
+            my $width_l10n = length( decode_utf8( translate_severity( $_ ) ) );
             $level_width = $width_l10n if $width_l10n > $level_width;
         }
     }
@@ -460,8 +460,8 @@ sub run {
             message  => __( 'Message' )
         );
         foreach ( keys %header_names ) {
-            $field_width{$_} = _max( $field_width{$_}, length( decode( 'UTF-8', $header_names{$_} ) ) );
-            $remaining_space{$_} = $field_width{$_} - length( decode( 'UTF-8', $header_names{$_} ) );
+            $field_width{$_} = _max( $field_width{$_}, length( decode_utf8( $header_names{$_} ) ) );
+            $remaining_space{$_} = $field_width{$_} - length( decode_utf8( $header_names{$_} ) );
         }
     }
 
