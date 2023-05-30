@@ -435,9 +435,17 @@ sub run {
         Zonemaster::Engine->preload_cache( $self->restore );
     }
 
+    my $level_width = 0;
+    foreach ( keys %numeric ) {
+        if ( $numeric{ $self->level } <= $numeric{$_} ) {
+            my $width_l10n = length( decode( 'UTF-8', __( $_ ) ) );
+            $level_width = $width_l10n if $width_l10n > $level_width;
+        }
+    }
+
     my %field_width = (
-        seconds  =>  7,
-        level    =>  9,
+        seconds  => 7,
+        level    => $level_width,
         module   => 12,
         testcase => 14
     );
