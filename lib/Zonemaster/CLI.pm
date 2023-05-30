@@ -500,7 +500,9 @@ sub run {
                     }
 
                     if ( $self->show_level ) {
-                        $prefix .= sprintf "%-*s ", ${field_width{level}}, $self->raw ? $entry->level : translate_severity( $entry->level );
+                        $prefix .= $self->raw ? $entry->level : translate_severity( $entry->level );
+                        my $space_l10n = ${field_width{level}} - length( decode_utf8( translate_severity($entry->level) ) ) + 1;
+                        $prefix .= ' ' x $space_l10n;
                     }
 
                     if ( $self->show_module ) {
