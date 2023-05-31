@@ -435,9 +435,17 @@ sub run {
         Zonemaster::Engine->preload_cache( $self->restore );
     }
 
+    my $level_width = 0;
+    foreach ( keys %numeric ) {
+        if ( $numeric{ $self->level } <= $numeric{$_} ) {
+            my $width_l10n = length( decode_utf8( translate_severity( $_ ) ) );
+            $level_width = $width_l10n if $width_l10n > $level_width;
+        }
+    }
+
     my %field_width = (
-        seconds  =>  7,
-        level    =>  9,
+        seconds  => 7,
+        level    => $level_width,
         module   => 12,
         testcase => 14
     );
@@ -452,8 +460,8 @@ sub run {
             message  => __( 'Message' )
         );
         foreach ( keys %header_names ) {
-            $field_width{$_} = _max( $field_width{$_}, length( decode( 'UTF-8', $header_names{$_} ) ) );
-            $remaining_space{$_} = $field_width{$_} - length( decode( 'UTF-8', $header_names{$_} ) );
+            $field_width{$_} = _max( $field_width{$_}, length( decode_utf8( $header_names{$_} ) ) );
+            $remaining_space{$_} = $field_width{$_} - length( decode_utf8( $header_names{$_} ) );
         }
     }
 
@@ -492,7 +500,9 @@ sub run {
                     }
 
                     if ( $self->show_level ) {
-                        $prefix .= sprintf "%-*s ", ${field_width{level}}, $self->raw ? $entry->level : translate_severity( $entry->level );
+                        $prefix .= $self->raw ? $entry->level : translate_severity( $entry->level );
+                        my $space_l10n = ${field_width{level}} - length( decode_utf8( translate_severity($entry->level) ) ) + 1;
+                        $prefix .= ' ' x $space_l10n;
                     }
 
                     if ( $self->show_module ) {
