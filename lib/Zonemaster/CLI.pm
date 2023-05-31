@@ -379,7 +379,7 @@ sub run {
         printf STDERR __( "Warning: deprecated --json-translate, use --no-raw instead." ) . "\n";
     }
     else {
-        if ( grep( /^--no-json-translate$/, @{ $self->ARGV } ) ) {
+        if ( grep( /^--no-json[_-]translate$/, @{ $self->ARGV } ) ) {
             unless ( $self->json or $self->json_stream ) {
                 printf STDERR __( "Warning: --json-translate has no effect without either --json or --json-stream." ) . "\n";
             }
