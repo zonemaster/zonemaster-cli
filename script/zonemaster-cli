@@ -129,8 +129,6 @@ For streaming JSON output, include the translated message of the tag.
 Print messages as raw dumps (message identifiers) instead of translating them
 to human language.
 
-Default: off
-
 =item --[no-]time
 
 Print the timestamp for each message.

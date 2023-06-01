@@ -97,7 +97,6 @@ has 'json_translate' => (
 has 'raw' => (
     is            => 'rw',
     isa           => 'Bool',
-    default       => 0,
     documentation => __( 'Flag indicating if output should be translated to human language or dumped raw.' ),
 );
 
@@ -389,7 +388,7 @@ sub run {
 
     # align values
     $self->json( 1 ) if $self->json_stream;
-    $self->raw( 0 ) if $self->json_translate; # deprecated
+    $self->raw( $self->raw // !$self->json_translate );
 
     # Filehandle for diagnostics output
     my $fh_diag = ( $self->json or $self->raw )
