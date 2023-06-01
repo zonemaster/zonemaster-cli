@@ -88,7 +88,6 @@ has 'json_translate' => (
     traits        => [ 'Getopt' ],
     is            => 'ro',
     isa           => 'Bool',
-    default       => 0,
     cmd_aliases   => 'json_translate',
     cmd_flag      => 'json-translate',
     documentation => __( 'Deprecated. Flag indicating if JSON output should include the translated message of the tag or not.' ),
@@ -371,24 +370,21 @@ sub run {
         die __( "Error: --json-stream and --no-json can't be used together." ) . "\n";
     }
 
-    if ( $self->json_translate ) {
+    if ( defined $self->json_translate ) {
         unless ( $self->json or $self->json_stream ) {
             printf STDERR __( "Warning: --json-translate has no effect without either --json or --json-stream." ) . "\n";
         }
-        printf STDERR __( "Warning: deprecated --json-translate, use --no-raw instead." ) . "\n";
-    }
-    else {
-        if ( grep( /^--no-?json[_-]translate$/, @{ $self->ARGV } ) ) {
-            unless ( $self->json or $self->json_stream ) {
-                printf STDERR __( "Warning: --json-translate has no effect without either --json or --json-stream." ) . "\n";
-            }
+        if ( $self->json_translate ) {
+            printf STDERR __( "Warning: deprecated --json-translate, use --no-raw instead." ) . "\n";
+        }
+        else {
             printf STDERR __( "Warning: deprecated --no-json-translate, use --raw instead." ) . "\n";
         }
     }
 
     # align values
     $self->json( 1 ) if $self->json_stream;
-    $self->raw( $self->raw // !$self->json_translate );
+    $self->raw( $self->raw // ( defined $self->json_translate ? !$self->json_translate : 0 ) );
 
     # Filehandle for diagnostics output
     my $fh_diag = ( $self->json or $self->raw )
