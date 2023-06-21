@@ -3,7 +3,7 @@ Release history for Zonemaster component Zonemaster-CLI
 v6.0.0 2023-06-21 (public release version)
 
  [Breaking changes]
- - Adds dispaly of Zonemaster::LDNS and libldns versions
+ - Adds display of Zonemaster::LDNS and libldns versions
    when --version has been selected (#306)
 
  [Features]
@@ -18,7 +18,7 @@ v6.0.0 2023-06-21 (public release version)
  - Fixes table layout in zonemaster-cli output (#335)
  - Removes documentation moved to the zonemaster/zonemaster
    repository (#332)
- - Remove some untranslatable characters from msgids (#307)
+ - Removes some untranslatable characters from msgids (#307)
 
 
 v5.0.2 2023-03-01 (public fix version)
