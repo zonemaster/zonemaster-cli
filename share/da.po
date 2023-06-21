@@ -2,14 +2,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-20 08:39+0000\n"
-"PO-Revision-Date: 2022-06-08 14:01+0000\n"
+"POT-Creation-Date: 2023-06-02 20:01+0000\n"
+"PO-Revision-Date: 2023-06-02 11:12+0200\n"
 "Last-Translator: haarbo@dk-hostmaster.dk\n"
 "Language-Team: Zonemaster Team\n"
 "Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.3.1\n"
 
 msgid "Print version information and exit."
 msgstr "Udskriv version og afbryd."
@@ -31,10 +32,10 @@ msgid "Flag indicating if output should be streaming JSON or not."
 msgstr "Flag angiver om output-format skal være streaming JSON eller ej."
 
 msgid ""
-"Flag indicating if streaming JSON output should include the translated "
+"Deprecated. Flag indicating if JSON output should include the translated "
 "message of the tag or not."
 msgstr ""
-"Flag angiver om streaming JSON-output skal inkludere den oversatte besked af "
+"Forældet. Flag angiver om JSON-output skal inkludere den oversatte besked af "
 "tag'et eller ej."
 
 msgid ""
@@ -65,6 +66,7 @@ msgstr ""
 
 msgid "Name of a root hints file to override the defaults."
 msgstr ""
+"Navn på en \"root hints\"-fil for at overstyre standardindstillingerne."
 
 msgid "Name of a file to save DNS data to after running tests."
 msgstr "Filnavn indeholdende DNS-data efter udførte test."
@@ -114,7 +116,7 @@ msgid "Strings with DS data on the form \"keytag,algorithm,type,digest\""
 msgstr "En streng med DS-data i formatet \"keytag,algorithm,type,digest\""
 
 msgid "Print a count of the number of messages at each level"
-msgstr "Udskriv antallet af registrerede beskeder på hvert niveau."
+msgstr "Udskriv antallet af registrerede beskeder på hvert niveau"
 
 msgid ""
 "Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off "
@@ -124,24 +126,51 @@ msgstr ""
 "deaktiveret. Deaktiver med --no-progress."
 
 msgid "Name of the character encoding used for command line arguments"
-msgstr "Navn på tegnkodningen, der skal anvendes for kommandolinje-argumenter."
+msgstr "Navn på tegnkodningen, der skal anvendes for kommandolinje-argumenter"
 
 msgid ""
-"At the end of a run, print a summary of the times the zone's name servers "
-"took to answer."
+"At the end of a run, print a summary of the times (in milliseconds) the "
+"zone's name servers took to answer."
 msgstr ""
-"Efter afsluttet afvikling, udskriv en opsummering af svarftiderne som zonens "
-"navneservere brugte på at svare."
+"Ved afslutningen af en kørsel udskrives en oversigt over de tider (i "
+"millisekunder), det tog zonens navneservere at svare."
 
 msgid "Print the effective profile used in JSON format, then exit."
 msgstr "Udskriv den effektive profil benyttet i JSON-format, og afslut."
 
 msgid ""
-"Source IP address used to send queries. Setting an IP address not correctly "
-"configured on a local network interface causes cryptic error messages."
+"Deprecated (planned removal: v2024.1). Use --sourceaddr4 and/or --"
+"sourceaddr6. Source IP address used to send queries. Setting an IP address "
+"not correctly configured on a local network interface causes cryptic error "
+"messages."
 msgstr ""
-"IP-adresse brugt til at sende forespørgsler fra. En ikke korrekt konfiguret "
-"IP-adresse på et lokalt interface medfører kryptiske fejlbeskeder."
+"Forældet (planlagt fjernelse: v2024.1). Brug --sourceaddr4 og/eller --"
+"sourceaddr6. Kilde-IP-adresse benyttet til at sende forespørgsler. "
+"Indstilling af en IP-adresse, der ikke er korrekt konfigureret på et lokalt "
+"netværksinterface, forårsager kryptiske fejlmeddelelser."
+
+msgid ""
+"Source IPv4 address used to send queries. Setting an IPv4 address not "
+"correctly configured on a local network interface fails silently. Can not be "
+"combined with --sourceaddr."
+msgstr ""
+"Kilde IPv4-adresse benyttet til at sende forespørgsler. Indstilling af en "
+"IPv4-adresse, der ikke er konfigureret korrekt på et lokalt "
+"netværksinterface, fejler uden varsling. Kan ikke kombineres med --"
+"sourceaddr."
+
+msgid ""
+"Source IPv6 address used to send queries. Setting an IPv6 address not "
+"correctly configured on a local network interface fails silently. Can not be "
+"combined with --sourceaddr."
+msgstr ""
+"Kilde IPv6-adresse benyttet til at sende forespørgsler. Indstilling af en "
+"IPv6-adresse, der ikke er konfigureret korrekt på et lokalt "
+"netværksinterface, fejler uden varsling. Kan ikke kombineres med --"
+"sourceaddr."
+
+msgid "Print elapsed time (in seconds) at end of run."
+msgstr "Udskriv forløbet tid (i sekunder) ved slutningen af kørslen."
 
 #, perl-format
 msgid ""
@@ -163,12 +192,40 @@ msgstr ""
 "installeret på dette system?).\n"
 "\n"
 
+msgid ""
+"Error: --sourceaddr can't be combined with --sourceaddr4 or --sourceaddr6."
+msgstr ""
+"Fejl: --sourceaddr kan ikke kombineres med --sourceaddr4 eller --sourceaddr6."
+
+msgid ""
+"Warning: --sourceaddr is deprecated (planned removal: v2024.1). Use --"
+"sourceaddr4 and/or --sourceaddr6 instead."
+msgstr ""
+"Advarsel: --sourceaddr er forældet (planlagt fjernelse: v2024.1). Brug --"
+"sourceaddr4 og/eller --sourceaddr6 i stedet."
+
+msgid "Error: --json-stream and --no-json can't be used together."
+msgstr "Fejl: --json-stream og --no-json kan ikke bruges sammen."
+
+msgid ""
+"Warning: --json-translate has no effect without either --json or --json-"
+"stream."
+msgstr ""
+"Advarsel: --json-translate har ingen virkning uden enten --json eller --json-"
+"stream."
+
+msgid "Warning: deprecated --json-translate, use --no-raw instead."
+msgstr "Advarsel: --json-translate er forældet, brug --no-raw i stedet."
+
+msgid "Warning: deprecated --no-json-translate, use --raw instead."
+msgstr "Advarsel: --no-json-translate er forældet, brug --raw i stedet."
+
 #, perl-brace-format
 msgid "Loading profile from {path}."
-msgstr "Indlæser policy fra {path}."
+msgstr "Indlæser profil fra {path}."
 
 msgid "Failed to recognize stop level '"
-msgstr "Ukendt afslutningsniveau '"
+msgstr "Kunne ikke genkende stopniveau '"
 
 msgid ""
 "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 "
@@ -177,46 +234,33 @@ msgstr ""
 "--level skal være enten CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, "
 "DEBUG2 eller DEBUG3.\n"
 
+msgid "Seconds"
+msgstr "Sekunder"
+
+msgid "Level"
+msgstr "Niveau"
+
+msgid "Module"
+msgstr "Modul"
+
+msgid "Testcase"
+msgstr "Testcase"
+
+msgid "Message"
+msgstr "Besked"
+
 msgid ""
 "Only one domain can be given for testing. Did you forget to prepend an "
 "option with '--<OPTION>'?\n"
 msgstr ""
+"Der kan kun angives ét domæne til test. Har du glemt at sætte '--<OPTION>' "
+"foran en indstilling?\n"
 
 msgid "Must give the name of a domain to test.\n"
 msgstr "Domænenavn, der skal testes, skal angives.\n"
 
 msgid "The domain name contains consecutive dots.\n"
 msgstr "Domænenavnet indeholder flere dots (.) efter hinanden.\n"
-
-msgid "Seconds "
-msgstr "Sekunder "
-
-msgid "Level     "
-msgstr "Niveau    "
-
-msgid "Module       "
-msgstr "Modul        "
-
-msgid "Testcase       "
-msgstr "Testcase       "
-
-msgid "Message"
-msgstr "Besked"
-
-msgid "======= "
-msgstr "======= "
-
-msgid "========= "
-msgstr "========= "
-
-msgid "============ "
-msgstr "============ "
-
-msgid "============== "
-msgstr "============== "
-
-msgid "======="
-msgstr "======="
 
 msgid "Looks OK."
 msgstr "Ser OK ud."

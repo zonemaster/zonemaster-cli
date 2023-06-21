@@ -60,18 +60,19 @@ zonemaster-cli - run Zonemaster tests from the command line
 
 =head1 SYNOPSIS
 
-    zonemaster-cli nic.se
-    zonemaster-cli --test=delegation --level=debug --no-time afnic.fr
+    zonemaster-cli zonemaster.net
+    zonemaster-cli --test=delegation --level=info --no-time zonemaster.net
+    zonemaster-cli --test=delegation/delegation01 --level=debug zonemaster.net
     zonemaster-cli --list_tests
 
 =head1 DESCRIPTION
 
 L<zonemaster-cli> is a command-line interface to the L<Zonemaster> test engine.
-It does nothing itself except take the instructions the user provides as
-command line arguments, transform them into suitable API calls to the engine,
-run the requested test and print the resulting messages. The messages will be
-translated by the engine's translation module, and possibly have a timestamp
-and a module name prepended when printed.
+It takes instructions the user provides as command line arguments, transforms
+them into suitable API calls to the engine, runs the test suite and prints the
+resulting messages. By default, the messages will be translated by the engine's
+translation module, with the corresponding timestamp and logging level when
+printed. See the available options below.
 
 =head1 OPTIONS
 
@@ -79,73 +80,89 @@ and a module name prepended when printed.
 
 =item -h -? --usage --help
 
-Any of these print a rather too long summary of the command line switches, then
-quits the program.
+Print the available command line switches, then exit.
 
 =item --version
 
-Prints the versions of this program, the L<Zonemaster> framework and the loaded
-test modules.
+Print the versions of this program as well as the ones from the underlying 
+L<Zonemaster> test engine, then exit.
 
 =item --level=LEVEL
 
-Specify the minimum level that a message needs to have in order to be printed.
-That is, messages with this level or higher will be printed. The levels are, in
-order from highest to lowest, CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG,
-DEBUG2 and DEBUG3. The lowest two levels show some of the internal workings of
-the test engine, and are probably not useful for ordinary users.
+Specify the minimum level of a message to be printed. Messages with this level
+(or higher) will be printed. The levels are, from highest to lowest: 
+CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 and DEBUG3.
+The lowest three levels (DEBUG) add a significant amount of messages to be shown.
+They reveal some of the internal workings of the test engine, and are probably 
+not useful for most users.
+
+Default: NOTICE
 
 =item --locale=LOCALE
 
-Specifies which locale to tell the translation system to use. If not given, the
-translation system itself will look at environment variables to try to guess.
+Specify which locale to be used by the translation system. If not given, the
+translation system itself will look at environment variables to try and guess.
 If the requested translation does not exist, it will fallback to the local
-locale, and if that doesn't exist either to English.
+locale, and if that doesn't exist either, to English.
 
-=item --json
+=item --[no-]json
 
 Print results as JSON instead of human language.
 
-=item --json_stream, --json-stream
+Default: off
 
-Stream the results as JSON objects, useful to follow the progress in a machine
-readable way.
+=item --[no-]json_stream, --[no-]json-stream
 
-=item --json_translate, --json-translate
+Stream the results as JSON. Useful to follow the progress in a
+machine-readable way.
+
+Default: off
+
+=item --[no-]json_translate, --[no-]json-translate
+
+Deprecated since v2023.1, use --no-raw instead.
 
 For streaming JSON output, include the translated message of the tag.
 
-=item --raw, --no-raw
+=item --[no-]raw
 
-Print messages as raw dumps instead of passing them through the translation
-system.
+Print messages as raw dumps (message identifiers) instead of translating them
+to human language.
 
-=item --time, --no-time
+=item --[no-]time
 
-Turn the printing of timestamps on or off (default on).
+Print the timestamp for each message.
 
-=item --show_level, --no-show_level, --show-level, --no-show-level
+Default: on
 
-Turn the printing of the message severity level on or off (default on).
+=item --[no-]show_level, --[no-]show-level
 
-=item --show_module, --no-show_module, --show-module, --no-show-module
+Print the severity level for each message.
 
-Turn the printing of which module produced a message on or off (default off).
+Default: on
 
-=item --show_testcase, --no-show_testcase, --show-testcase, --no-show-testcase
+=item --[no-]show_module, --[no-]show-module
 
-Turn the printing of which test case produced a message on or off (default off).
+Print the name of the module which produced the message.
+
+Default: off
+
+=item --[no-]show_testcase, --[no-]show-testcase
+
+Print the name of the test case (test case identifier) which produced the message.
+
+Default: off
 
 =item --ns=NAME[/IP]
 
 Provide information about a nameserver, for undelegated tests. The argument
-must be either a domain name and an IP address (v4 or v6) separated by a single
-slash character (/), or only a name, in which case a lookup for A and AAAA
-records for that name will be done in the live global DNS tree and the results
-of that lookup used.
+must be either: (i) a domain name and an IP address, separated by a single
+slash character (/), or (ii) only a domain name, in which case a A and AAAA
+records lookup for that name is done in the live global DNS tree (unless 
+overriden by --hints) and from which the results of that lookup will be used.
 
-This switch can (and probably should) be given multiple times. As long as any
-of these switches are present, their aggregate content will be used as the
+This switch can be given multiple times. As long as any of these switches
+are present, their aggregated content will be used as the
 entirety of the parent-side delegation information.
 
 =item --hints=FILENAME
@@ -154,40 +171,43 @@ Name of a root hints file to override the defaults.
 
 =item --save=FILENAME
 
-After the entire test has finished running, write the contents of the
-accumulated packet cache to a file with the given name.
+Write the contents of the accumulated DNS packet cache to a file with the given name
+after the testing suite has finished running.
 
 =item --restore=FILENAME
 
-Before starting the test, prime the packet cache with the contents from the
-file with the given name. The format of the file should be that produced by the
-save functions.
+Prime the DNS packet cache with the contents from the file with the given name
+before starting the testing suite. The format of the file should be from one
+produced by the --save switch.
 
-=item --ipv4, --no-ipv4
+=item --[no-]ipv4
 
-Allow or disallow the sending of IPv4 packets (default on).
+Allow the sending of IPv4 packets.
 
-=item --ipv6, --no-ipv6
+Default: on
 
-Allow or disallow the sending of IPv6 packets (default on).
+=item --[no-]ipv6
+
+Allow the sending of IPv6 packets.
+
+Default: on
 
 =item --list_tests, --list-tests
 
-Instead of running a test, list all the tests presented by the testing modules.
+Print all test cases listed in the test modules, then exit.
 
-=item --test=MODULE, --test=MODULE/METHOD
+=item --test=MODULE, --test=MODULE/TESTCASE
 
-Run only the specified tests. You can either give the name of a testing module,
-in which case that module will be asked to run all its tests, or you can give
-the name of a module followed by a slash and the name of a method in that
-module. The specified method will be called with a zone object as its single
-argument. It's up to the user to make sure that that is the kind of argument
-the method expects.
+Limit the testing suite to run only the specified tests.
+This can be the name of a testing module, in which case all test cases from
+that module will be run, or the name of a module followed by a slash and the
+name of a test case (test case identifier) in that module.
 
 =item --stop_level=LEVEL, --stop-level=LEVEL
 
-As soon as a message of the given level or higher is logged, terminate the
-testing process.
+Specify the minimum severity level after which the testing suite is terminated.
+The levels are, from highest to lowest: CRITICAL, ERROR, WARNING, NOTICE,
+INFO, DEBUG, DEBUG2 and DEBUG3.
 
 =item --profile=FILE
 
@@ -198,34 +218,67 @@ the given profile JSON file.
 
 Provide a DS record for undelegated testing (that is, a test where the
 delegating nameserver information is given via --ns switches). The four pieces
-of data should be in the same format they would have in a zone file.
+of data (keytag, algorithm, type, digest) should be in the same format they would
+have in a zone file.
 
-=item --count, --no-count
+=item --[no-]count
 
-After the test run is finished, turn on or off the printing of a summary with
-the numbers of messages of the various levels that were logged during the run
-(default off).
+Print a summary, at the end of a run, of the numbers of messages for each severity
+level that were logged during the run.
 
-=item --progress, --no-progress
+Default: off
 
-Turn on or off the printing of a "spinner" showing that something is happening
-during the test run. The default is to print it if the process' standard output
-is a TTY, and to not print otherwise.
+=item --[no-]progress
+
+Print an activity indicator ("spinner"). Useful to know that something is
+happening during a run.
+
+Default: on (if the process' standard output is a TTY)
 
 =item --encoding=ENCODING
 
 Specify the character encoding that is used for command line arguments. This
-will be used to convert non-ASCII names to IDNA format, on which the tests will
-then be run.
+will be used to convert non-ASCII names to IDNA format, on which the testing
+suite will then be run.
 
 The default value will be taken from the C<LC_CTYPE> environment variable if
 possible, and set to UTF-8 if not.
 
+=item --nstimes
+
+Print a summary, at the end of a run, of the times (in milliseconds) the zone's
+name servers took to answer.
+
+=item --dump_profile, --dump-profile
+
+Print the effective profile used in JSON format, then exit.
+
 =item --sourceaddr=IPADDR
 
-Source IP address used to send queries.
+Deprecated since v2023.1 (planned removal: v2024.1), use --sourceaddr4
+and/or --sourceaddr6 instead.
+
+Specify the source IP address used to send queries.
 Setting an IP address not correctly configured on a local network interface
 causes cryptic error messages.
+
+=item --sourceaddr4=IPADDR
+
+Specify the source IPv4 address used to send queries.
+Setting an IPv4 address not correctly configured on a local network interface
+fails silently. Can not be combined with --sourceaddr.
+
+=item --sourceaddr6=IPADDR
+
+Specify the source IPv6 address used to send queries.
+Setting an IPv6 address not correctly configured on a local network interface
+fails silently. Can not be combined with --sourceaddr.
+
+=item --[no-]elapsed
+
+Print elapsed time (in seconds) at end of a run.
+
+Default: off
 
 =back
 

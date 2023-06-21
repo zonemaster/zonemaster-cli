@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-08 18:58+0000\n"
-"PO-Revision-Date: 2014-08-28\n"
+"POT-Creation-Date: 2023-05-22 07:23+0200\n"
+"PO-Revision-Date: 2023-05-22 07:44+0200\n"
 "Last-Translator: pion@afnic.fr\n"
 "Language-Team: Zonemaster Team\n"
 "Language: fr\n"
@@ -34,11 +34,11 @@ msgstr ""
 "Option signalant que le format de sortie utilisé sera du flux JSON ou non."
 
 msgid ""
-"Flag indicating if streaming JSON output should include the translated "
+"Deprecated. Flag indicating if JSON output should include the translated "
 "message of the tag or not."
 msgstr ""
-"Option signalant que le flux JSON sera traduit en langage humain ou affiché "
-"en mode brut."
+"Déprécié. Option indiquant si la sortie JSON doit inclure les messages "
+"traduits en langage humain ou uniquement le format brut."
 
 msgid ""
 "Flag indicating if output should be translated to human language or dumped "
@@ -152,22 +152,47 @@ msgstr ""
 "commande."
 
 msgid ""
-"At the end of a run, print a summary of the times the zone's name servers "
-"took to answer."
+"At the end of a run, print a summary of the times (in milliseconds) the "
+"zone's name servers took to answer."
 msgstr ""
-"A la fin de l'exécution, affichage d'un récapitulatif sur les temps de "
-"réponses des serveurs de noms de la eone interrogés au cours de l'analyse."
+"À la fin de l'exécution, affichage d'un récapitulatif sur les temps de "
+"réponse (en millisecondes) des serveurs de noms de la zone interrogés au "
+"cours de l'analyse."
 
 msgid "Print the effective profile used in JSON format, then exit."
 msgstr "Affichage du \"profile\" réellement utilisé au format JSON."
 
 msgid ""
-"Source IP address used to send queries. Setting an IP address not correctly "
-"configured on a local network interface causes cryptic error messages."
+"Deprecated (planned removal: v2024.1). Use --sourceaddr4 and/or --"
+"sourceaddr6. Source IP address used to send queries. Setting an IP address "
+"not correctly configured on a local network interface causes cryptic error "
+"messages."
 msgstr ""
-"Positionne l'adresse IP source qui sera utilisée lors de l'envoi des "
-"requêtes. Indiquer une adresse mal configurée sur une interface réseau "
-"locale peut conduire à des messages d'erreur peu compréhensibles."
+"Déprécié (suppression prévue : v2024.1). Utilisez --sourceaddr4 et/ou --"
+"sourceaddr6. Adresse IP source à utiliser pour l'envoi des requêtes. "
+"Indiquer une adresse mal configurée sur une interface réseau locale peut "
+"conduire à des messages d'erreur peu compréhensibles."
+
+msgid ""
+"Source IPv4 address used to send queries. Setting an IPv4 address not "
+"correctly configured on a local network interface fails silently. Can not be "
+"combined with --sourceaddr."
+msgstr ""
+"Adresse IPv4 source à utiliser pour l'envoi des requêtes. Indiquer une "
+"adresse IPv4 mal configurée sur une interface réseau locale échoue en "
+"silence. Ne peut pas être combinée avec --sourceaddr."
+
+msgid ""
+"Source IPv6 address used to send queries. Setting an IPv6 address not "
+"correctly configured on a local network interface fails silently. Can not be "
+"combined with --sourceaddr."
+msgstr ""
+"Adresse IPv6 source à utiliser pour l'envoi des requêtes. Indiquer une "
+"adresse IPv6 mal configurée sur une interface réseau locale échoue en "
+"silence. Ne peut pas être combinée avec --sourceaddr."
+
+msgid "Print elapsed time (in seconds) at end of run."
+msgstr "Affiche le temps écoulé (en secondes) à la fin de l'exécution."
 
 #, perl-format
 msgid ""
@@ -189,6 +214,39 @@ msgstr ""
 "compte (Est-elle installée sur votre système ?).\n"
 "\n"
 
+msgid ""
+"Error: --sourceaddr can't be combined with --sourceaddr4 or --sourceaddr6."
+msgstr ""
+"Erreur : --sourceaddr ne peut pas être combinée avec --sourceaddr4 ou --"
+"sourceaddr6."
+
+msgid ""
+"Warning: --sourceaddr is deprecated (planned removal: v2024.1). Use --"
+"sourceaddr4 and/or --sourceaddr6 instead."
+msgstr ""
+"Avertissement : --sourceaddr est dépréciée (suppression prévue : v2024.1). "
+"Utilisez plutôt --sourceaddr4 et/ou --sourceaddr6."
+
+msgid "Error: --json-stream and --no-json can't be used together."
+msgstr ""
+"Erreur : --json-stream et --no-json ne peuvent pas être utilisés "
+"simultanément."
+
+msgid ""
+"Warning: --json-translate has no effect without either --json or --json-"
+"stream."
+msgstr ""
+"Avertissement : --json-translate n'a pas d'effet sans --json ni --json-"
+"stream."
+
+msgid "Warning: deprecated --json-translate, use --no-raw instead."
+msgstr ""
+"Avertissement : --json-translate est dépréciée, utilisez plutôt --no-raw."
+
+msgid "Warning: deprecated --no-json-translate, use --raw instead."
+msgstr ""
+"Avertissement : --no-json-translate est dépréciée, utilisez plutôt --raw."
+
 #, perl-brace-format
 msgid "Loading profile from {path}."
 msgstr "Chargement de la politique de tests depuis le fichier {path}."
@@ -205,6 +263,21 @@ msgstr ""
 "--level doit avoir pour valeur CRITICAL, ERROR, WARNING, NOTICE, INFO, "
 "DEBUG, DEBUG2 ou DEBUG3.\n"
 
+msgid "Seconds"
+msgstr "Durée"
+
+msgid "Level"
+msgstr "Niveau"
+
+msgid "Module"
+msgstr "Module"
+
+msgid "Testcase"
+msgstr "Plan de test"
+
+msgid "Message"
+msgstr "Message"
+
 msgid ""
 "Only one domain can be given for testing. Did you forget to prepend an "
 "option with '--<OPTION>'?\n"
@@ -213,40 +286,10 @@ msgstr ""
 "une option avec `--<OPTION>` ?\n"
 
 msgid "Must give the name of a domain to test.\n"
-msgstr "Il est nécessaire d'indiquer un nom de domaine pour lancer le test.\n"
+msgstr "Il est nécessaire d'indiquer un nom de domaine à tester.\n"
 
 msgid "The domain name contains consecutive dots.\n"
 msgstr "Le nom de domaine contient des points consécutifs.\n"
-
-msgid "Seconds "
-msgstr "Durée   "
-
-msgid "Level     "
-msgstr "Niveau    "
-
-msgid "Module       "
-msgstr "Module       "
-
-msgid "Testcase       "
-msgstr "Plan de test   "
-
-msgid "Message"
-msgstr "Message"
-
-msgid "======= "
-msgstr "======= "
-
-msgid "========= "
-msgstr "========= "
-
-msgid "============ "
-msgstr "============ "
-
-msgid "============== "
-msgstr "============== "
-
-msgid "======="
-msgstr "======="
 
 msgid "Looks OK."
 msgstr "Le résultat semble concluant."

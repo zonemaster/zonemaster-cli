@@ -2,15 +2,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-17 08:34+0000\n"
-"PO-Revision-Date: 2023-02-17 08:34+0000\n"
+"POT-Creation-Date: 2023-05-22 13:05-0400\n"
+"PO-Revision-Date: 2023-05-22 13:22-0400\n"
 "Last-Translator: hsalgado@vulcano.cl\n"
 "Language-Team: Zonemaster Team\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
+"X-Generator: Poedit 3.0.1\n"
 
 msgid "Print version information and exit."
 msgstr "Despliega información de la versión y termina."
@@ -32,11 +32,11 @@ msgid "Flag indicating if output should be streaming JSON or not."
 msgstr "Opción que indica si la salida debiera ser transmisión de JSON o no."
 
 msgid ""
-"Flag indicating if streaming JSON output should include the translated "
+"Deprecated. Flag indicating if JSON output should include the translated "
 "message of the tag or not."
 msgstr ""
-"Opción que indica si la salida de transmisión de JSON debiera incluir el "
-"mensaje traducido del tag o no."
+"Obsoleta. Opción que indica si la salida de transmisión de JSON debiera "
+"incluir el mensaje traducido del tag o no."
 
 msgid ""
 "Flag indicating if output should be translated to human language or dumped "
@@ -122,8 +122,8 @@ msgstr "Nombre del archivo de perfiles a cargar. (DEFAULT)"
 
 msgid "Strings with DS data on the form \"keytag,algorithm,type,digest\""
 msgstr ""
-"Etiquetas con los datos DS en la forma \"tag,algoritmo,tipo,resumen"
-"\" (\"keytag,algorithm,type,digest\")"
+"Etiquetas con los datos DS en la forma \"tag,algoritmo,tipo,"
+"resumen\" (\"keytag,algorithm,type,digest\")"
 
 msgid "Print a count of the number of messages at each level"
 msgstr "Despliega un contador de la cantidad de mensajes en cada nivel"
@@ -142,22 +142,49 @@ msgstr ""
 "argumentos en la línea de comandos"
 
 msgid ""
-"At the end of a run, print a summary of the times the zone's name servers "
-"took to answer."
+"At the end of a run, print a summary of the times (in milliseconds) the "
+"zone's name servers took to answer."
 msgstr ""
-"Al finalizar una ejecución, despliega un resumen del tiempo que le tomó "
-"responder a los servidores de nombre de la zona."
+"Al finalizar una ejecución, despliega un resumen del tiempo (en "
+"milisegundos) que le tomó responder a los servidores de nombre de la zona."
 
 msgid "Print the effective profile used in JSON format, then exit."
 msgstr "Despliega el perfil definitivo usado en formato JSON, luego termina."
 
 msgid ""
-"Source IP address used to send queries. Setting an IP address not correctly "
-"configured on a local network interface causes cryptic error messages."
+"Deprecated (planned removal: v2024.1). Use --sourceaddr4 and/or --"
+"sourceaddr6. Source IP address used to send queries. Setting an IP address "
+"not correctly configured on a local network interface causes cryptic error "
+"messages."
 msgstr ""
-"Dirección IP de origen usada para enviar las consultas. Indicar una "
-"dirección IP que no esté correctamente configurada en una interfaz de red "
-"local puede causar mensajes de error confusos."
+"Obsoleta (eliminación planificada para v2024.1). Use --sourceaddr4 y/o .."
+"sourceaddr6. Dirección IP de origen usada para enviar las consultas. Indicar "
+"una dirección IP que no esté correctamente configurada en una interfaz de "
+"red local puede causar mensajes de error confusos."
+
+msgid ""
+"Source IPv4 address used to send queries. Setting an IPv4 address not "
+"correctly configured on a local network interface fails silently. Can not be "
+"combined with --sourceaddr."
+msgstr ""
+"Dirección IPv4 de origen usada para enviar las consultas. Indicar una "
+"dirección IPv4 que no esté correctamente configurada en una interfaz de red "
+"local fallará silenciosamente. No puede usarse en combinación con --"
+"sourceaddr."
+
+msgid ""
+"Source IPv6 address used to send queries. Setting an IPv6 address not "
+"correctly configured on a local network interface fails silently. Can not be "
+"combined with --sourceaddr."
+msgstr ""
+"Dirección IPv6 de origen usada para enviar las consultas. Indicar una "
+"dirección IPv6 que no esté correctamente configurada en una interfaz de red "
+"local fallará silenciosamente. No puede usarse en combinación con --"
+"sourceaddr."
+
+msgid "Print elapsed time (in seconds) at end of run."
+msgstr ""
+"Imprime el tiempo transcurrido (en segundos) al finalizar la ejecución."
 
 #, perl-format
 msgid ""
@@ -179,6 +206,35 @@ msgstr ""
 "(¿está instalada en este sistema?).\n"
 "\n"
 
+msgid ""
+"Error: --sourceaddr can't be combined with --sourceaddr4 or --sourceaddr6."
+msgstr ""
+"Error: --sourceaddr no puede usarse al mismo tiempo que --sourceaddr4 o --"
+"sourceaddr6."
+
+msgid ""
+"Warning: --sourceaddr is deprecated (planned removal: v2024.1). Use --"
+"sourceaddr4 and/or --sourceaddr6 instead."
+msgstr ""
+"Advertencia: --sourceaddr está obsoleta (eliminación planificada para "
+"v2024.1). Utilice mejor --sourceaddr4 y/o --sourceaddr6."
+
+msgid "Error: --json-stream and --no-json can't be used together."
+msgstr "Error: --json-stream y --no-json no pueden usarse al mismo tiempo."
+
+msgid ""
+"Warning: --json-translate has no effect without either --json or --json-"
+"stream."
+msgstr ""
+"Advertencia: --json-translate no tiene ningún efecto sin tener además --json "
+"o --json-stream."
+
+msgid "Warning: deprecated --json-translate, use --no-raw instead."
+msgstr "Advertencia: --json-translate está obsoleta, utilice mejor --no-raw."
+
+msgid "Warning: deprecated --no-json-translate, use --raw instead."
+msgstr "Advertencia: --no-json-translate está obsoleta, utilice mejor --raw."
+
 #, perl-brace-format
 msgid "Loading profile from {path}."
 msgstr "Cargando perfil desde {path}."
@@ -193,6 +249,21 @@ msgstr ""
 "--level debe ser alguno entre CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, "
 "DEBUG2 o DEBUG3.\n"
 
+msgid "Seconds"
+msgstr "Segundos"
+
+msgid "Level"
+msgstr "Nivel"
+
+msgid "Module"
+msgstr "Módulo"
+
+msgid "Testcase"
+msgstr "Caso de prueba"
+
+msgid "Message"
+msgstr "Mensaje"
+
 msgid ""
 "Only one domain can be given for testing. Did you forget to prepend an "
 "option with '--<OPTION>'?\n"
@@ -205,36 +276,6 @@ msgstr "Debe indicar el nombre de un dominio a probar.\n"
 
 msgid "The domain name contains consecutive dots.\n"
 msgstr "El nombre de dominio contiene puntos consecutivos.\n"
-
-msgid "Seconds "
-msgstr "Segundos "
-
-msgid "Level     "
-msgstr "Nivel     "
-
-msgid "Module       "
-msgstr "Módulo       "
-
-msgid "Testcase       "
-msgstr "Caso de prueba       "
-
-msgid "Message"
-msgstr "Mensaje"
-
-msgid "======= "
-msgstr "======= "
-
-msgid "========= "
-msgstr "========= "
-
-msgid "============ "
-msgstr "============ "
-
-msgid "============== "
-msgstr "============== "
-
-msgid "======="
-msgstr "======="
 
 msgid "Looks OK."
 msgstr "Se ve bien."
@@ -284,24 +325,3 @@ msgstr "ERROR"
 
 msgid "CRITICAL"
 msgstr "CRÍTICO"
-
-#~ msgid "The minimum severity level to display"
-#~ msgstr "El nivel mínimo de gravedad que despliega"
-
-#~ msgid "Name of configuration file to load."
-#~ msgstr "Nombre del archivo de configuración a cargar."
-
-#~ msgid "Loading configuration from {path}."
-#~ msgstr "Cargando configuración desde {path}."
-
-#~ msgid "Print the effective configuration used in JSON format, then exit."
-#~ msgstr ""
-#~ "Despliega la configuración definitiva usada en formato JSON, luego "
-#~ "termina."
-
-#~ msgid ""
-#~ "Local IP address that the test engine should try to send its requests "
-#~ "from."
-#~ msgstr ""
-#~ "Dirección IP local que debería usar el motor de pruebas como origen de "
-#~ "sus solicitudes."

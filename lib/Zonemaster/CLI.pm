@@ -11,7 +11,7 @@ use 5.014002;
 use strict;
 use warnings;
 
-use version; our $VERSION = version->declare( "v5.0.2" );
+use version; our $VERSION = version->declare( "v6.0.0" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
@@ -68,7 +68,7 @@ has 'locale' => (
 );
 
 has 'json' => (
-    is            => 'ro',
+    is            => 'rw',
     isa           => 'Bool',
     default       => 0,
     documentation => __( 'Flag indicating if output should be in JSON or not.' ),
@@ -88,16 +88,14 @@ has 'json_translate' => (
     traits        => [ 'Getopt' ],
     is            => 'ro',
     isa           => 'Bool',
-    default       => 0,
     cmd_aliases   => 'json_translate',
     cmd_flag      => 'json-translate',
-    documentation => __( 'Flag indicating if streaming JSON output should include the translated message of the tag or not.' ),
+    documentation => __( 'Deprecated. Flag indicating if JSON output should include the translated message of the tag or not.' ),
 );
 
 has 'raw' => (
-    is            => 'ro',
+    is            => 'rw',
     isa           => 'Bool',
-    default       => 0,
     documentation => __( 'Flag indicating if output should be translated to human language or dumped raw.' ),
 );
 
@@ -259,7 +257,7 @@ has 'nstimes' => (
     isa           => 'Bool',
     required      => 0,
     default       => 0,
-    documentation => __('At the end of a run, print a summary of the times the zone\'s name servers took to answer.'),
+    documentation => __( 'At the end of a run, print a summary of the times (in milliseconds) the zone\'s name servers took to answer.' ),
 );
 
 has 'dump_profile' => (
@@ -278,8 +276,32 @@ has 'sourceaddr' => (
     isa           => 'Str',
     required      => 0,
     documentation => __(
-            'Source IP address used to send queries. '
+            'Deprecated (planned removal: v2024.1). '
+          . 'Use --sourceaddr4 and/or --sourceaddr6. '
+          . 'Source IP address used to send queries. '
           . 'Setting an IP address not correctly configured on a local network interface causes cryptic error messages.'
+    ),
+);
+
+has 'sourceaddr4' => (
+    is            => 'ro',
+    isa           => 'Str',
+    required      => 0,
+    documentation => __(
+            'Source IPv4 address used to send queries. '
+          . 'Setting an IPv4 address not correctly configured on a local network interface fails silently. '
+          . 'Can not be combined with --sourceaddr.'
+    ),
+);
+
+has 'sourceaddr6' => (
+    is            => 'ro',
+    isa           => 'Str',
+    required      => 0,
+    documentation => __(
+            'Source IPv6 address used to send queries. '
+          . 'Setting an IPv6 address not correctly configured on a local network interface fails silently. '
+          . 'Can not be combined with --sourceaddr.'
     ),
 );
 
@@ -288,7 +310,7 @@ has 'elapsed' => (
     isa           => 'Bool',
     required      => 0,
     default       => 0,
-    documentation => 'Print elapsed time at end of run.',
+    documentation => __( 'Print elapsed time (in seconds) at end of run.' ),
 );
 
 sub run {
@@ -327,13 +349,45 @@ sub run {
         print_test_list();
     }
 
-    if ($self->sourceaddr) {
-
+    if ( $self->sourceaddr ) {
+        if ( $self->sourceaddr4 or $self->sourceaddr6 ) {
+            die __( "Error: --sourceaddr can't be combined with --sourceaddr4 or --sourceaddr6." ) . "\n";
+        }
+        printf STDERR "%s\n\n", __( "Warning: --sourceaddr is deprecated (planned removal: v2024.1). Use --sourceaddr4 and/or --sourceaddr6 instead." );
         Zonemaster::Engine::Profile->effective->set( q{resolver.source}, $self->sourceaddr );
     }
 
+    if ( $self->sourceaddr4 ) {
+        Zonemaster::Engine::Profile->effective->set( q{resolver.source4}, $self->sourceaddr4 );
+    }
+
+    if ( $self->sourceaddr6 ) {
+        Zonemaster::Engine::Profile->effective->set( q{resolver.source6}, $self->sourceaddr6 );
+    }
+
+    # errors and warnings
+    if ( $self->json_stream and not $self->json and grep( /^--no-?json$/, @{ $self->ARGV } ) ) {
+        die __( "Error: --json-stream and --no-json can't be used together." ) . "\n";
+    }
+
+    if ( defined $self->json_translate ) {
+        unless ( $self->json or $self->json_stream ) {
+            printf STDERR __( "Warning: --json-translate has no effect without either --json or --json-stream." ) . "\n";
+        }
+        if ( $self->json_translate ) {
+            printf STDERR __( "Warning: deprecated --json-translate, use --no-raw instead." ) . "\n";
+        }
+        else {
+            printf STDERR __( "Warning: deprecated --no-json-translate, use --raw instead." ) . "\n";
+        }
+    }
+
+    # align values
+    $self->json( 1 ) if $self->json_stream;
+    $self->raw( $self->raw // ( defined $self->json_translate ? !$self->json_translate : 0 ) );
+
     # Filehandle for diagnostics output
-    my $fh_diag = ( $self->json or $self->json_stream or $self->raw )
+    my $fh_diag = ( $self->json or $self->raw )
       ? *STDERR     # Structured output mode (e.g. JSON)
       : *STDOUT;    # Human readable output mode
 
@@ -369,17 +423,41 @@ sub run {
     }
 
     my $translator;
-    $translator = Zonemaster::Engine::Translator->new unless ( $self->raw or $self->json or $self->json_stream );
+    $translator = Zonemaster::Engine::Translator->new unless $self->raw;
     $translator->locale( $self->locale ) if $translator and $self->locale;
-
-    my $json_translator;
-    if ( $self->json_translate ) {
-        $json_translator = Zonemaster::Engine::Translator->new;
-        $json_translator->locale( $self->locale ) if $self->locale;
-    }
 
     if ( $self->restore ) {
         Zonemaster::Engine->preload_cache( $self->restore );
+    }
+
+    my $level_width = 0;
+    foreach ( keys %numeric ) {
+        if ( $numeric{ $self->level } <= $numeric{$_} ) {
+            my $width_l10n = length( decode_utf8( translate_severity( $_ ) ) );
+            $level_width = $width_l10n if $width_l10n > $level_width;
+        }
+    }
+
+    my %field_width = (
+        seconds  => 7,
+        level    => $level_width,
+        module   => 12,
+        testcase => 14
+    );
+    my %header_names = ();
+    my %remaining_space = ();
+    if ( $translator ) {
+        %header_names = (
+            seconds  => __( 'Seconds' ),
+            level    => __( 'Level' ),
+            module   => __( 'Module' ),
+            testcase => __( 'Testcase' ),
+            message  => __( 'Message' )
+        );
+        foreach ( keys %header_names ) {
+            $field_width{$_} = _max( $field_width{$_}, length( decode_utf8( $header_names{$_} ) ) );
+            $remaining_space{$_} = $field_width{$_} - length( decode_utf8( $header_names{$_} ) );
+        }
     }
 
     # Callback defined here so it closes over the setup above.
@@ -394,75 +472,70 @@ sub run {
             if ( $numeric{ uc $entry->level } >= $numeric{ $self->level } ) {
                 $printed_something = 1;
 
-                if ( $translator ) {
-                    my $header = q{};
-                    if ( $self->time ) {
-                        $header .= sprintf "%7.2f ", $entry->timestamp;
-                    }
-
-                    if ( $self->show_level ) {
-                        $header .= sprintf "%-9s ", translate_severity( $entry->level );
-                    }
-
-                    if ( $self->show_module ) {
-                        $header .= sprintf "%-12s ", $entry->module;
-                    }
-
-                    if ( $self->show_testcase ) {
-                        $header .= sprintf "%-14s ", $entry->testcase;
-                    }
-
-                    print $header;
-
-                    if ( $entry->level eq q{DEBUG3} and scalar( keys %{$entry->args} ) == 1 and defined $entry->args->{packet} ) {
-                        my $packet = $entry->args->{packet};
-                        my $padding = q{ } x length $header;
-                        $entry->args->{packet} = q{};
-                        say $translator->translate_tag( $entry );
-                        foreach my $line ( split /\n/, $packet ) {
-                            print $padding, $line, "\n";
-                        }
-                    }
-                    else {
-                        say $translator->translate_tag( $entry );
-                    }
-                }
-                elsif ( $self->json_stream ) {
+                if ( $self->json and $self->json_stream ) {
                     my %r;
 
-                    $r{timestamp} = $entry->timestamp;
-                    $r{module}    = $entry->module;
-                    $r{testcase}  = $entry->testcase;
+                    $r{timestamp} = $entry->timestamp if $self->time;
+                    $r{module}    = $entry->module if $self->show_module;
+                    $r{testcase}  = $entry->testcase if $self->show_testcase;
                     $r{tag}       = $entry->tag;
-                    $r{level}     = $entry->level;
+                    $r{level}     = $entry->level if $self->show_level;
                     $r{args}      = $entry->args if $entry->args;
-                    $r{message}   = $json_translator->translate_tag( $entry ) if $json_translator;
+                    $r{message}   = $translator->translate_tag( $entry ) unless $self->raw;
 
                     say $JSON->encode( \%r );
                 }
-                elsif ( $self->json ) {
+                elsif ( $self->json and not $self->json_stream ) {
                     # Don't do anything
                 }
                 else {
-                    my $prefix = sprintf "%7.2f %-9s ", $entry->timestamp, $entry->level;
+                    my $prefix = q{};
+                    if ( $self->time ) {
+                        $prefix .= sprintf "%*.2f ", ${field_width{seconds}}, $entry->timestamp;
+                    }
+
+                    if ( $self->show_level ) {
+                        $prefix .= $self->raw ? $entry->level : translate_severity( $entry->level );
+                        my $space_l10n = ${field_width{level}} - length( decode_utf8( translate_severity($entry->level) ) ) + 1;
+                        $prefix .= ' ' x $space_l10n;
+                    }
+
                     if ( $self->show_module ) {
-                        $prefix .= sprintf "%-12s ", $entry->module;
+                        $prefix .= sprintf "%-*s ", ${field_width{module}}, $entry->module;
                     }
+
                     if ( $self->show_testcase ) {
-                        $prefix .= sprintf "%-14s ", $entry->testcase;
+                        $prefix .= sprintf "%-*s ", ${field_width{testcase}}, $entry->testcase;
                     }
-                    $prefix .= $entry->tag;
 
-                    my $message = $entry->string;
-                    $message =~ s/^[A-Z0-9:_]+//;    # strip MODULE:TAG, they're coming in $prefix instead
-                    my @lines = split /\n/, $message;
+                    if ( $self->raw ) {
+                        $prefix .= $entry->tag;
 
-                    printf "%s%s %s\n", $prefix, ' ', shift @lines;
-                    for my $line ( @lines ) {
-                        printf "%s%s %s\n", $prefix, '>', $line;
+                        my $message = $entry->string;
+                        $message =~ s/^[A-Z0-9:_]+//;    # strip MODULE:TAG, they're coming in $prefix instead
+                        my @lines = split /\n/, $message;
+
+                        printf "%s%s %s\n", $prefix, ' ', shift @lines;
+                        for my $line ( @lines ) {
+                            printf "%s%s %s\n", $prefix, '>', $line;
+                        }
+                    }
+                    else {
+                        if ( $entry->level eq q{DEBUG3} and scalar( keys %{$entry->args} ) == 1 and defined $entry->args->{packet} ) {
+                            my $packet = $entry->args->{packet};
+                            my $padding = q{ } x length $prefix;
+                            $entry->args->{packet} = q{};
+                            printf "%s%s\n", $prefix, $translator->translate_tag( $entry );
+                            foreach my $line ( split /\n/, $packet ) {
+                                printf "%s%s\n", $padding, $line;
+                            }
+                        }
+                        else {
+                            printf "%s%s\n", $prefix, $translator->translate_tag( $entry );
+                        }
                     }
                 }
-            } ## end if ( $numeric{ uc $entry...})
+            }
             if ( $self->stop_level and $numeric{ uc $entry->level } >= $numeric{ $self->stop_level } ) {
                 die( Zonemaster::Engine::Exception::NormalExit->new( { message => "Saw message at level " . $entry->level } ) );
             }
@@ -511,35 +584,39 @@ sub run {
         $self->add_fake_ds( $domain );
     }
 
-    if ( $translator ) {
-        if ( $self->time ) {
-            print __( 'Seconds ' );
-        }
-        if ( $self->show_level ) {
-            print __( 'Level     ' );
-        }
-        if ( $self->show_module ) {
-            print __( 'Module       ' );
-        }
-        if ( $self->show_testcase ) {
-            print __( 'Testcase       ' );
-        }
-        say __( 'Message' );
+    if ( not $self->raw and not $self->json ) {
+        my $header = q{};
 
         if ( $self->time ) {
-            print __( '======= ' );
+            $header .= sprintf "%s%s ", $header_names{seconds}, " " x $remaining_space{seconds};
         }
         if ( $self->show_level ) {
-            print __( '========= ' );
+            $header .= sprintf "%s%s ", $header_names{level}, " " x $remaining_space{level};
         }
         if ( $self->show_module ) {
-            print __( '============ ' );
+            $header .= sprintf "%s%s ", $header_names{module}, " " x $remaining_space{module};
         }
         if ( $self->show_testcase ) {
-            print __( '============== ' );
+            $header .= sprintf "%s%s ", $header_names{testcase}, " " x $remaining_space{testcase};
         }
-        say __( '=======' );
-    } ## end if ( $translator )
+        $header .= sprintf "%s\n", $header_names{message};
+
+        if ( $self->time ) {
+            $header .= sprintf "%s ", "=" x $field_width{seconds};
+        }
+        if ( $self->show_level ) {
+            $header .= sprintf "%s ", "=" x $field_width{level};
+        }
+        if ( $self->show_module ) {
+            $header .= sprintf "%s ", "=" x $field_width{module};
+        }
+        if ( $self->show_testcase ) {
+            $header .= sprintf "%s ", "=" x $field_width{testcase};
+        }
+        $header .= sprintf "%s\n", "=" x $field_width{message};
+
+        print $header;
+    }
 
     # Actually run tests!
     eval {
@@ -558,7 +635,7 @@ sub run {
             Zonemaster::Engine->test_zone( $domain );
         }
     };
-    if ( $translator ) {
+    if ( not $self->raw and not $self->json ) {
         if ( not $printed_something ) {
             say __( "Looks OK." );
         }
@@ -574,11 +651,21 @@ sub run {
         }
     }
 
+    my $json_output = {};
+
     if ( $self->count ) {
-        say __( "\n\n   Level\tNumber of log entries" );
-        say "   =====\t=====================";
-        foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
-            printf __( "%8s\t%5d entries.\n" ), translate_severity( $level ), $counter{$level};
+        if ( $self->json ) {
+            $json_output->{count} = {};
+            foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
+                $json_output->{count}{$level} = $counter{$level};
+            }
+        }
+        else {
+            say __( "\n\n   Level\tNumber of log entries" );
+            say "   =====\t=====================";
+            foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
+                printf __( "%8s\t%5d entries.\n" ), translate_severity( $level ), $counter{$level};
+            }
         }
     }
 
@@ -586,28 +673,68 @@ sub run {
         my $zone = Zonemaster::Engine->zone( $domain );
         my $max = max map { length( "$_" ) } ( @{ $zone->ns }, q{Server} );
 
-        print "\n";
-        printf "%${max}s %s\n", 'Server', ' Max (ms)      Min      Avg   Stddev   Median     Total';
-        printf "%${max}s %s\n", '=' x $max, ' ======== ======== ======== ======== ======== =========';
+        if ( $self->json ) {
+            my @times = ();
+            foreach my $ns ( @{ $zone->ns } ) {
+                push @times, {
+                    'ns'     => $ns->string,
+                    'max'    => 1000 * $ns->max_time,
+                    'min'    => 1000 * $ns->min_time,
+                    'avg'    => 1000 * $ns->average_time,
+                    'stddev' => 1000 * $ns->stddev_time,
+                    'median' => 1000 * $ns->median_time,
+                    'total'  => 1000 * $ns->sum_time
+                };
+            }
+            $json_output->{nstimes} = \@times;
+        }
+        else {
+            print "\n";
+            printf "%${max}s %s\n", 'Server', '      Max      Min      Avg   Stddev   Median     Total';
+            printf "%${max}s %s\n", '=' x $max, ' ======== ======== ======== ======== ======== =========';
 
-        foreach my $ns ( @{ $zone->ns } ) {
-            printf "%${max}s ", $ns->string;
-            printf "%9.2f ",    1000 * $ns->max_time;
-            printf "%8.2f ",    1000 * $ns->min_time;
-            printf "%8.2f ",    1000 * $ns->average_time;
-            printf "%8.2f ",    1000 * $ns->stddev_time;
-            printf "%8.2f ",    1000 * $ns->median_time;
-            printf "%9.2f\n",   1000 * $ns->sum_time;
+            foreach my $ns ( @{ $zone->ns } ) {
+                printf "%${max}s ", $ns->string;
+                printf "%9.2f ",    1000 * $ns->max_time;
+                printf "%8.2f ",    1000 * $ns->min_time;
+                printf "%8.2f ",    1000 * $ns->average_time;
+                printf "%8.2f ",    1000 * $ns->stddev_time;
+                printf "%8.2f ",    1000 * $ns->median_time;
+                printf "%9.2f\n",   1000 * $ns->sum_time;
+            }
         }
     }
 
     if ($self->elapsed) {
         my $last = Zonemaster::Engine->logger->entries->[-1];
-        printf "Total test run time: %0.1f seconds.\n", $last->timestamp;
+
+        if ( $self->json ) {
+            $json_output->{elapsed} = $last->timestamp;
+        }
+        else {
+            printf "Total test run time: %0.1f seconds.\n", $last->timestamp;
+        }
     }
 
-    if ( $self->json ) {
-        say Zonemaster::Engine->logger->json( $self->level );
+    if ( $self->json and not $self->json_stream ) {
+        my $res = Zonemaster::Engine->logger->json( $self->level );
+        $res = $JSON->decode( $res );
+        foreach ( @$res ) {
+            unless ( $self->raw ) {
+                my %e = %$_;
+                my $entry = Zonemaster::Engine::Logger::Entry->new( \%e );
+                $_->{message} = $translator->translate_tag( $entry );
+            }
+            delete $_->{timestamp} unless $self->time;
+            delete $_->{level} unless $self->show_level;
+            delete $_->{module} unless $self->show_module;
+            delete $_->{testcase} unless $self->show_testcase;
+        }
+        $json_output->{results} = $res;
+    }
+
+    if ( scalar keys %$json_output ) {
+        say $JSON->encode( $json_output );
     }
 
     if ( $self->save ) {
@@ -615,7 +742,7 @@ sub run {
     }
 
     return;
-} ## end sub run
+}
 
 sub add_fake_delegation {
     my ( $self, $domain ) = @_;
@@ -669,15 +796,10 @@ sub add_fake_ds {
 }
 
 sub print_versions {
-    say 'CLI version:    ' . __PACKAGE__->VERSION;
-    say 'Engine version: ' . $Zonemaster::Engine::VERSION;
-    say "\nTest module versions:";
-
-    my %methods = Zonemaster::Engine->all_methods;
-    foreach my $module ( sort keys %methods ) {
-        my $mod = "Zonemaster::Engine::Test::$module";
-        say "\t$module: " . $mod->version;
-    }
+    say 'Zonemaster-CLI version ' . __PACKAGE__->VERSION;
+    say 'Zonemaster-Engine version ' . $Zonemaster::Engine::VERSION;
+    say 'Zonemaster-LDNS version ' . $Zonemaster::LDNS::VERSION;
+    say 'NL NetLabs LDNS version ' . Zonemaster::LDNS::lib_version();
 
     return;
 }
@@ -736,7 +858,7 @@ sub print_test_list {
         print "\n";
     }
     exit( 0 );
-} ## end sub print_test_list
+}
 
 sub do_dump_profile {
     my $json = JSON::XS->new->canonical->pretty;
@@ -769,6 +891,13 @@ sub translate_severity {
     else {
         return $severity;
     }
+}
+
+sub _max {
+    my ( $a, $b ) = @_;
+    $a //= 0;
+    $b //= 0;
+    return ( $a > $b ? $a : $b ) ;
 }
 
 1;

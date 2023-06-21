@@ -1,6 +1,6 @@
 .POSIX:
 .SUFFIXES: .po .mo
-.PHONY: all check-msg-args dist extract-pot tidy-po show-fuzzy update-po
+.PHONY: all check-msg-args dist extract-pot tidy-po show-fuzzy update-po new-po check-po
 
 POFILES := $(shell find . -maxdepth 1 -type f -name '*.po' -exec basename {} \;)
 MOFILES := $(POFILES:%.po=%.mo)
@@ -17,6 +17,23 @@ tidy-po:
 
 update-po: extract-pot
 	@for f in $(POFILES) ; do msgmerge --update --backup=none --quiet --no-location $(MSGMERGE_OPTS) $$f $(POTFILE) ; done
+
+# Create a new empty PO file with basename provided with the POLANG variable
+# Update the Language field in the header
+new-po: extract-pot
+	@[ -n "$(POLANG)" ] || ( echo "Usage: make POLANG=xx new-po" && exit 1 )
+	@cp $(POTFILE) $(POLANG).po
+	@perl -pi -e 's/^("Project-Id-Version:) .+(\\n)/$$1 1.0.0$$2/;' \
+		-e 's/^("Language-Team:) .+(\\n)/$$1 Zonemaster Team$$2/;' \
+		-e 's/^"Language: /$$&$(POLANG)/;' \
+		-e 's/^("Content-Type:.+charset=)CHARSET/$${1}UTF-8/;' $(POLANG).po
+	@perl -ni -e 'print unless /^#( |$$)/' $(POLANG).po
+
+# Check the msgid/msgstr pair for some inconsistencies between them in the
+# selected PO file and report on standard error any errors found. The PO file
+# is not updated.
+check-po:
+	@for f in $(POFILES) ; do msgfmt -c $$f ; done
 
 extract-pot:
 	@xgettext --output $(POTFILE) --sort-by-file --add-comments --language=Perl --from-code=UTF-8 -k__ -k\$$__ -k%__ -k__x -k__n:1,2 -k__nx:1,2 -k__xn:1,2 -kN__ -kN__n:1,2 -k__p:1c,2 -k__np:1c,2,3 -kN__p:1c,2 -kN__np:1c,2,3 $(PMFILES)
