@@ -1,5 +1,21 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
+v5.1.0 2023-06-21 (public release version)
+
+ [Features]
+ - Updates various report options to zonemaster-cli script
+   (#318, #337, #309)
+ - Adds options "--sourceaddr4" and "--sourceaddr6" to
+   zonemaster-cli script (#317)
+
+ [Fixes]
+ - Updates translations (#338, #328, #329, #331, #327, #322)
+ - Updates documentation in zonemaster-cli script (#336)
+ - Fixes table layout in zonemaster-cli output (#335)
+ - Removes documentation moved to the zonemaster/zonemaster
+   repository (#332)
+ - Remove some untranslatable characters from msgids (#307)
+
 
 v5.0.2 2023-03-01 (public fix version)
 
