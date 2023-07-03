@@ -192,7 +192,7 @@ has 'test' => (
     isa           => 'ArrayRef',
     required      => 0,
     documentation => __(
-'Specify test to run. Should be either the name of a module, or the name of a module and the name of a method in that module separated by a "/" character (Example: "Basic/basic1"). The method specified must be one that takes a zone object as its single argument. This switch can be repeated.'
+'Specify test to run. Should be either the name of a module, or the name of a module and the name of a method in that module separated by a "/" character (Example: "Basic/basic01"). This switch can be repeated.'
     )
 );
 
