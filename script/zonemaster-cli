@@ -202,6 +202,7 @@ Limit the testing suite to run only the specified tests.
 This can be the name of a testing module, in which case all test cases from
 that module will be run, or the name of a module followed by a slash and the
 name of a test case (test case identifier) in that module.
+This option is case-insensitive.
 
 =item --stop_level=LEVEL, --stop-level=LEVEL
 

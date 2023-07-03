@@ -192,7 +192,7 @@ has 'test' => (
     isa           => 'ArrayRef',
     required      => 0,
     documentation => __(
-'Specify test to run. Should be either the name of a module, or the name of a module and the name of a method in that module separated by a "/" character (Example: "Basic/basic01"). This switch can be repeated.'
+'Specify test to run case-insensitively. Should be either the name of a module, or the name of a module and the name of a method in that module separated by a "/" character (Example: "Basic/basic01"). This switch can be repeated.'
     )
 );
 
@@ -622,7 +622,7 @@ sub run {
     eval {
         if ( $self->test and @{ $self->test } > 0 ) {
             foreach my $t ( @{ $self->test } ) {
-                my ( $module, $method ) = split( '/', $t, 2 );
+                my ( $module, $method ) = split( '/', lc($t), 2 );
                 if ( $method ) {
                     Zonemaster::Engine->test_method( $module, $method, Zonemaster::Engine->zone( $domain ) );
                 }
