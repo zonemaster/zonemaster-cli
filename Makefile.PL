@@ -24,7 +24,7 @@ requires(
     'Text::Reflow'       => 0,
     'Try::Tiny'          => 0,
     'Zonemaster::LDNS'   => 3.002000,  # v3.2.0
-    'Zonemaster::Engine' => 4.007001,  # v4.7.2
+    'Zonemaster::Engine' => 4.007002,  # v4.7.2
 );
 
 # Make all platforms include inc/Module/Install/External.pm
