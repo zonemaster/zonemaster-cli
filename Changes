@@ -1,6 +1,13 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
 
+v6.0.3 2023-09-05 (public fix version)
+
+ [Fixes]
+ - This version contains no real changes. It has been created to
+   require a higher (fixed) version of Zonemaster-Engine.
+
+
 v6.0.2 2023-08-07 (public fix version)
 
  [Fixes]
