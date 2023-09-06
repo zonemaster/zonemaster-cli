@@ -1,7 +1,7 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
 
-v6.0.3 2023-09-05 (public fix version)
+v6.0.3 2023-09-08 (public fix version)
 
  [Fixes]
  - Fixes a spelling error (text) in the zonemaster-cli script (#351).
