@@ -5,7 +5,7 @@ v6.0.3 2023-09-08 (public fix version)
 
  [Fixes]
  - Fixes a spelling error (text) in the zonemaster-cli script (#351).
- - This version contains no real code changes, but it require a higher
+ - This version contains no real code changes, but it requires a higher
    (fixed) version of Zonemaster-Engine.
 
 v6.0.2 2023-08-07 (public fix version)
