@@ -159,7 +159,7 @@ Provide information about a nameserver, for undelegated tests. The argument
 must be either: (i) a domain name and an IP address, separated by a single
 slash character (/), or (ii) only a domain name, in which case a A and AAAA
 records lookup for that name is done in the live global DNS tree (unless 
-overriden by --hints) and from which the results of that lookup will be used.
+overridden by --hints) and from which the results of that lookup will be used.
 
 This switch can be given multiple times. As long as any of these switches
 are present, their aggregated content will be used as the
