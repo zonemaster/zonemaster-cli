@@ -30,7 +30,7 @@ use Zonemaster::Engine;
 use Zonemaster::Engine::Exception;
 use Zonemaster::Engine::Logger::Entry;
 use Zonemaster::Engine::Translator;
-use Zonemaster::Engine::Util qw[parse_hints pod_extract_for];
+use Zonemaster::Engine::Util qw[parse_hints];
 use Zonemaster::Engine::Zone;
 use Zonemaster::LDNS;
 
@@ -841,19 +841,8 @@ sub print_test_list {
 
     foreach my $module ( sort keys %methods ) {
         say $module;
-        my $doc = pod_extract_for( $module );
         foreach my $method ( sort @{ $methods{$module} } ) {
-            printf "  %${maxlen}s ", $method;
-            if ( $doc and $doc->{$method} ) {
-                print reflow_string(
-                    $doc->{$method},
-                    optimum => 65,
-                    maximum => 75,
-                    indent1 => '   ',
-                    indent2 => ( ' ' x ( $maxlen + 6 ) )
-                );
-            }
-            print "\n";
+            printf "  %${maxlen}s\n", $method;
         }
         print "\n";
     }
