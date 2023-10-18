@@ -11,7 +11,7 @@ use 5.014002;
 use strict;
 use warnings;
 
-use version; our $VERSION = version->declare( "v6.1.0" );
+use version; our $VERSION = version->declare( "v6.0.3" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
@@ -819,22 +819,6 @@ sub print_spinner {
     printf "%s\r", $spinner_strings[ $counter++ % 4 ] if $self->progress;
 
     return;
-}
-
-sub to_idn {
-    my ( $self, $str ) = @_;
-
-    if ( $str =~ m/^[[:ascii:]]+$/ ) {
-        return $str;
-    }
-
-    if ( Zonemaster::LDNS::has_idn() ) {
-        return Zonemaster::LDNS::to_idn( decode( $self->encoding, $str ) );
-    }
-    else {
-        say STDERR __( "Warning: Zonemaster::LDNS not compiled with IDN support, cannot handle non-ASCII names correctly." );
-        return $str;
-    }
 }
 
 sub print_test_list {
