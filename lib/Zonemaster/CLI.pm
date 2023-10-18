@@ -756,23 +756,24 @@ sub add_fake_delegation {
     foreach my $pair ( @{ $self->ns } ) {
         my ( $name, $ip ) = split( '/', $pair, 2 );
 
-        if ( not $name ) {
+        if ( $pair =~ tr/\/// > 1 or not $name ) {
             say STDERR __( "--ns must be a name or a name/ip pair." );
             exit( 1 );
         }
 
-        if ( $name =~ m/\.\./i ) {
-            say STDERR __x( "The name of the nameserver '{nsname}' contains consecutive dots.", nsname => $name );
-            exit ( 1 );
-        }
+        ( my $errors, $name ) = normalize_name( $name );
 
-        $name =~ s/\.$// unless $name eq '.';
+        if ( scalar @$errors > 0 ) {
+            my $err = "Invalid name in --ns argument:\n" ;
+            $err .= "\t" . $_->string . "\n" for @$errors;
+            die $err;
+        }
 
         if ($ip) {
-            push @{ $data{ $self->to_idn( $name ) } }, $ip;
+            push @{ $data{ $name } }, $ip;
         }
         else {
-            push @ns_with_no_ip, $self->to_idn($name);
+            push @ns_with_no_ip, $name;
         }
     }
     foreach my $ns ( @ns_with_no_ip ) {
