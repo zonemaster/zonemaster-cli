@@ -11,7 +11,7 @@ use 5.014002;
 use strict;
 use warnings;
 
-use version; our $VERSION = version->declare( "v6.0.3" );
+use version; our $VERSION = version->declare( "v6.1.0" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
@@ -26,13 +26,15 @@ use Scalar::Util qw[blessed];
 use Socket qw[AF_INET AF_INET6];
 use Text::Reflow qw[reflow_string];
 use Try::Tiny;
+
+use Zonemaster::LDNS;
 use Zonemaster::Engine;
 use Zonemaster::Engine::Exception;
+use Zonemaster::Engine::Normalization qw[normalize_name];
 use Zonemaster::Engine::Logger::Entry;
 use Zonemaster::Engine::Translator;
 use Zonemaster::Engine::Util qw[parse_hints];
 use Zonemaster::Engine::Zone;
-use Zonemaster::LDNS;
 
 our %numeric = Zonemaster::Engine::Logger::Entry->levels;
 our $JSON    = JSON::XS->new->allow_blessed->convert_blessed->canonical;
@@ -552,16 +554,18 @@ sub run {
     }
 
     my ( $domain ) = @{ $self->extra_argv };
+
     if ( not $domain ) {
         die __( "Must give the name of a domain to test.\n" );
     }
 
-    if ( $domain =~ m/\.\./i ) {
-        die __( "The domain name contains consecutive dots.\n" );
-    }
+    ( my $errors, $domain ) = normalize_name( $domain );
 
-    $domain =~ s/\.$// unless $domain eq '.';
-    $domain = $self->to_idn( $domain );
+    if ( scalar @$errors > 0 ) {
+        my $err;
+        $err .= $_->string . "\n" for @$errors;
+        die $err;
+    }
 
     if ( defined $self->hints ) {
         my $hints_data;
