@@ -562,9 +562,11 @@ sub run {
     ( my $errors, $domain ) = normalize_name( $domain );
 
     if ( scalar @$errors > 0 ) {
-        my $err;
-        $err .= $_->string . "\n" for @$errors;
-        die $err;
+        my $error_message;
+        foreach my $err ( @$errors ) {
+            $error_message .= $err->string . "\n";
+        }
+        die $error_message;
     }
 
     if ( defined $self->hints ) {
@@ -764,18 +766,21 @@ sub add_fake_delegation {
         ( my $errors, $name ) = normalize_name( $name );
 
         if ( scalar @$errors > 0 ) {
-            my $err = "Invalid name in --ns argument:\n" ;
-            $err .= "\t" . $_->string . "\n" for @$errors;
-            die $err;
+            my $error_message = "Invalid name in --ns argument:\n" ;
+            foreach my $err ( @$errors ) {
+                $error_message .= "\t" . $err->string . "\n";
+            }
+            die $error_message;
         }
 
-        if ($ip) {
+        if ( $ip ) {
             push @{ $data{ $name } }, $ip;
         }
         else {
             push @ns_with_no_ip, $name;
         }
     }
+
     foreach my $ns ( @ns_with_no_ip ) {
         if ( not exists $data{ $ns } ) {
             $data{ $ns } = undef;
