@@ -26,6 +26,7 @@ use Scalar::Util qw[blessed];
 use Socket qw[AF_INET AF_INET6];
 use Text::Reflow qw[reflow_string];
 use Try::Tiny;
+use Zonemaster::CLI::TestCaseSet;
 use Zonemaster::Engine;
 use Zonemaster::Engine::Exception;
 use Zonemaster::Engine::Logger::Entry;
@@ -189,11 +190,21 @@ has 'list_tests' => (
 
 has 'test' => (
     is            => 'ro',
-    isa           => 'ArrayRef',
+    isa           => 'Str',
+    default       => '',
     required      => 0,
     documentation => __(
-'Specify test to run case-insensitively. Should be either the name of a module, or the name of a module and the name of a method in that module separated by a "/" character (Example: "Basic/basic01"). This switch can be repeated.'
-    )
+            'An expression specifying or modifying the set of tests to run.'
+          . ' Here are some examples:'
+          . ' "nameserver" runs the entire Nameserver test module, and the Basic test module which cannot be disabled, and nothing else.'
+          . ' "nameserver01" runs the Nameserver01 test case, and the Basic test module, and nothing else.'
+          . ' "dnssec-dnssec05" runs the entire DNSSEC test module except the DNSSEC05 test case, and the Basic module, and nothing else.'
+          . ' "all-nameserver+nameserver03" runs all test cases of all test modules except for the Nameserver test module in which only the Nameserver03 test case is run.'
+          . ' "-dnssec" removes all test cases of the DNSSEC module from the set of tests that would otherwise have run.'
+          . ' "+syntax01+syntax02" adds the Syntax01 and Syntax02 test cases to the set of tests that would otherwise have run.'
+          . ' "" leaves the set of tests to run unmodified.'
+          . ' Default is "".'
+    ),
 );
 
 has 'stop_level' => (
@@ -618,22 +629,23 @@ sub run {
         print $header;
     }
 
+    my $cases = Zonemaster::CLI::TestCaseSet->new(
+        Zonemaster::Engine::Profile->effective->get( q{test_cases} ),
+        Zonemaster::Engine->all_methods,
+    );
+
+    my @modifiers = Zonemaster::CLI::TestCaseSet->parse_modifier_expr( $self->test );
+    while ( @modifiers ) {
+        my $op   = shift @modifiers;
+        my $term = shift @modifiers;
+        $cases->apply_modifier($op, $term);
+    }
+
+    Zonemaster::Engine::Profile->effective->set( q{test_cases}, [$cases->to_list] ),
+
     # Actually run tests!
     eval {
-        if ( $self->test and @{ $self->test } > 0 ) {
-            foreach my $t ( @{ $self->test } ) {
-                my ( $module, $method ) = split( '/', lc($t), 2 );
-                if ( $method ) {
-                    Zonemaster::Engine->test_method( $module, $method, Zonemaster::Engine->zone( $domain ) );
-                }
-                else {
-                    Zonemaster::Engine->test_module( $module, $domain );
-                }
-            }
-        }
-        else {
-            Zonemaster::Engine->test_zone( $domain );
-        }
+        Zonemaster::Engine->test_zone( $domain );
     };
     if ( not $self->raw and not $self->json ) {
         if ( not $printed_something ) {
