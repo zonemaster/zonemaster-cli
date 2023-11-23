@@ -18,6 +18,7 @@ use Moose;
 with 'MooseX::Getopt::GLD' => { getopt_conf => [ 'pass_through' ] };
 
 use Encode;
+use Readonly;
 use File::Slurp;
 use JSON::XS;
 use List::Util qw[max];
@@ -26,6 +27,7 @@ use Scalar::Util qw[blessed];
 use Socket qw[AF_INET AF_INET6];
 use Text::Reflow qw[reflow_string];
 use Try::Tiny;
+use Net::IP::XS;
 
 use Zonemaster::LDNS;
 use Zonemaster::Engine;
@@ -38,6 +40,9 @@ use Zonemaster::Engine::Zone;
 
 our %numeric = Zonemaster::Engine::Logger::Entry->levels;
 our $JSON    = JSON::XS->new->allow_blessed->convert_blessed->canonical;
+
+Readonly our $IPV4_RE => qr/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/;
+Readonly our $IPV6_RE => qr/^[0-9a-f:]*:[0-9a-f:]+(:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})?$/i;
 
 STDOUT->autoflush( 1 );
 
@@ -774,8 +779,16 @@ sub add_fake_delegation {
         }
 
         if ( $ip ) {
-            $ip = new Net::IP::XS ( $ip ) or die Net::IP::XS::Error();
-            push @{ $data{ $name } }, $ip->short;
+            my $net_ip = Net::IP::XS->new( $ip );
+            if ( ( $ip =~ /($IPV4_RE)/ && Net::IP::XS::ip_is_ipv4( $ip ) )
+                or
+                 ( $ip =~ /($IPV6_RE)/ && Net::IP::XS::ip_is_ipv6( $ip ) )
+            ) {
+                push @{ $data{ $name } }, $ip;
+            }
+            else {
+                die Net::IP::XS::Error() ? "Invalid IP address in --ns argument:\n\t". Net::IP::XS::Error() ."\n" : "Invalid IP address in --ns argument.\n";
+            }
         }
         else {
             push @ns_with_no_ip, $name;
