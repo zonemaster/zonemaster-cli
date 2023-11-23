@@ -774,7 +774,8 @@ sub add_fake_delegation {
         }
 
         if ( $ip ) {
-            push @{ $data{ $name } }, $ip;
+            $ip = new Net::IP::XS ( $ip ) or die Net::IP::XS::Error();
+            push @{ $data{ $name } }, $ip->short;
         }
         else {
             push @ns_with_no_ip, $name;
