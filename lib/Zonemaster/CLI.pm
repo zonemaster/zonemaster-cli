@@ -559,7 +559,7 @@ sub run {
         die __( "Must give the name of a domain to test.\n" );
     }
 
-    ( my $errors, $domain ) = normalize_name( $domain );
+    ( my $errors, $domain ) = normalize_name( decode( 'utf8', $domain ) );
 
     if ( scalar @$errors > 0 ) {
         my $error_message;
@@ -763,7 +763,7 @@ sub add_fake_delegation {
             exit( 1 );
         }
 
-        ( my $errors, $name ) = normalize_name( $name );
+        ( my $errors, $name ) = normalize_name( decode( 'utf8', $name ) );
 
         if ( scalar @$errors > 0 ) {
             my $error_message = "Invalid name in --ns argument:\n" ;
