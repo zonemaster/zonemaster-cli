@@ -18,6 +18,7 @@ use Moose;
 with 'MooseX::Getopt::GLD' => { getopt_conf => [ 'pass_through' ] };
 
 use Encode;
+use Readonly;
 use File::Slurp;
 use JSON::XS;
 use List::Util qw[max];
@@ -26,16 +27,22 @@ use Scalar::Util qw[blessed];
 use Socket qw[AF_INET AF_INET6];
 use Text::Reflow qw[reflow_string];
 use Try::Tiny;
+use Net::IP::XS;
+
+use Zonemaster::LDNS;
 use Zonemaster::Engine;
 use Zonemaster::Engine::Exception;
+use Zonemaster::Engine::Normalization qw[normalize_name];
 use Zonemaster::Engine::Logger::Entry;
 use Zonemaster::Engine::Translator;
 use Zonemaster::Engine::Util qw[parse_hints];
 use Zonemaster::Engine::Zone;
-use Zonemaster::LDNS;
 
 our %numeric = Zonemaster::Engine::Logger::Entry->levels;
 our $JSON    = JSON::XS->new->allow_blessed->convert_blessed->canonical;
+
+Readonly our $IPV4_RE => qr/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/;
+Readonly our $IPV6_RE => qr/^[0-9a-f:]*:[0-9a-f:]+(:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})?$/i;
 
 STDOUT->autoflush( 1 );
 
@@ -552,16 +559,20 @@ sub run {
     }
 
     my ( $domain ) = @{ $self->extra_argv };
+
     if ( not $domain ) {
         die __( "Must give the name of a domain to test.\n" );
     }
 
-    if ( $domain =~ m/\.\./i ) {
-        die __( "The domain name contains consecutive dots.\n" );
-    }
+    ( my $errors, $domain ) = normalize_name( decode( 'utf8', $domain ) );
 
-    $domain =~ s/\.$// unless $domain eq '.';
-    $domain = $self->to_idn( $domain );
+    if ( scalar @$errors > 0 ) {
+        my $error_message;
+        foreach my $err ( @$errors ) {
+            $error_message .= $err->string . "\n";
+        }
+        die $error_message;
+    }
 
     if ( defined $self->hints ) {
         my $hints_data;
@@ -752,25 +763,38 @@ sub add_fake_delegation {
     foreach my $pair ( @{ $self->ns } ) {
         my ( $name, $ip ) = split( '/', $pair, 2 );
 
-        if ( not $name ) {
+        if ( $pair =~ tr/\/// > 1 or not $name ) {
             say STDERR __( "--ns must be a name or a name/ip pair." );
             exit( 1 );
         }
 
-        if ( $name =~ m/\.\./i ) {
-            say STDERR __x( "The name of the nameserver '{nsname}' contains consecutive dots.", nsname => $name );
-            exit ( 1 );
+        ( my $errors, $name ) = normalize_name( decode( 'utf8', $name ) );
+
+        if ( scalar @$errors > 0 ) {
+            my $error_message = "Invalid name in --ns argument:\n" ;
+            foreach my $err ( @$errors ) {
+                $error_message .= "\t" . $err->string . "\n";
+            }
+            die $error_message;
         }
 
-        $name =~ s/\.$// unless $name eq '.';
-
-        if ($ip) {
-            push @{ $data{ $self->to_idn( $name ) } }, $ip;
+        if ( $ip ) {
+            my $net_ip = Net::IP::XS->new( $ip );
+            if ( ( $ip =~ /($IPV4_RE)/ && Net::IP::XS::ip_is_ipv4( $ip ) )
+                or
+                 ( $ip =~ /($IPV6_RE)/ && Net::IP::XS::ip_is_ipv6( $ip ) )
+            ) {
+                push @{ $data{ $name } }, $ip;
+            }
+            else {
+                die Net::IP::XS::Error() ? "Invalid IP address in --ns argument:\n\t". Net::IP::XS::Error() ."\n" : "Invalid IP address in --ns argument.\n";
+            }
         }
         else {
-            push @ns_with_no_ip, $self->to_idn($name);
+            push @ns_with_no_ip, $name;
         }
     }
+
     foreach my $ns ( @ns_with_no_ip ) {
         if ( not exists $data{ $ns } ) {
             $data{ $ns } = undef;
@@ -814,22 +838,6 @@ sub print_spinner {
     printf "%s\r", $spinner_strings[ $counter++ % 4 ] if $self->progress;
 
     return;
-}
-
-sub to_idn {
-    my ( $self, $str ) = @_;
-
-    if ( $str =~ m/^[[:ascii:]]+$/ ) {
-        return $str;
-    }
-
-    if ( Zonemaster::LDNS::has_idn() ) {
-        return Zonemaster::LDNS::to_idn( decode( $self->encoding, $str ) );
-    }
-    else {
-        say STDERR __( "Warning: Zonemaster::LDNS not compiled with IDN support, cannot handle non-ASCII names correctly." );
-        return $str;
-    }
 }
 
 sub print_test_list {

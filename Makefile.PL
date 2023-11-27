@@ -18,6 +18,8 @@ tests_recursive( 't' );
 # (see Zonemaster::LDNS below)
 
 requires(
+    'Readonly'           => 0,
+    'Net::IP::XS'        => 0,
     'JSON::XS'           => 0,
     'Locale::TextDomain' => 1.23,
     'MooseX::Getopt'     => 0,
