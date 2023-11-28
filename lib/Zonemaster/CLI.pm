@@ -416,7 +416,6 @@ sub run {
         Zonemaster::Engine::Profile->effective->set( q{net.ipv6}, 0+$self->ipv6 );
     }
 
-
     if ( $self->dump_profile ) {
         do_dump_profile();
     }
@@ -637,10 +636,20 @@ sub run {
                 $t = lc( $t );
                 # Fully qualified module and test case (e.g. Example/example12)
                 if (my ($module, $method) = $t =~ m#^ ( [a-z]+ ) / ( [a-z]+[0-9]{2} ) $#ix) {
+                    if ( not grep( /^$method$/, @{ Zonemaster::Engine::Profile->effective->get( 'test_cases' ) } ) ) {
+                        say $fh_diag __x( "Notice: Engine does not have test case '$method' enabled in the profile. Forcing...");
+                        Zonemaster::Engine::Profile->effective->set( 'test_cases', [ "$method" ] );
+                    }
+
                     Zonemaster::Engine->test_method( $module, $method, $zone );
                 }
                 # Just a test case (e.g. example12). Note the different capturing order.
                 elsif (($method, $module) = $t =~ m#^ ( ( [a-z]+ ) [0-9]{2} ) $#ix) {
+                    if ( not grep( /^$method$/, @{ Zonemaster::Engine::Profile->effective->get( 'test_cases' ) } ) ) {
+                        say $fh_diag __x( "Notice: Engine does not have test case '$method' enabled in the profile. Forcing...");
+                        Zonemaster::Engine::Profile->effective->set( 'test_cases', [ "$method" ] );
+                    }
+
                     Zonemaster::Engine->test_method( $module, $method, $zone );
                 }
                 # Just a module name (e.g. Example) or something invalid.
