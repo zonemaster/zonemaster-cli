@@ -518,11 +518,10 @@ sub run {
                     if ( $self->raw ) {
                         $prefix .= $entry->tag;
 
-                        my $message = $entry->string;
-                        $message =~ s/^[A-Z0-9:_]+//;    # strip MODULE:TAG, they're coming in $prefix instead
+                        my $message = $entry->argstr;
                         my @lines = split /\n/, $message;
 
-                        printf "%s%s %s\n", $prefix, ' ', shift @lines;
+                        printf "%s%s %s\n", $prefix, ' ', @lines ? shift @lines : '';
                         for my $line ( @lines ) {
                             printf "%s%s %s\n", $prefix, '>', $line;
                         }
