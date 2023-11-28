@@ -192,7 +192,7 @@ has 'test' => (
     isa           => 'ArrayRef',
     required      => 0,
     documentation => __(
-'Specify one or several test cases to be run. Should be the case-insensitive name of a test module and/or a test case (examples: "Delegation", "delegation01", "Delegation/delegation01"). This switch can be repeated.'
+'Specify test case to be run. Should be the case-insensitive name of a test module (e.g. "Delegation") and/or a test case (e.g. "Delegation/delegation01" or "delegation01"). This switch can be repeated.'
     )
 );
 
@@ -637,8 +637,8 @@ sub run {
                 # TODO: in case of invalid input, print a proper error message
                 # suggesting to use --list-tests for valid choices.
                 else {
-                    $t =~ s/\/$//;
-                    Zonemaster::Engine->test_module( $t, $zone );
+                    $t =~ s{/$}{};
+                    Zonemaster::Engine->test_module( $t, $domain );
                 }
             }
         }
