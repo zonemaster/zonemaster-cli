@@ -199,7 +199,7 @@ has 'test' => (
     isa           => 'ArrayRef',
     required      => 0,
     documentation => __(
-'Specify test to run case-insensitively. Should be either the name of a module, or the name of a module and the name of a method in that module separated by a "/" character (Example: "Basic/basic01"). This switch can be repeated.'
+'Specify test case to be run. Should be the case-insensitive name of a test module (e.g. "Delegation") and/or a test case (e.g. "Delegation/delegation01" or "delegation01"). This switch can be repeated.'
     )
 );
 
@@ -631,13 +631,24 @@ sub run {
     # Actually run tests!
     eval {
         if ( $self->test and @{ $self->test } > 0 ) {
+            my $zone = Zonemaster::Engine->zone( $domain );
             foreach my $t ( @{ $self->test } ) {
-                my ( $module, $method ) = split( '/', lc($t), 2 );
-                if ( $method ) {
-                    Zonemaster::Engine->test_method( $module, $method, Zonemaster::Engine->zone( $domain ) );
+                # The case does not matter
+                $t = lc( $t );
+                # Fully qualified module and test case (e.g. Example/example12)
+                if (my ($module, $method) = $t =~ m#^ ( [a-z]+ ) / ( [a-z]+[0-9]{2} ) $#ix) {
+                    Zonemaster::Engine->test_method( $module, $method, $zone );
                 }
+                # Just a test case (e.g. example12). Note the different capturing order.
+                elsif (($method, $module) = $t =~ m#^ ( ( [a-z]+ ) [0-9]{2} ) $#ix) {
+                    Zonemaster::Engine->test_method( $module, $method, $zone );
+                }
+                # Just a module name (e.g. Example) or something invalid.
+                # TODO: in case of invalid input, print a proper error message
+                # suggesting to use --list-tests for valid choices.
                 else {
-                    Zonemaster::Engine->test_module( $module, $domain );
+                    $t =~ s{/$}{};
+                    Zonemaster::Engine->test_module( $t, $domain );
                 }
             }
         }
