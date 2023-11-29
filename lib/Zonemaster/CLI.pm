@@ -630,27 +630,21 @@ sub run {
     # Actually run tests!
     eval {
         if ( $self->test and @{ $self->test } > 0 ) {
-            my $zone = Zonemaster::Engine->zone( $domain );
             foreach my $t ( @{ $self->test } ) {
                 # The case does not matter
                 $t = lc( $t );
-                # Fully qualified module and test case (e.g. Example/example12)
-                if (my ($module, $method) = $t =~ m#^ ( [a-z]+ ) / ( [a-z]+[0-9]{2} ) $#ix) {
+                # Fully qualified module and test case (e.g. Example/example12), or just a test case (e.g. example12). Note the different capturing order.
+                my ( $module, $method );
+                if ( ( ($module, $method) = $t =~ m#^ ( [a-z]+ ) / ( [a-z]+[0-9]{2} ) $#ix )
+                    or
+                     ( ($method, $module) = $t =~ m#^ ( ( [a-z]+ ) [0-9]{2} ) $#ix ) )
+                {
                     if ( not grep( /^$method$/, @{ Zonemaster::Engine::Profile->effective->get( 'test_cases' ) } ) ) {
                         say $fh_diag __x( "Notice: Engine does not have test case '$method' enabled in the profile. Forcing...");
                         Zonemaster::Engine::Profile->effective->set( 'test_cases', [ "$method" ] );
                     }
 
-                    Zonemaster::Engine->test_method( $module, $method, $zone );
-                }
-                # Just a test case (e.g. example12). Note the different capturing order.
-                elsif (($method, $module) = $t =~ m#^ ( ( [a-z]+ ) [0-9]{2} ) $#ix) {
-                    if ( not grep( /^$method$/, @{ Zonemaster::Engine::Profile->effective->get( 'test_cases' ) } ) ) {
-                        say $fh_diag __x( "Notice: Engine does not have test case '$method' enabled in the profile. Forcing...");
-                        Zonemaster::Engine::Profile->effective->set( 'test_cases', [ "$method" ] );
-                    }
-
-                    Zonemaster::Engine->test_method( $module, $method, $zone );
+                    Zonemaster::Engine->test_method( $module, $method, $domain );
                 }
                 # Just a module name (e.g. Example) or something invalid.
                 # TODO: in case of invalid input, print a proper error message
