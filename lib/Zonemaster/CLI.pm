@@ -407,6 +407,39 @@ sub run {
         Zonemaster::Engine::Profile->effective->merge( $profile );
     }
 
+    my @testing_suite;
+    if ( $self->test and @{ $self->test } > 0 ) {
+        foreach my $t ( @{ $self->test } ) {
+            # There should be at most one slash character
+            if ( $t =~ tr/\/// > 1 ) {
+                die __( "Error: --test must have at most one slash ('/') character: $t");
+            }
+
+            # The case does not matter
+            $t = lc( $t );
+
+            my ( $module, $method );
+            # Fully qualified module and test case (e.g. Example/example12), or just a test case (e.g. example12). Note the different capturing order.
+            if ( ( ($module, $method) = $t =~ m#^ ( [a-z]+ ) / ( [a-z]+[0-9]{2} ) $#ix )
+                or
+                 ( ($method, $module) = $t =~ m#^ ( ( [a-z]+ ) [0-9]{2} ) $#ix ) )
+            {
+                push @testing_suite, "$module/$method";
+                if ( not grep( /^$method$/, @{ Zonemaster::Engine::Profile->effective->get( 'test_cases' ) } ) ) {
+                    # Actual forcing will be done later in the code, i.e. just before calling Zonemaster::Engine->test_method()
+                    say $fh_diag __x( "Notice: Engine does not have test case '$method' enabled in the profile. Forcing...");
+                }
+            }
+            # Just a module name (e.g. Example) or something invalid.
+            # TODO: in case of invalid input, print a proper error message
+            # suggesting to use --list-tests for valid choices.
+            else {
+                $t =~ s{/$}{};
+                push @testing_suite, $t;
+            }
+        }
+    }
+
     # These two must come after any profile from command line has been loaded
     # to make any IPv4/IPv6 option override the profile setting.
     if ( defined ($self->ipv4) ) {
@@ -630,28 +663,16 @@ sub run {
     # Actually run tests!
     eval {
         if ( $self->test and @{ $self->test } > 0 ) {
-            foreach my $t ( @{ $self->test } ) {
-                # The case does not matter
-                $t = lc( $t );
-                # Fully qualified module and test case (e.g. Example/example12), or just a test case (e.g. example12). Note the different capturing order.
-                my ( $module, $method );
-                if ( ( ($module, $method) = $t =~ m#^ ( [a-z]+ ) / ( [a-z]+[0-9]{2} ) $#ix )
-                    or
-                     ( ($method, $module) = $t =~ m#^ ( ( [a-z]+ ) [0-9]{2} ) $#ix ) )
-                {
-                    if ( not grep( /^$method$/, @{ Zonemaster::Engine::Profile->effective->get( 'test_cases' ) } ) ) {
-                        say $fh_diag __x( "Notice: Engine does not have test case '$method' enabled in the profile. Forcing...");
-                        Zonemaster::Engine::Profile->effective->set( 'test_cases', [ "$method" ] );
-                    }
-
+            foreach my $t ( @testing_suite ) {
+                # Either a module/method, or just a module
+                my ( $module, $method ) = split('/', $t);
+                if ( $method ) {
+                    # Force Engine to include the requested test case in its profile
+                    Zonemaster::Engine::Profile->effective->set( 'test_cases', [ "$method" ] );
                     Zonemaster::Engine->test_method( $module, $method, $domain );
                 }
-                # Just a module name (e.g. Example) or something invalid.
-                # TODO: in case of invalid input, print a proper error message
-                # suggesting to use --list-tests for valid choices.
                 else {
-                    $t =~ s{/$}{};
-                    Zonemaster::Engine->test_module( $t, $domain );
+                    Zonemaster::Engine->test_module( $module, $domain );
                 }
             }
         }
@@ -659,6 +680,7 @@ sub run {
             Zonemaster::Engine->test_zone( $domain );
         }
     };
+
     if ( not $self->raw and not $self->json ) {
         if ( not $printed_something ) {
             say __( "Looks OK." );
