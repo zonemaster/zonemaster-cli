@@ -1,12 +1,11 @@
-dist: focal
+dist: jammy
 
 language: perl
 
 perl:
-    - "5.32"
-    - "5.30.2"
+    - "5.36"
+    - "5.30"
     - "5.26"
-    - "5.14.4"
 
 addons:
   apt:
@@ -26,6 +25,7 @@ addons:
     - liblist-moreutils-perl
     - liblocale-msgfmt-perl
     - libmail-rfc822-address-perl
+    - libmail-spf-perl
     - libmodule-find-perl
     - libnet-ip-perl
     - libpod-coverage-perl
