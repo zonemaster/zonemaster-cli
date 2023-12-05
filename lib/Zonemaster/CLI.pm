@@ -618,7 +618,7 @@ sub run {
         }
     );
 
-    if ( $self->profile ) {
+    if ( $self->profile or $self->test ) {
         # Separate initialization from main output in human readable output mode
         print "\n" if $fh_diag eq *STDOUT;
     }
