@@ -409,10 +409,14 @@ sub run {
 
     my @testing_suite;
     if ( $self->test and @{ $self->test } > 0 ) {
+        my %existing_tests = Zonemaster::Engine->all_methods;
+        my @existing_test_modules = keys %existing_tests;
+        my @existing_test_cases = map { @{ $existing_tests{$_} } } @existing_test_modules;
+
         foreach my $t ( @{ $self->test } ) {
             # There should be at most one slash character
             if ( $t =~ tr/\/// > 1 ) {
-                die __( "Error: --test must have at most one slash ('/') character: $t");
+                die __( "Error: Invalid input '$t' in --test. There must be at most one slash ('/') character.\n");
             }
 
             # The case does not matter
@@ -424,20 +428,54 @@ sub run {
                 or
                  ( ($method, $module) = $t =~ m#^ ( ( [a-z]+ ) [0-9]{2} ) $#ix ) )
             {
-                push @testing_suite, "$module/$method";
-                if ( not grep( /^$method$/, @{ Zonemaster::Engine::Profile->effective->get( 'test_cases' ) } ) ) {
-                    # Actual forcing will be done later in the code, i.e. just before calling Zonemaster::Engine->test_method()
-                    say $fh_diag __x( "Notice: Engine does not have test case '$method' enabled in the profile. Forcing...");
+                # Check that test module exists
+                if ( grep( /^$module$/,  map { lc($_) } @existing_test_modules ) ) {
+                    # Check that test case exists
+                    if ( grep( /^$method$/, @existing_test_cases ) ) {
+                        if ( not grep( /^$method$/, @{ Zonemaster::Engine::Profile->effective->get( 'test_cases' ) } ) ) {
+                            # Actual forcing will be done later in the code
+                            say $fh_diag __x( "Notice: Engine does not have test case '$method' enabled in the profile. Forcing...");
+                        }
+
+                        push @testing_suite, "$module/$method";
+                    }
+                    else {
+                        die __( "Error: Unrecognized test case '$method' in --test. Use --list-tests for a list of valid choices.\n" );
+                    }
+                }
+                else {
+                    die __( "Error: Unrecognized test module '$module' in --test. Use --list-tests for a list of valid choices.\n" );
                 }
             }
             # Just a module name (e.g. Example) or something invalid.
-            # TODO: in case of invalid input, print a proper error message
-            # suggesting to use --list-tests for valid choices.
             else {
                 $t =~ s{/$}{};
-                push @testing_suite, $t;
+                # Check that test module exists
+                if ( grep( /^$t$/,  map { lc($_) } @existing_test_modules ) ) {
+                    push @testing_suite, $t;
+                }
+                else {
+                    die __( "Error: Invalid input '$t' in --test.\n" );
+                }
             }
         }
+
+        my @actual_test_cases;
+        foreach my $t ( @testing_suite ) {
+            # Either a module/method, or just a module
+            my ( $module, $method ) = split('/', $t);
+            if ( $method ) {
+                push @actual_test_cases, $method;
+            }
+            else {
+                # Get the test module with the right case
+                ( $module ) = grep { lc( $module ) eq lc( $_ ) } @existing_test_modules;
+                push @actual_test_cases, @{ $existing_tests{$module} };
+            }
+        }
+
+        # Force Engine to include all of the requested test cases in the profile
+        Zonemaster::Engine::Profile->effective->set( 'test_cases', [ @actual_test_cases ] );
     }
 
     # These two must come after any profile from command line has been loaded
@@ -667,8 +705,6 @@ sub run {
                 # Either a module/method, or just a module
                 my ( $module, $method ) = split('/', $t);
                 if ( $method ) {
-                    # Force Engine to include the requested test case in its profile
-                    Zonemaster::Engine::Profile->effective->set( 'test_cases', [ "$method" ] );
                     Zonemaster::Engine->test_method( $module, $method, $domain );
                 }
                 else {
