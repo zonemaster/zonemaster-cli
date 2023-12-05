@@ -21,7 +21,7 @@ use Encode;
 use Readonly;
 use File::Slurp;
 use JSON::XS;
-use List::Util qw[max];
+use List::Util qw[max uniq];
 use POSIX qw[setlocale LC_MESSAGES LC_CTYPE];
 use Scalar::Util qw[blessed];
 use Socket qw[AF_INET AF_INET6];
@@ -432,11 +432,6 @@ sub run {
                 if ( grep( /^$module$/,  map { lc($_) } @existing_test_modules ) ) {
                     # Check that test case exists
                     if ( grep( /^$method$/, @existing_test_cases ) ) {
-                        if ( not grep( /^$method$/, @{ Zonemaster::Engine::Profile->effective->get( 'test_cases' ) } ) ) {
-                            # Actual forcing will be done later in the code
-                            say $fh_diag __x( "Notice: Engine does not have test case '$method' enabled in the profile. Forcing...");
-                        }
-
                         push @testing_suite, "$module/$method";
                     }
                     else {
@@ -460,22 +455,40 @@ sub run {
             }
         }
 
-        my @actual_test_cases;
+        # Start with all profile-enabled test cases
+        my @actual_test_cases = @{ Zonemaster::Engine::Profile->effective->get( 'test_cases' ) };
+
+        # Derive test module from each profile-enabled test case
+        my %actual_test_modules;
+        foreach my $t ( @actual_test_cases ) {
+            my ( $module ) = $t =~ m#^ ( [a-z]+ ) [0-9]{2} $#ix;
+            $actual_test_modules{$module} = 1;
+        }
+
+        # Check if more test cases need to be included in the profile
         foreach my $t ( @testing_suite ) {
             # Either a module/method, or just a module
             my ( $module, $method ) = split('/', $t);
             if ( $method ) {
-                push @actual_test_cases, $method;
+                # Test case in not already in the profile, we add it explicitly and notify the user
+                if ( not grep( /^$method$/, @actual_test_cases ) ) {
+                    say $fh_diag __x( "Notice: Engine does not have test case '$method' enabled in the profile. Forcing...");
+                    push @actual_test_cases, $method;
+                }
             }
             else {
-                # Get the test module with the right case
-                ( $module ) = grep { lc( $module ) eq lc( $_ ) } @existing_test_modules;
-                push @actual_test_cases, @{ $existing_tests{$module} };
+                # No test case from this module is already in the profile, we can add them all
+                if ( not grep( /^$module$/, keys %actual_test_modules ) ) {
+                    # Get the test module with the right case
+                    ( $module ) = grep { lc( $module ) eq lc( $_ ) } @existing_test_modules;
+                    # No need to bother to check for duplicates here
+                    push @actual_test_cases, @{ $existing_tests{$module} };
+                }
             }
         }
 
-        # Force Engine to include all of the requested test cases in the profile
-        Zonemaster::Engine::Profile->effective->set( 'test_cases', [ @actual_test_cases ] );
+        # Configure Engine to include all of the required test cases in the profile
+        Zonemaster::Engine::Profile->effective->set( 'test_cases', [ uniq sort @actual_test_cases ] );
     }
 
     # These two must come after any profile from command line has been loaded
