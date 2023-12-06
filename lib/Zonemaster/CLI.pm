@@ -21,7 +21,7 @@ use Encode;
 use Readonly;
 use File::Slurp;
 use JSON::XS;
-use List::Util qw[max];
+use List::Util qw[max uniq];
 use POSIX qw[setlocale LC_MESSAGES LC_CTYPE];
 use Scalar::Util qw[blessed];
 use Socket qw[AF_INET AF_INET6];
@@ -407,6 +407,90 @@ sub run {
         Zonemaster::Engine::Profile->effective->merge( $profile );
     }
 
+    my @testing_suite;
+    if ( $self->test and @{ $self->test } > 0 ) {
+        my %existing_tests = Zonemaster::Engine->all_methods;
+        my @existing_test_modules = keys %existing_tests;
+        my @existing_test_cases = map { @{ $existing_tests{$_} } } @existing_test_modules;
+
+        foreach my $t ( @{ $self->test } ) {
+            # There should be at most one slash character
+            if ( $t =~ tr/\/// > 1 ) {
+                die __( "Error: Invalid input '$t' in --test. There must be at most one slash ('/') character.\n");
+            }
+
+            # The case does not matter
+            $t = lc( $t );
+
+            my ( $module, $method );
+            # Fully qualified module and test case (e.g. Example/example12), or just a test case (e.g. example12). Note the different capturing order.
+            if ( ( ($module, $method) = $t =~ m#^ ( [a-z]+ ) / ( [a-z]+[0-9]{2} ) $#ix )
+                or
+                 ( ($method, $module) = $t =~ m#^ ( ( [a-z]+ ) [0-9]{2} ) $#ix ) )
+            {
+                # Check that test module exists
+                if ( grep( /^$module$/,  map { lc($_) } @existing_test_modules ) ) {
+                    # Check that test case exists
+                    if ( grep( /^$method$/, @existing_test_cases ) ) {
+                        push @testing_suite, "$module/$method";
+                    }
+                    else {
+                        die __( "Error: Unrecognized test case '$method' in --test. Use --list-tests for a list of valid choices.\n" );
+                    }
+                }
+                else {
+                    die __( "Error: Unrecognized test module '$module' in --test. Use --list-tests for a list of valid choices.\n" );
+                }
+            }
+            # Just a module name (e.g. Example) or something invalid.
+            else {
+                $t =~ s{/$}{};
+                # Check that test module exists
+                if ( grep( /^$t$/,  map { lc($_) } @existing_test_modules ) ) {
+                    push @testing_suite, $t;
+                }
+                else {
+                    die __( "Error: Invalid input '$t' in --test.\n" );
+                }
+            }
+        }
+
+        # Start with all profile-enabled test cases
+        my @actual_test_cases = @{ Zonemaster::Engine::Profile->effective->get( 'test_cases' ) };
+
+        # Derive test module from each profile-enabled test case
+        my %actual_test_modules;
+        foreach my $t ( @actual_test_cases ) {
+            my ( $module ) = $t =~ m#^ ( [a-z]+ ) [0-9]{2} $#ix;
+            $actual_test_modules{$module} = 1;
+        }
+
+        # Check if more test cases need to be included in the profile
+        foreach my $t ( @testing_suite ) {
+            # Either a module/method, or just a module
+            my ( $module, $method ) = split('/', $t);
+            if ( $method ) {
+                # Test case in not already in the profile, we add it explicitly and notify the user
+                if ( not grep( /^$method$/, @actual_test_cases ) ) {
+                    say $fh_diag __x( "Notice: Engine does not have test case '$method' enabled in the profile. Forcing...");
+                    push @actual_test_cases, $method;
+                }
+            }
+            else {
+                # No test case from this module is already in the profile, we can add them all
+                if ( not grep( /^$module$/, keys %actual_test_modules ) ) {
+                    # Get the test module with the right case
+                    ( $module ) = grep { lc( $module ) eq lc( $_ ) } @existing_test_modules;
+                    # No need to bother to check for duplicates here
+                    push @actual_test_cases, @{ $existing_tests{$module} };
+                }
+            }
+        }
+
+        # Configure Engine to include all of the required test cases in the profile
+        Zonemaster::Engine::Profile->effective->set( 'test_cases', [ uniq sort @actual_test_cases ] );
+    }
+
     # These two must come after any profile from command line has been loaded
     # to make any IPv4/IPv6 option override the profile setting.
     if ( defined ($self->ipv4) ) {
@@ -415,7 +499,6 @@ sub run {
     if ( defined ($self->ipv6) ) {
         Zonemaster::Engine::Profile->effective->set( q{net.ipv6}, 0+$self->ipv6 );
     }
-
 
     if ( $self->dump_profile ) {
         do_dump_profile();
@@ -548,7 +631,7 @@ sub run {
         }
     );
 
-    if ( $self->profile ) {
+    if ( $self->profile or $self->test ) {
         # Separate initialization from main output in human readable output mode
         print "\n" if $fh_diag eq *STDOUT;
     }
@@ -631,24 +714,14 @@ sub run {
     # Actually run tests!
     eval {
         if ( $self->test and @{ $self->test } > 0 ) {
-            my $zone = Zonemaster::Engine->zone( $domain );
-            foreach my $t ( @{ $self->test } ) {
-                # The case does not matter
-                $t = lc( $t );
-                # Fully qualified module and test case (e.g. Example/example12)
-                if (my ($module, $method) = $t =~ m#^ ( [a-z]+ ) / ( [a-z]+[0-9]{2} ) $#ix) {
-                    Zonemaster::Engine->test_method( $module, $method, $zone );
+            foreach my $t ( @testing_suite ) {
+                # Either a module/method, or just a module
+                my ( $module, $method ) = split('/', $t);
+                if ( $method ) {
+                    Zonemaster::Engine->test_method( $module, $method, $domain );
                 }
-                # Just a test case (e.g. example12). Note the different capturing order.
-                elsif (($method, $module) = $t =~ m#^ ( ( [a-z]+ ) [0-9]{2} ) $#ix) {
-                    Zonemaster::Engine->test_method( $module, $method, $zone );
-                }
-                # Just a module name (e.g. Example) or something invalid.
-                # TODO: in case of invalid input, print a proper error message
-                # suggesting to use --list-tests for valid choices.
                 else {
-                    $t =~ s{/$}{};
-                    Zonemaster::Engine->test_module( $t, $domain );
+                    Zonemaster::Engine->test_module( $module, $domain );
                 }
             }
         }
@@ -656,6 +729,7 @@ sub run {
             Zonemaster::Engine->test_zone( $domain );
         }
     };
+
     if ( not $self->raw and not $self->json ) {
         if ( not $printed_something ) {
             say __( "Looks OK." );
