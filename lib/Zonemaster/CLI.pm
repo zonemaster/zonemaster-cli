@@ -634,7 +634,7 @@ sub run {
 
     my ( $domain ) = @{ $self->extra_argv };
 
-    if ( not $domain ) {
+    if ( !defined $domain ) {
         die __( "Must give the name of a domain to test.\n" );
     }
 
