@@ -628,11 +628,6 @@ sub run {
         }
     );
 
-    if ( $self->profile or $self->test ) {
-        # Separate initialization from main output in human readable output mode
-        print "\n" if $fh_diag eq *STDOUT;
-    }
-
     if ( scalar @{ $self->extra_argv } > 1 ) {
         die __( "Only one domain can be given for testing. Did you forget to prepend an option with '--<OPTION>'?\n" );
     }
@@ -672,6 +667,11 @@ sub run {
 
     if ( $self->ds and @{ $self->ds } ) {
         $self->add_fake_ds( $domain );
+    }
+
+    if ( $self->profile or $self->test ) {
+        # Separate initialization from main output in human readable output mode
+        print "\n" if $fh_diag eq *STDOUT;
     }
 
     if ( not $self->raw and not $self->json ) {
