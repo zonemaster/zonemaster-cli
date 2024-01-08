@@ -11,8 +11,7 @@ RUN apk add --no-cache \
     perl-app-cpanminus \
     perl-module-install \
  && cpanm --no-wget --from https://cpan.metacpan.org/ \
-    MooseX::Getopt \
-    Text::Reflow
+    MooseX::Getopt
 
 ARG version
 

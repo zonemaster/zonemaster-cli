@@ -23,7 +23,6 @@ requires(
     'JSON::XS'           => 0,
     'Locale::TextDomain' => 1.23,
     'MooseX::Getopt'     => 0,
-    'Text::Reflow'       => 0,
     'Try::Tiny'          => 0,
     'Zonemaster::LDNS'   => 3.002000,  # v3.2.0
     'Zonemaster::Engine' => 4.007003,  # v4.7.3
