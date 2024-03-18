@@ -1,6 +1,17 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
 
+v6.1.0 2024-03-18 (public release version)
+
+ [Features]
+ - Extends "--test" option to allow passing of test case only (#333)
+ - Updates "--list_tests" option (#354)
+ - Adds input name normalization (#357)
+
+ [Fixes]
+ - Fixes the "--raw" output (#360)
+
+
 v6.0.3 2023-09-08 (public fix version)
 
  [Fixes]
