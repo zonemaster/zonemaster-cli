@@ -196,12 +196,15 @@ Default: on
 
 Print all test cases listed in the test modules, then exit.
 
-=item --test=MODULE, --test=MODULE/TESTCASE
+=item --test=MODULE, --test=MODULE/TESTCASE, --test=TESTCASE
 
 Limit the testing suite to run only the specified tests.
 This can be the name of a testing module, in which case all test cases from
 that module will be run, or the name of a module followed by a slash and the
-name of a test case (test case identifier) in that module.
+name of a test case (test case identifier) in that module, or the name of the
+test case.
+Can be specified multiple times.
+This option is case-insensitive.
 
 =item --stop_level=LEVEL, --stop-level=LEVEL
 

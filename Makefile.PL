@@ -18,13 +18,15 @@ tests_recursive( 't' );
 # (see Zonemaster::LDNS below)
 
 requires(
+    'Readonly'           => 0,
+    'Net::IP::XS'        => 0,
     'JSON::XS'           => 0,
     'Locale::TextDomain' => 1.23,
     'MooseX::Getopt'     => 0,
     'Text::Reflow'       => 0,
     'Try::Tiny'          => 0,
-    'Zonemaster::LDNS'   => 3.002000,  # v3.2.0
-    'Zonemaster::Engine' => 4.007003,  # v4.7.3
+    'Zonemaster::LDNS'   => 4.000000,  # v4.0.0
+    'Zonemaster::Engine' => 5.000000,  # v5.0.0
 );
 
 # Make all platforms include inc/Module/Install/External.pm

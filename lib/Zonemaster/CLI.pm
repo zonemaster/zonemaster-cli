@@ -11,31 +11,38 @@ use 5.014002;
 use strict;
 use warnings;
 
-use version; our $VERSION = version->declare( "v6.0.3" );
+use version; our $VERSION = version->declare( "v6.1.0" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
 with 'MooseX::Getopt::GLD' => { getopt_conf => [ 'pass_through' ] };
 
 use Encode;
+use Readonly;
 use File::Slurp;
 use JSON::XS;
-use List::Util qw[max];
+use List::Util qw[max uniq];
 use POSIX qw[setlocale LC_MESSAGES LC_CTYPE];
 use Scalar::Util qw[blessed];
 use Socket qw[AF_INET AF_INET6];
 use Text::Reflow qw[reflow_string];
 use Try::Tiny;
+use Net::IP::XS;
+
+use Zonemaster::LDNS;
 use Zonemaster::Engine;
 use Zonemaster::Engine::Exception;
+use Zonemaster::Engine::Normalization qw[normalize_name];
 use Zonemaster::Engine::Logger::Entry;
 use Zonemaster::Engine::Translator;
-use Zonemaster::Engine::Util qw[parse_hints pod_extract_for];
+use Zonemaster::Engine::Util qw[parse_hints];
 use Zonemaster::Engine::Zone;
-use Zonemaster::LDNS;
 
 our %numeric = Zonemaster::Engine::Logger::Entry->levels;
 our $JSON    = JSON::XS->new->allow_blessed->convert_blessed->canonical;
+
+Readonly our $IPV4_RE => qr/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/;
+Readonly our $IPV6_RE => qr/^[0-9a-f:]*:[0-9a-f:]+(:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})?$/i;
 
 STDOUT->autoflush( 1 );
 
@@ -192,7 +199,7 @@ has 'test' => (
     isa           => 'ArrayRef',
     required      => 0,
     documentation => __(
-'Specify test to run. Should be either the name of a module, or the name of a module and the name of a method in that module separated by a "/" character (Example: "Basic/basic1"). The method specified must be one that takes a zone object as its single argument. This switch can be repeated.'
+'Specify test case to be run. Should be the case-insensitive name of a test module (e.g. "Delegation") and/or a test case (e.g. "Delegation/delegation01" or "delegation01"). This switch can be repeated.'
     )
 );
 
@@ -400,6 +407,90 @@ sub run {
         Zonemaster::Engine::Profile->effective->merge( $profile );
     }
 
+    my @testing_suite;
+    if ( $self->test and @{ $self->test } > 0 ) {
+        my %existing_tests = Zonemaster::Engine->all_methods;
+        my @existing_test_modules = keys %existing_tests;
+        my @existing_test_cases = map { @{ $existing_tests{$_} } } @existing_test_modules;
+
+        foreach my $t ( @{ $self->test } ) {
+            # There should be at most one slash character
+            if ( $t =~ tr/\/// > 1 ) {
+                die __( "Error: Invalid input '$t' in --test. There must be at most one slash ('/') character.\n");
+            }
+
+            # The case does not matter
+            $t = lc( $t );
+
+            my ( $module, $method );
+            # Fully qualified module and test case (e.g. Example/example12), or just a test case (e.g. example12). Note the different capturing order.
+            if ( ( ($module, $method) = $t =~ m#^ ( [a-z]+ ) / ( [a-z]+[0-9]{2} ) $#ix )
+                or
+                 ( ($method, $module) = $t =~ m#^ ( ( [a-z]+ ) [0-9]{2} ) $#ix ) )
+            {
+                # Check that test module exists
+                if ( grep( /^$module$/,  map { lc($_) } @existing_test_modules ) ) {
+                    # Check that test case exists
+                    if ( grep( /^$method$/, @existing_test_cases ) ) {
+                        push @testing_suite, "$module/$method";
+                    }
+                    else {
+                        die __( "Error: Unrecognized test case '$method' in --test. Use --list-tests for a list of valid choices.\n" );
+                    }
+                }
+                else {
+                    die __( "Error: Unrecognized test module '$module' in --test. Use --list-tests for a list of valid choices.\n" );
+                }
+            }
+            # Just a module name (e.g. Example) or something invalid.
+            else {
+                $t =~ s{/$}{};
+                # Check that test module exists
+                if ( grep( /^$t$/,  map { lc($_) } @existing_test_modules ) ) {
+                    push @testing_suite, $t;
+                }
+                else {
+                    die __( "Error: Invalid input '$t' in --test.\n" );
+                }
+            }
+        }
+
+        # Start with all profile-enabled test cases
+        my @actual_test_cases = @{ Zonemaster::Engine::Profile->effective->get( 'test_cases' ) };
+
+        # Derive test module from each profile-enabled test case
+        my %actual_test_modules;
+        foreach my $t ( @actual_test_cases ) {
+            my ( $module ) = $t =~ m#^ ( [a-z]+ ) [0-9]{2} $#ix;
+            $actual_test_modules{$module} = 1;
+        }
+
+        # Check if more test cases need to be included in the profile
+        foreach my $t ( @testing_suite ) {
+            # Either a module/method, or just a module
+            my ( $module, $method ) = split('/', $t);
+            if ( $method ) {
+                # Test case in not already in the profile, we add it explicitly and notify the user
+                if ( not grep( /^$method$/, @actual_test_cases ) ) {
+                    say $fh_diag __x( "Notice: Engine does not have test case '$method' enabled in the profile. Forcing...");
+                    push @actual_test_cases, $method;
+                }
+            }
+            else {
+                # No test case from this module is already in the profile, we can add them all
+                if ( not grep( /^$module$/, keys %actual_test_modules ) ) {
+                    # Get the test module with the right case
+                    ( $module ) = grep { lc( $module ) eq lc( $_ ) } @existing_test_modules;
+                    # No need to bother to check for duplicates here
+                    push @actual_test_cases, @{ $existing_tests{$module} };
+                }
+            }
+        }
+
+        # Configure Engine to include all of the required test cases in the profile
+        Zonemaster::Engine::Profile->effective->set( 'test_cases', [ uniq sort @actual_test_cases ] );
+    }
+
     # These two must come after any profile from command line has been loaded
     # to make any IPv4/IPv6 option override the profile setting.
     if ( defined ($self->ipv4) ) {
@@ -408,7 +499,6 @@ sub run {
     if ( defined ($self->ipv6) ) {
         Zonemaster::Engine::Profile->effective->set( q{net.ipv6}, 0+$self->ipv6 );
     }
-
 
     if ( $self->dump_profile ) {
         do_dump_profile();
@@ -511,11 +601,10 @@ sub run {
                     if ( $self->raw ) {
                         $prefix .= $entry->tag;
 
-                        my $message = $entry->string;
-                        $message =~ s/^[A-Z0-9:_]+//;    # strip MODULE:TAG, they're coming in $prefix instead
+                        my $message = $entry->argstr;
                         my @lines = split /\n/, $message;
 
-                        printf "%s%s %s\n", $prefix, ' ', shift @lines;
+                        printf "%s%s %s\n", $prefix, ' ', @lines ? shift @lines : '';
                         for my $line ( @lines ) {
                             printf "%s%s %s\n", $prefix, '>', $line;
                         }
@@ -542,7 +631,7 @@ sub run {
         }
     );
 
-    if ( $self->profile ) {
+    if ( $self->profile or $self->test ) {
         # Separate initialization from main output in human readable output mode
         print "\n" if $fh_diag eq *STDOUT;
     }
@@ -552,16 +641,20 @@ sub run {
     }
 
     my ( $domain ) = @{ $self->extra_argv };
+
     if ( not $domain ) {
         die __( "Must give the name of a domain to test.\n" );
     }
 
-    if ( $domain =~ m/\.\./i ) {
-        die __( "The domain name contains consecutive dots.\n" );
-    }
+    ( my $errors, $domain ) = normalize_name( decode( 'utf8', $domain ) );
 
-    $domain =~ s/\.$// unless $domain eq '.';
-    $domain = $self->to_idn( $domain );
+    if ( scalar @$errors > 0 ) {
+        my $error_message;
+        foreach my $err ( @$errors ) {
+            $error_message .= $err->string . "\n";
+        }
+        die $error_message;
+    }
 
     if ( defined $self->hints ) {
         my $hints_data;
@@ -621,10 +714,11 @@ sub run {
     # Actually run tests!
     eval {
         if ( $self->test and @{ $self->test } > 0 ) {
-            foreach my $t ( @{ $self->test } ) {
-                my ( $module, $method ) = split( '/', $t, 2 );
+            foreach my $t ( @testing_suite ) {
+                # Either a module/method, or just a module
+                my ( $module, $method ) = split('/', $t);
                 if ( $method ) {
-                    Zonemaster::Engine->test_method( $module, $method, Zonemaster::Engine->zone( $domain ) );
+                    Zonemaster::Engine->test_method( $module, $method, $domain );
                 }
                 else {
                     Zonemaster::Engine->test_module( $module, $domain );
@@ -635,6 +729,7 @@ sub run {
             Zonemaster::Engine->test_zone( $domain );
         }
     };
+
     if ( not $self->raw and not $self->json ) {
         if ( not $printed_something ) {
             say __( "Looks OK." );
@@ -752,25 +847,38 @@ sub add_fake_delegation {
     foreach my $pair ( @{ $self->ns } ) {
         my ( $name, $ip ) = split( '/', $pair, 2 );
 
-        if ( not $name ) {
+        if ( $pair =~ tr/\/// > 1 or not $name ) {
             say STDERR __( "--ns must be a name or a name/ip pair." );
             exit( 1 );
         }
 
-        if ( $name =~ m/\.\./i ) {
-            say STDERR __x( "The name of the nameserver '{nsname}' contains consecutive dots.", nsname => $name );
-            exit ( 1 );
+        ( my $errors, $name ) = normalize_name( decode( 'utf8', $name ) );
+
+        if ( scalar @$errors > 0 ) {
+            my $error_message = "Invalid name in --ns argument:\n" ;
+            foreach my $err ( @$errors ) {
+                $error_message .= "\t" . $err->string . "\n";
+            }
+            die $error_message;
         }
 
-        $name =~ s/\.$// unless $name eq '.';
-
-        if ($ip) {
-            push @{ $data{ $self->to_idn( $name ) } }, $ip;
+        if ( $ip ) {
+            my $net_ip = Net::IP::XS->new( $ip );
+            if ( ( $ip =~ /($IPV4_RE)/ && Net::IP::XS::ip_is_ipv4( $ip ) )
+                or
+                 ( $ip =~ /($IPV6_RE)/ && Net::IP::XS::ip_is_ipv6( $ip ) )
+            ) {
+                push @{ $data{ $name } }, $ip;
+            }
+            else {
+                die Net::IP::XS::Error() ? "Invalid IP address in --ns argument:\n\t". Net::IP::XS::Error() ."\n" : "Invalid IP address in --ns argument.\n";
+            }
         }
         else {
-            push @ns_with_no_ip, $self->to_idn($name);
+            push @ns_with_no_ip, $name;
         }
     }
+
     foreach my $ns ( @ns_with_no_ip ) {
         if ( not exists $data{ $ns } ) {
             $data{ $ns } = undef;
@@ -816,22 +924,6 @@ sub print_spinner {
     return;
 }
 
-sub to_idn {
-    my ( $self, $str ) = @_;
-
-    if ( $str =~ m/^[[:ascii:]]+$/ ) {
-        return $str;
-    }
-
-    if ( Zonemaster::LDNS::has_idn() ) {
-        return Zonemaster::LDNS::to_idn( decode( $self->encoding, $str ) );
-    }
-    else {
-        say STDERR __( "Warning: Zonemaster::LDNS not compiled with IDN support, cannot handle non-ASCII names correctly." );
-        return $str;
-    }
-}
-
 sub print_test_list {
     my %methods = Zonemaster::Engine->all_methods;
     my $maxlen  = max map {
@@ -841,19 +933,8 @@ sub print_test_list {
 
     foreach my $module ( sort keys %methods ) {
         say $module;
-        my $doc = pod_extract_for( $module );
         foreach my $method ( sort @{ $methods{$module} } ) {
-            printf "  %${maxlen}s ", $method;
-            if ( $doc and $doc->{$method} ) {
-                print reflow_string(
-                    $doc->{$method},
-                    optimum => 65,
-                    maximum => 75,
-                    indent1 => '   ',
-                    indent2 => ( ' ' x ( $maxlen + 6 ) )
-                );
-            }
-            print "\n";
+            printf "  %${maxlen}s\n", $method;
         }
         print "\n";
     }
