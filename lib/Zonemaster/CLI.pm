@@ -24,8 +24,6 @@ use JSON::XS;
 use List::Util qw[max uniq];
 use POSIX qw[setlocale LC_MESSAGES LC_CTYPE];
 use Scalar::Util qw[blessed];
-use Socket qw[AF_INET AF_INET6];
-use Text::Reflow qw[reflow_string];
 use Try::Tiny;
 use Net::IP::XS;
 
@@ -36,7 +34,6 @@ use Zonemaster::Engine::Normalization qw[normalize_name];
 use Zonemaster::Engine::Logger::Entry;
 use Zonemaster::Engine::Translator;
 use Zonemaster::Engine::Util qw[parse_hints];
-use Zonemaster::Engine::Zone;
 
 our %numeric = Zonemaster::Engine::Logger::Entry->levels;
 our $JSON    = JSON::XS->new->allow_blessed->convert_blessed->canonical;
@@ -631,18 +628,13 @@ sub run {
         }
     );
 
-    if ( $self->profile or $self->test ) {
-        # Separate initialization from main output in human readable output mode
-        print "\n" if $fh_diag eq *STDOUT;
-    }
-
     if ( scalar @{ $self->extra_argv } > 1 ) {
         die __( "Only one domain can be given for testing. Did you forget to prepend an option with '--<OPTION>'?\n" );
     }
 
     my ( $domain ) = @{ $self->extra_argv };
 
-    if ( not $domain ) {
+    if ( !defined $domain ) {
         die __( "Must give the name of a domain to test.\n" );
     }
 
@@ -675,6 +667,11 @@ sub run {
 
     if ( $self->ds and @{ $self->ds } ) {
         $self->add_fake_ds( $domain );
+    }
+
+    if ( $self->profile or $self->test ) {
+        # Separate initialization from main output in human readable output mode
+        print "\n" if $fh_diag eq *STDOUT;
     }
 
     if ( not $self->raw and not $self->json ) {
