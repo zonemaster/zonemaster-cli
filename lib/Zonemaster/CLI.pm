@@ -28,14 +28,15 @@ use Readonly;
 use Scalar::Util qw[blessed];
 use Time::HiRes;
 use Try::Tiny;
-use Zonemaster::LDNS;
-use Zonemaster::Engine;
+use Zonemaster::CLI::TestCaseSet;
 use Zonemaster::Engine::Exception;
-use Zonemaster::Engine::Normalization qw[normalize_name];
 use Zonemaster::Engine::Logger::Entry;
+use Zonemaster::Engine::Normalization qw[normalize_name];
 use Zonemaster::Engine::Translator;
 use Zonemaster::Engine::Util       qw[parse_hints];
 use Zonemaster::Engine::Validation qw[validate_ipv4 validate_ipv6];
+use Zonemaster::Engine;
+use Zonemaster::LDNS;
 
 our %numeric = Zonemaster::Engine::Logger::Entry->levels;
 our $JSON    = JSON::XS->new->allow_blessed->convert_blessed->canonical;
@@ -169,7 +170,8 @@ sub run {
         $ENV{LC_ALL} = $opt_locale;
     }
 
-# Set LC_MESSAGES and LC_CTYPE separately (https://www.gnu.org/software/gettext/manual/html_node/Triggering.html#Triggering)
+    # Set LC_MESSAGES and LC_CTYPE separately
+    # (https://www.gnu.org/software/gettext/manual/html_node/Triggering.html#Triggering)
     if ( not defined setlocale( LC_MESSAGES, "" ) ) {
         my $locale = ( $ENV{LANGUAGE} || $ENV{LC_ALL} || $ENV{LC_MESSAGES} );
         say STDERR __x(
@@ -259,102 +261,27 @@ sub run {
         };
     }
 
-    my @testing_suite;
-    if ( @opt_test ) {
-        my %existing_tests        = Zonemaster::Engine->all_methods;
-        my @existing_test_modules = keys %existing_tests;
-        my @existing_test_cases   = map { @{ $existing_tests{$_} } } @existing_test_modules;
+    {
+        my $cases = Zonemaster::CLI::TestCaseSet->new(
+            Zonemaster::Engine::Profile->effective->get( q{test_cases} ),
+            Zonemaster::Engine->all_methods,
+        );
 
-        foreach my $t ( @opt_test ) {
-            # There should be at most one slash character
-            if ( $t =~ tr/\/// > 1 ) {
-                say STDERR __x(
-                    "Error: Invalid input '{cli_arg}' in --test. There must be at most one slash ('/') character.",
-                    cli_arg => $t );
-                return $EXIT_USAGE_ERROR;
-            }
+        for my $test ( @opt_test ) {
+            my @modifiers = Zonemaster::CLI::TestCaseSet->parse_modifier_expr( $test );
+            while ( @modifiers ) {
+                my $op   = shift @modifiers;
+                my $term = shift @modifiers;
 
-            # The case does not matter
-            $t = lc( $t );
-
-            my ( $module, $method );
-# Fully qualified module and test case (e.g. Example/example12), or just a test case (e.g. example12). Note the different capturing order.
-            if (   ( ( $module, $method ) = $t =~ m#^ ( [a-z]+ ) / ( [a-z]+[0-9]{2} ) $#ix )
-                or ( ( $method, $module ) = $t =~ m#^ ( ( [a-z]+ ) [0-9]{2} ) $#ix ) )
-            {
-                # Check that test module exists
-                if ( grep( /^$module$/, map { lc( $_ ) } @existing_test_modules ) ) {
-                    # Check that test case exists
-                    if ( grep( /^$method$/, @existing_test_cases ) ) {
-                        push @testing_suite, "$module/$method";
-                    }
-                    else {
-                        say STDERR __x(
-"Error: Unrecognized test case '{testcase}' in --test. Use --list-tests for a list of valid choices.",
-                            testcase => $method
-                        );
-                        return $EXIT_USAGE_ERROR;
-                    }
-                }
-                else {
-                    say STDERR __x(
-"Error: Unrecognized test module '{module}' in --test. Use --list-tests for a list of valid choices.",
-                        module => $module
-                    );
-                    return $EXIT_USAGE_ERROR;
-                }
-            } ## end if ( ( ( $module, $method...)))
-            # Just a module name (e.g. Example) or something invalid.
-            else {
-                $t =~ s{/$}{};
-                # Check that test module exists
-                if ( grep( /^$t$/, map { lc( $_ ) } @existing_test_modules ) ) {
-                    push @testing_suite, $t;
-                }
-                else {
-                    say STDERR __x( "Error: Invalid input '{cli_arg}' in --test.", cli_arg => $t );
+                if ( !$cases->apply_modifier( $op, $term ) ) {
+                    say STDERR __x( "Error: Unrecognized term '$term' in --test.\n" );
                     return $EXIT_USAGE_ERROR;
                 }
             }
-        } ## end foreach my $t ( @opt_test )
-
-        # Start with all profile-enabled test cases
-        my @actual_test_cases = @{ Zonemaster::Engine::Profile->effective->get( 'test_cases' ) };
-
-        # Derive test module from each profile-enabled test case
-        my %actual_test_modules;
-        foreach my $t ( @actual_test_cases ) {
-            my ( $module ) = $t =~ m#^ ( [a-z]+ ) [0-9]{2} $#ix;
-            $actual_test_modules{$module} = 1;
         }
 
-        # Check if more test cases need to be included in the profile
-        foreach my $t ( @testing_suite ) {
-            # Either a module/method, or just a module
-            my ( $module, $method ) = split( '/', $t );
-            if ( $method ) {
-                # Test case in not already in the profile, we add it explicitly and notify the user
-                if ( not grep( /^$method$/, @actual_test_cases ) ) {
-                    say $fh_diag __x(
-                        "Notice: Engine does not have test case '{testcase}' enabled in the profile. Forcing...",
-                        testcase => $method );
-                    push @actual_test_cases, $method;
-                }
-            }
-            else {
-                # No test case from this module is already in the profile, we can add them all
-                if ( not grep( /^$module$/, keys %actual_test_modules ) ) {
-                    # Get the test module with the right case
-                    ( $module ) = grep { lc( $module ) eq lc( $_ ) } @existing_test_modules;
-                    # No need to bother to check for duplicates here
-                    push @actual_test_cases, @{ $existing_tests{$module} };
-                }
-            }
-        } ## end foreach my $t ( @testing_suite)
-
-        # Configure Engine to include all of the required test cases in the profile
-        Zonemaster::Engine::Profile->effective->set( 'test_cases', [ uniq sort @actual_test_cases ] );
-    } ## end if ( @opt_test )
+        Zonemaster::Engine::Profile->effective->set( q{test_cases}, [ $cases->to_list ] ),
+    }
 
     # These two must come after any profile from command line has been loaded
     # to make any IPv4/IPv6 option override the profile setting.
@@ -642,29 +569,7 @@ sub run {
     Zonemaster::Engine->logger->callback( $message_printer );
 
     # Actually run tests!
-    eval {
-        if ( @opt_test ) {
-            foreach my $t ( @testing_suite ) {
-                # Either a module/method, or just a module
-                my ( $module, $method ) = split( '/', $t );
-                if ( $method ) {
-                    Zonemaster::Engine->test_method( $module, $method, $domain );
-                }
-                else {
-                    Zonemaster::Engine->test_module( $module, $domain );
-                }
-            }
-        }
-        else {
-            Zonemaster::Engine->test_zone( $domain );
-        }
-    };
-
-    if ( not $opt_raw and not $opt_json ) {
-        if ( not $printed_something ) {
-            say __( "Looks OK." );
-        }
-    }
+    eval { Zonemaster::Engine->test_zone( $domain ); };
 
     if ( $@ ) {
         my $err = $@;
@@ -673,6 +578,12 @@ sub run {
         }
         else {
             die $err;    # Don't know what it is, rethrow
+        }
+    }
+
+    if ( not $opt_raw and not $opt_json ) {
+        if ( not $printed_something ) {
+            say __( "Looks OK." );
         }
     }
 
