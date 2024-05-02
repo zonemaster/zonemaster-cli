@@ -97,7 +97,7 @@ sub check_success {
         }
 
         is $exitstatus, $Zonemaster::CLI::EXIT_SUCCESS, 'success exit status';
-    };
+    }; ## end sub
 } ## end sub check_success
 
 sub check_success_report {
@@ -505,15 +505,16 @@ do {
 
     check_usage_error 'unrecognized option', ['--foobar'], qr{unknown option}i;
 
-    check_usage_error '--test BAD_MODULE', [ '--test', '!%~&', 'example.' ], qr{invalid input}i;
+    check_usage_error '--test BAD_MODULE', [ '--test', '!%~&', 'example.' ], qr{unrecognized term '!%~&' in --test}i;
 
     check_usage_error '--test UNKNOWN_MODULE/TESTCASE', [ '--test', 'foobar/foobar01', 'example.' ],
-      qr{unrecognized test module}i;
+      qr{unrecognized term 'foobar/foobar01' in --test}i;
 
     check_usage_error '--test MODULE/UNKNOWN_TESTCASE', [ '--test', 'basic/foobar01', 'example.' ],
-      qr{unrecognized test case}i;
+      qr{unrecognized term 'basic/foobar01' in --test}i;
 
-    check_usage_error '--test MODULE//TESTCASE', [ '--test', 'basic//basic01', 'example.' ], qr{invalid input}i;
+    check_usage_error '--test MODULE//TESTCASE', [ '--test', 'basic//basic01', 'example.' ],
+      qr{unrecognized term 'basic//basic01' in --test}i;
 
     check_usage_error '--ns BAD_NAME', [ '--ns', '!%~&', 'example.' ], qr{invalid name}i;
 

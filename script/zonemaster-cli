@@ -114,14 +114,50 @@ Print the effective profile used in JSON format, then exit.
 =item B<--test>=TESTCASE, B<--test>=TESTMODULE
 
 Limit the testing suite to run only the specified tests.
-Can be specified multiple times.
-(default: all test cases)
+(default: the empty string)
 
-=for :man This can be the name of a testing module, in which case all test cases from
-that module will be run, or the name of a module followed by a slash and the
-name of a test case (test case identifier) in that module, or the name of the
-test case.
-This option is case-insensitive.
+=begin :man
+
+EXPR is an expression specifying or modifying the set of tests to run.
+Here are some examples:
+
+=over 4
+
+=item --test=B<nameserver>
+
+runs the entire Nameserver test module, and nothing else.
+
+=item --test=B<nameserver01>
+
+runs the Nameserver01 test case, and nothing else.
+
+=item --test=B<dnssec-dnssec05>
+
+runs the entire DNSSEC test module except the DNSSEC05 test case, and nothing
+else.
+
+=item --test=B<all-nameserver+nameserver03>
+
+runs all test cases of all test modules except for the Nameserver test module in
+which only the Nameserver03 test case is run.
+
+=item --test=B<-dnssec>
+
+removes all test cases of the DNSSEC module from the set of tests that would
+otherwise have run.
+
+=item --test=B<+syntax01+syntax02>
+
+adds the Syntax01 and Syntax02 test cases to the set of tests that would
+otherwise have run.
+
+=item --test=
+
+(i.e., the empty string) leaves the set of tests to run unmodified.
+
+=back
+
+=end :man
 
 =item B<--level>=LEVEL
 

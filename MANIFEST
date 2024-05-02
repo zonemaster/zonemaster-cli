@@ -12,6 +12,7 @@ inc/Module/Install/Share.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 lib/Zonemaster/CLI.pm
+lib/Zonemaster/CLI/TestCaseSet.pm
 LICENSE
 Makefile.PL
 MANIFEST			This list of files
@@ -28,6 +29,7 @@ share/locale/nb/LC_MESSAGES/Zonemaster-CLI.mo
 share/locale/sv/LC_MESSAGES/Zonemaster-CLI.mo
 t/00-load.t
 t/pod.t
+t/test_case_set.t
 t/usage.fake-data.data
 t/usage.fake-root.data
 t/usage.hints
