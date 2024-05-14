@@ -256,26 +256,17 @@ name servers took to answer.
 
 Print the effective profile used in JSON format, then exit.
 
-=item --sourceaddr=IPADDR
-
-Deprecated since v2023.1 (planned removal: v2024.1), use --sourceaddr4
-and/or --sourceaddr6 instead.
-
-Specify the source IP address used to send queries.
-Setting an IP address not correctly configured on a local network interface
-causes cryptic error messages.
-
 =item --sourceaddr4=IPADDR
 
 Specify the source IPv4 address used to send queries.
 Setting an IPv4 address not correctly configured on a local network interface
-fails silently. Can not be combined with --sourceaddr.
+fails silently.
 
 =item --sourceaddr6=IPADDR
 
 Specify the source IPv6 address used to send queries.
 Setting an IPv6 address not correctly configured on a local network interface
-fails silently. Can not be combined with --sourceaddr.
+fails silently.
 
 =item --[no-]elapsed
 
