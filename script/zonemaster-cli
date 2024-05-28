@@ -53,7 +53,7 @@ if ( defined $global_conf_file ) {
 }
 
 eval {
-    my $exitstatus = Zonemaster::CLI->new_with_options->run;
+    my $exitstatus = Zonemaster::CLI->run( @ARGV );
     exit $exitstatus;
 };
 

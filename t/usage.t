@@ -537,6 +537,16 @@ do {
     check_usage_error 'Bad --hints (syntax)', [ '--hints', 't/usage.t', 'example.' ],
       qr{error loading hints file}i;
 
+    check_success '--help', ['--help'], qr{
+        ^Usage:$
+        .*
+        zonemaster-cli
+        .*
+        ^Options:$
+        .*
+        --help
+    }msx;
+
     check_success '--version', ['--version'], qr{
         ^\QZonemaster-CLI version\E .*
         ^\QZonemaster-Engine version\E .*
