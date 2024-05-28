@@ -10,6 +10,9 @@ use Zonemaster::Engine::Profile;
 
 use lib catfile( dirname( dirname( __FILE__ ) ), 'script' );
 
+# Help Zonemaster::CLI find zonemaster-cli in test context
+$Zonemaster::CLI::SCRIPT = catfile( dirname( dirname( __FILE__ ) ), 'script', 'zonemaster-cli' );
+
 # Parse command line options upto and including '--'.
 
 my $opt_record = 0;
@@ -60,7 +63,7 @@ do {
 
     # Run Zonemaster::CLI
     eval {
-        $EXIT_STATUS = Zonemaster::CLI->new_with_options->run;
+        $EXIT_STATUS = Zonemaster::CLI->run( @ARGV );
         1;
     } or do {
         print STDERR $@;

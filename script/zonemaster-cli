@@ -53,23 +53,26 @@ if ( defined $global_conf_file ) {
 }
 
 eval {
-    my $exitstatus = Zonemaster::CLI->new_with_options->run;
+    my $exitstatus = Zonemaster::CLI->run( @ARGV );
     exit $exitstatus;
 };
 
 print STDERR $@;
 exit $Zonemaster::CLI::EXIT_GENERIC_ERROR;
 
+=encoding UTF-8
+
 =head1 NAME
 
 zonemaster-cli - run Zonemaster tests from the command line
 
-=head1 SYNOPSIS
+=head1 USAGE
 
-    zonemaster-cli zonemaster.net
-    zonemaster-cli --test=delegation --level=info --no-time zonemaster.net
-    zonemaster-cli --test=delegation/delegation01 --level=debug zonemaster.net
-    zonemaster-cli --list_tests
+    zonemaster-cli --help
+    zonemaster-cli --version
+    zonemaster-cli --dump-profile
+    zonemaster-cli --list-tests
+    zonemaster-cli [OPTIONS] DOMAIN_NAME
 
 =head1 DESCRIPTION
 
@@ -84,144 +87,64 @@ printed. See the available options below.
 
 =over
 
-=item -h -? --usage --help
+=item --help -h --usage -?
 
-Print the available command line switches, then exit.
+Print this usage information.
 
 =item --version
 
-Print the versions of this program as well as the ones from the underlying 
-L<Zonemaster> test engine, then exit.
+Print the versions of this program as well as the ones from the underlying
+L<Zonemaster> test engine.
 
-=item --level=LEVEL
+=item --list-tests, --list_tests
 
-Specify the minimum level of a message to be printed. Messages with this level
-(or higher) will be printed. The levels are, from highest to lowest: 
-CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 and DEBUG3.
-The lowest three levels (DEBUG) add a significant amount of messages to be shown.
-They reveal some of the internal workings of the test engine, and are probably 
-not useful for most users.
+List all available tests.
 
-Default: NOTICE
+=item --dump-profile, --dump_profile
 
-=item --locale=LOCALE
-
-Specify which locale to be used by the translation system. If not given, the
-translation system itself will look at environment variables to try and guess.
-If the requested translation does not exist, it will fallback to the local
-locale, and if that doesn't exist either, to English.
-
-=item --[no-]json
-
-Print results as JSON instead of human language.
-
-Default: off
-
-=item --[no-]json_stream, --[no-]json-stream
-
-Stream the results as JSON. Useful to follow the progress in a
-machine-readable way.
-
-Default: off
-
-=item --[no-]json_translate, --[no-]json-translate
-
-Deprecated since v2023.1, use --no-raw instead.
-
-For streaming JSON output, include the translated message of the tag.
-
-=item --[no-]raw
-
-Print messages as raw dumps (message identifiers) instead of translating them
-to human language.
-
-=item --[no-]time
-
-Print the timestamp for each message.
-
-Default: on
-
-=item --[no-]show_level, --[no-]show-level
-
-Print the severity level for each message.
-
-Default: on
-
-=item --[no-]show_module, --[no-]show-module
-
-Print the name of the module which produced the message.
-
-Default: off
-
-=item --[no-]show_testcase, --[no-]show-testcase
-
-Print the name of the test case (test case identifier) which produced the message.
-
-Default: off
-
-=item --ns=NAME[/IP]
-
-Provide information about a nameserver, for undelegated tests. The argument
-must be either: (i) a domain name and an IP address, separated by a single
-slash character (/), or (ii) only a domain name, in which case a A and AAAA
-records lookup for that name is done in the live global DNS tree (unless 
-overridden by --hints) and from which the results of that lookup will be used.
-
-This switch can be given multiple times. As long as any of these switches
-are present, their aggregated content will be used as the
-entirety of the parent-side delegation information.
-
-=item --hints=FILENAME
-
-Name of a root hints file to override the defaults.
-
-=item --save=FILENAME
-
-Write the contents of the accumulated DNS packet cache to a file with the given name
-after the testing suite has finished running.
-
-=item --restore=FILENAME
-
-Prime the DNS packet cache with the contents from the file with the given name
-before starting the testing suite. The format of the file should be from one
-produced by the --save switch.
-
-=item --[no-]ipv4
-
-Allow the sending of IPv4 packets.
-
-Default: on
-
-=item --[no-]ipv6
-
-Allow the sending of IPv6 packets.
-
-Default: on
-
-=item --list_tests, --list-tests
-
-Print all test cases listed in the test modules, then exit.
+Print the effective profile used in JSON format.
 
 =item --test=MODULE, --test=MODULE/TESTCASE, --test=TESTCASE
 
-Limit the testing suite to run only the specified tests.
-This can be the name of a testing module, in which case all test cases from
-that module will be run, or the name of a module followed by a slash and the
-name of a test case (test case identifier) in that module, or the name of the
-test case.
-Can be specified multiple times.
-This option is case-insensitive.
-
-=item --stop_level=LEVEL, --stop-level=LEVEL
-
-Specify the minimum severity level after which the testing suite is terminated.
-The levels are, from highest to lowest: CRITICAL, ERROR, WARNING, NOTICE,
-INFO, DEBUG, DEBUG2 and DEBUG3.
+Limit the run to only include the specified test.
+Repeat this option to include multiple tests.
+Should be the case-insensitive name of a test module (e.g. "Delegation") and/or
+a test case (e.g. "Delegation/delegation01" or "delegation01").
+This option may be repeated.
+Default: all tests in the testings suite
 
 =item --profile=FILE
 
 Override the Zonemaster Engine default profile data with values from
 the given profile JSON file.
+
+=item --[no-]ipv4
+
+Allow the sending of IPv4 packets.
+Default: on
+
+=item --[no-]ipv6
+
+Allow the sending of IPv6 packets.
+Default: on
+
+=item --sourceaddr4=IPADDR
+
+Source IPv4 address used when sending queries.
+Setting an IPv4 address not correctly configured on a local network interface
+fails silently.
+
+=item --sourceaddr6=IPADDR
+
+Source IPv6 address used when sending queries.
+Setting an IPv6 address not correctly configured on a local network interface
+fails silently.
+
+=item --ns=DOMAINNAME, --ns=DOMAINNAME/IP
+
+Override the parent-side delegation information.
+This option may be given multiple times.
+If no IP is provided, the name is looked up for IP addresses.
 
 =item --ds=KEYTAG,ALGORITHM,TYPE,DIGEST
 
@@ -230,50 +153,100 @@ delegating nameserver information is given via --ns switches). The four pieces
 of data (keytag, algorithm, type, digest) should be in the same format they would
 have in a zone file.
 
-=item --[no-]count
+=item --hints=FILENAME
 
-Print a summary, at the end of a run, of the numbers of messages for each severity
-level that were logged during the run.
+Name of a root hints file to override the defaults.
 
-Default: off
+=item --save=FILENAME
+
+Save DNS data to file after running tests.
+
+=item --restore=FILENAME
+
+Restore DNS data from file before running test.
 
 =item --[no-]progress
 
 Print an activity indicator ("spinner"). Useful to know that something is
 happening during a run.
+Default: on if STDOUT is a tty, off if it is not.
 
-Default: on (if the process' standard output is a TTY)
+=item --level=LEVEL
 
-=item --encoding=ENCODING
+The minimum severity level required for messages to be displayed.
+Must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 or DEBUG3.
+Default: NOTICE
 
-Deprecated: Simply remove it from your usage. It is ignored.
+=item --stop-level=LEVEL, --stop_level=LEVEL
+
+As soon as a message at this level or higher is logged, the run is aborted.
+Must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 or DEBUG3.
+
+=item --[no-]time
+
+Show the timestamp of each message.
+Default: on
+
+=item --[no-]show-level, --[no-]show_level
+
+Show the severity level of each message.
+Default: on
+
+=item --[no-]show-module, --[no-]show_module
+
+Show which test module produced each message.
+Default: off
+
+=item --[no-]show-testcase, --[no-]show_testcase
+
+Show which test case produced each message.
+Default: off
+
+=item --[no-]json
+
+Print results as a JSON object instead of a table.
+Default: off
+
+=item --[no-]json-stream, --[no-]json_stream
+
+Print results as a newline-delimited JSON stream instead of a table.
+Default: off
+
+=item --[no-]raw
+
+Show raw message identifiers instead of human language messages.
+
+=item --locale=LOCALE
+
+The locale to be used for message translation. If not given, the locale is
+determined from standard environment variables. If the requested translation
+does not exist, it will fallback to the local locale, and if that doesn't exist
+either, to English.
+
+=item --[no-]json-translate, --[no-]json_translate
+
+Deprecated since v2023.1, use --no-raw instead.
+
+For streaming JSON output, include the translated message of the tag.
+
+=item --[no-]count
+
+At the end of a run, print a summary of the number of messages at each level.
+Default: off
 
 =item --nstimes
 
-Print a summary, at the end of a run, of the times (in milliseconds) the zone's
+At the end of a run, print a summary of the times (in milliseconds) the zone's
 name servers took to answer.
-
-=item --dump_profile, --dump-profile
-
-Print the effective profile used in JSON format, then exit.
-
-=item --sourceaddr4=IPADDR
-
-Specify the source IPv4 address used to send queries.
-Setting an IPv4 address not correctly configured on a local network interface
-fails silently.
-
-=item --sourceaddr6=IPADDR
-
-Specify the source IPv6 address used to send queries.
-Setting an IPv6 address not correctly configured on a local network interface
-fails silently.
 
 =item --[no-]elapsed
 
 Print elapsed time (in seconds) at end of a run.
-
 Default: off
+
+=item --encoding=ENCODING
+
+Deprecated: Simply remove it from your usage. It is ignored.
 
 =back
 
@@ -313,11 +286,3 @@ cannot be added on lines with arguments.
 
 Any arguments actually given on the command line will override what is in any of
 the loaded config files.
-
-=head1 SEE ALSO
-
-L<Zonemaster>
-
-=head1 AUTHOR
-
-Calle Dybedahl <calle@init.se> and others from the Zonemaster project
