@@ -1,7 +1,8 @@
 # Brief help module to define the exception we use for early exits.
 package Zonemaster::Engine::Exception::NormalExit;
-use Moose;
-extends 'Zonemaster::Engine::Exception';
+use 5.014002;
+use warnings;
+use parent 'Zonemaster::Engine::Exception';
 
 # The actual interesting module.
 package Zonemaster::CLI;
@@ -14,14 +15,14 @@ use warnings;
 use version; our $VERSION = version->declare( "v7.0.0" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
-use Moose;
-with 'MooseX::Getopt::GLD' => { getopt_conf => [ 'pass_through' ] };
 
 use Encode;
 use File::Slurp;
+use Getopt::Long qw[GetOptionsFromArray :config bundling no_auto_abbrev];
 use JSON::XS;
 use List::Util qw[max uniq];
 use Net::IP::XS;
+use Pod::Usage;
 use POSIX qw[setlocale LC_MESSAGES LC_CTYPE];
 use Readonly;
 use Scalar::Util qw[blessed];
@@ -37,6 +38,7 @@ use Zonemaster::Engine::Validation qw[validate_ipv4 validate_ipv6];
 
 our %numeric = Zonemaster::Engine::Logger::Entry->levels;
 our $JSON    = JSON::XS->new->allow_blessed->convert_blessed->canonical;
+our $SCRIPT  = $0;
 
 Readonly our $EXIT_SUCCESS       => 0;
 Readonly our $EXIT_GENERIC_ERROR => 1;
@@ -46,275 +48,120 @@ Readonly our $DS_RE => qr/^(?:[[:digit:]]+,){3}[[:xdigit:]]+$/;
 
 STDOUT->autoflush( 1 );
 
-has 'version' => (
-    is            => 'ro',
-    isa           => 'Bool',
-    default       => 0,
-    required      => 0,
-    documentation => __( 'Print version information and exit.' ),
-);
+sub my_pod2usage {
+    my ( %opts ) = @_;
 
-has 'level' => (
-    is            => 'ro',
-    isa           => 'Str',
-    required      => 0,
-    default       => 'NOTICE',
-    initializer   => sub {
-        my ( $self, $value, $set, $attr ) = @_;
-        $set->( uc $value );
-    },
-    documentation =>
-      __( 'The minimum severity level to display. Must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO or DEBUG.' ),
-);
+    pod2usage(
+        -input    => $SCRIPT,
+        -output   => $opts{output},
+        -verbose  => $opts{verbosity},
+        -exitcode => 'NOEXIT',
+    );
 
-has 'locale' => (
-    is            => 'ro',
-    isa           => 'Str',
-    required      => 0,
-    documentation => __( 'The locale to use for messages translation.' ),
-);
-
-has 'json' => (
-    is            => 'rw',
-    isa           => 'Bool',
-    default       => 0,
-    documentation => __( 'Flag indicating if output should be in JSON or not.' ),
-);
-
-has 'json_stream' => (
-    traits        => [ 'Getopt' ],
-    is            => 'ro',
-    isa           => 'Bool',
-    default       => 0,
-    cmd_aliases   => 'json_stream',
-    cmd_flag      => 'json-stream',
-    documentation => __( 'Flag indicating if output should be streaming JSON or not.' ),
-);
-
-has 'json_translate' => (
-    traits        => [ 'Getopt' ],
-    is            => 'ro',
-    isa           => 'Bool',
-    cmd_aliases   => 'json_translate',
-    cmd_flag      => 'json-translate',
-    documentation => __( 'Deprecated. Flag indicating if JSON output should include the translated message of the tag or not.' ),
-);
-
-has 'raw' => (
-    is            => 'rw',
-    isa           => 'Bool',
-    documentation => __( 'Flag indicating if output should be translated to human language or dumped raw.' ),
-);
-
-has 'time' => (
-    is            => 'ro',
-    isa           => 'Bool',
-    documentation => __( 'Print timestamp on entries.' ),
-    default       => 1,
-);
-
-has 'show_level' => (
-    traits        => [ 'Getopt' ],
-    is            => 'ro',
-    isa           => 'Bool',
-    cmd_aliases   => 'show_level',
-    cmd_flag      => 'show-level',
-    documentation => __( 'Print level on entries.' ),
-    default       => 1,
-);
-
-has 'show_module' => (
-    traits        => [ 'Getopt' ],
-    is            => 'ro',
-    isa           => 'Bool',
-    cmd_aliases   => 'show_module',
-    cmd_flag      => 'show-module',
-    documentation => __( 'Print the name of the module on entries.' ),
-    default       => 0,
-);
-
-has 'show_testcase' => (
-    traits        => [ 'Getopt' ],
-    is            => 'ro',
-    isa           => 'Bool',
-    cmd_aliases   => 'show_testcase',
-    cmd_flag      => 'show-testcase',
-    documentation => __( 'Print the name of the test case on entries.' ),
-    default       => 0,
-);
-
-has 'ns' => (
-    is            => 'ro',
-    isa           => 'ArrayRef',
-    documentation => __( 'A name/ip string giving a nameserver for undelegated tests, or just a name which will be looked up for IP addresses. Can be given multiple times.' ),
-);
-
-has 'hints' => (
-    is            => 'ro',
-    isa           => 'Str',
-    required      => 0,
-    documentation => __( 'Name of a root hints file to override the defaults.' ),
-);
-
-has 'save' => (
-    is            => 'ro',
-    isa           => 'Str',
-    required      => 0,
-    documentation => __( 'Name of a file to save DNS data to after running tests.' ),
-);
-
-has 'restore' => (
-    is            => 'ro',
-    isa           => 'Str',
-    required      => 0,
-    documentation => __( 'Name of a file to restore DNS data from before running test.' ),
-);
-
-has 'ipv4' => (
-    is            => 'ro',
-    isa           => 'Bool',
-    documentation =>
-      __( 'Flag to permit or deny queries being sent via IPv4. --ipv4 permits IPv4 traffic, --no-ipv4 forbids it.' ),
-);
-
-has 'ipv6' => (
-    is            => 'ro',
-    isa           => 'Bool',
-    documentation =>
-      __( 'Flag to permit or deny queries being sent via IPv6. --ipv6 permits IPv6 traffic, --no-ipv6 forbids it.' ),
-);
-
-has 'list_tests' => (
-    traits        => [ 'Getopt' ],
-    is            => 'ro',
-    isa           => 'Bool',
-    default       => 0,
-    cmd_aliases   => 'list_tests',
-    cmd_flag      => 'list-tests',
-    documentation => __( 'Instead of running a test, list all available tests.' ),
-);
-
-has 'test' => (
-    is            => 'ro',
-    isa           => 'ArrayRef',
-    required      => 0,
-    documentation => __(
-'Specify test case to be run. Should be the case-insensitive name of a test module (e.g. "Delegation") and/or a test case (e.g. "Delegation/delegation01" or "delegation01"). This switch can be repeated.'
-    )
-);
-
-has 'stop_level' => (
-    traits        => [ 'Getopt' ],
-    is            => 'ro',
-    isa           => 'Str',
-    required      => 0,
-    initializer   => sub {
-        my ( $self, $value, $set, $attr ) = @_;
-        $set->( uc $value );
-    },
-    cmd_aliases   => 'stop_level',
-    cmd_flag      => 'stop-level',
-    documentation => __(
-'As soon as a message at this level or higher is logged, execution will stop. Must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO or DEBUG.'
-    )
-);
-
-has 'profile' => (
-    is            => 'ro',
-    isa           => 'Str',
-    required      => 0,
-    documentation => __( 'Name of profile file to load. (DEFAULT)' ),
-);
-
-has 'ds' => (
-    is            => 'ro',
-    isa           => 'ArrayRef[Str]',
-    required      => 0,
-    documentation => __( 'Strings with DS data on the form "keytag,algorithm,type,digest"' ),
-);
-
-has 'count' => (
-    is            => 'ro',
-    isa           => 'Bool',
-    required      => 0,
-    documentation => __( 'Print a count of the number of messages at each level' ),
-);
-
-has 'progress' => (
-    is            => 'ro',
-    isa           => 'Bool',
-    documentation => __( 'Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off if it is not. Disable with --no-progress.' ),
-);
-
-has 'encoding' => (
-    is            => 'ro',
-    isa           => 'Str',
-    documentation => __( 'Deprecated: Simply remove it from your usage. It is ignored.' ),
-);
-
-has 'nstimes' => (
-    is            => 'ro',
-    isa           => 'Bool',
-    required      => 0,
-    default       => 0,
-    documentation => __( 'At the end of a run, print a summary of the times (in milliseconds) the zone\'s name servers took to answer.' ),
-);
-
-has 'dump_profile' => (
-    traits        => [ 'Getopt' ],
-    is            => 'ro',
-    isa           => 'Bool',
-    required      => 0,
-    default       => 0,
-    cmd_aliases   => 'dump_profile',
-    cmd_flag      => 'dump-profile',
-    documentation => __( 'Print the effective profile used in JSON format, then exit.' ),
-);
-
-has 'sourceaddr4' => (
-    is            => 'ro',
-    isa           => 'Str',
-    required      => 0,
-    documentation => __(
-            'Source IPv4 address used to send queries. '
-          . 'Setting an IPv4 address not correctly configured on a local network interface fails silently.'
-    ),
-);
-
-has 'sourceaddr6' => (
-    is            => 'ro',
-    isa           => 'Str',
-    required      => 0,
-    documentation => __(
-            'Source IPv6 address used to send queries. '
-          . 'Setting an IPv6 address not correctly configured on a local network interface fails silently.'
-    ),
-);
-
-has 'elapsed' => (
-    is            => 'ro',
-    isa           => 'Bool',
-    required      => 0,
-    default       => 0,
-    documentation => __( 'Print elapsed time (in seconds) at end of run.' ),
-);
+    return;
+}
 
 # Returns an integer representing an OS exit status.
 sub run {
-    my ( $self ) = @_;
+    my ( $class, @argv ) = @_;
+
+    my $opt_count        = 0;
+    my @opt_ds           = ();
+    my $opt_dump_profile = 0;
+    my $opt_elapsed      = 0;
+    my $opt_encoding     = undef;
+    my $opt_help         = 0;
+    my $opt_hints;
+    my $opt_ipv4           = undef;
+    my $opt_ipv6           = undef;
+    my $opt_json           = undef;
+    my $opt_json_stream    = 0;
+    my $opt_json_translate = undef;
+    my $opt_level          = 'NOTICE';
+    my $opt_list_tests     = 0;
+    my $opt_locale         = undef;
+    my @opt_ns             = ();
+    my $opt_nstimes        = 0;
+    my $opt_profile;
+    my $opt_progress = undef;
+    my $opt_raw;
+    my $opt_restore;
+    my $opt_save;
+    my $opt_show_level    = 1;
+    my $opt_show_module   = 0;
+    my $opt_show_testcase = 0;
+    my $opt_sourceaddr4;
+    my $opt_sourceaddr6;
+    my $opt_stop_level = 'CRITICAL';
+    my @opt_test       = ();
+    my $opt_time       = 1;
+    my $opt_version    = 0;
+
+    {
+        local $SIG{__WARN__} = sub { print STDERR $_[0] };
+
+        GetOptionsFromArray(
+            \@argv,
+            'count!'          => \$opt_count,
+            'ds=s'            => \@opt_ds,
+            'dump-profile!'   => \$opt_dump_profile,
+            'dump_profile!'   => \$opt_dump_profile,
+            'elapsed!'        => \$opt_elapsed,
+            'encoding=s'      => \$opt_encoding,
+            'hints=s'         => \$opt_hints,
+            'help|h|usage|?!' => \$opt_help,
+            'ipv4!'           => \$opt_ipv4,
+            'ipv6!'           => \$opt_ipv6,
+            'json!'           => \$opt_json,
+            'json-stream!'    => \$opt_json_stream,
+            'json_stream!'    => \$opt_json_stream,
+            'json-translate!' => \$opt_json_translate,
+            'json_translate!' => \$opt_json_translate,
+            'level=s'         => \$opt_level,
+            'list-tests!'     => \$opt_list_tests,
+            'list_tests!'     => \$opt_list_tests,
+            'locale=s'        => \$opt_locale,
+            'ns=s'            => \@opt_ns,
+            'nstimes!'        => \$opt_nstimes,
+            'profile=s'       => \$opt_profile,
+            'progress!'       => \$opt_progress,
+            'raw!'            => \$opt_raw,
+            'restore=s'       => \$opt_restore,
+            'save=s'          => \$opt_save,
+            'show-level!'     => \$opt_show_level,
+            'show_level!'     => \$opt_show_level,
+            'show-module!'    => \$opt_show_module,
+            'show_module!'    => \$opt_show_module,
+            'show-testcase!'  => \$opt_show_testcase,
+            'show_testcase!'  => \$opt_show_testcase,
+            'sourceaddr4=s'   => \$opt_sourceaddr4,
+            'sourceaddr6=s'   => \$opt_sourceaddr6,
+            'stop-level=s'    => \$opt_stop_level,
+            'stop_level=s'    => \$opt_stop_level,
+            'test=s'          => \@opt_test,
+            'time!'           => \$opt_time,
+            'version!'        => \$opt_version,
+        ) or do {
+            my_pod2usage( verbosity => 0, output => \*STDERR );
+            return 2;
+        };
+    }
+
+    if ( $opt_help ) {
+        my_pod2usage( verbosity => 1, output => \*STDOUT );
+        return 0;
+    }
+
+    $opt_level      = uc $opt_level;
+    $opt_stop_level = uc $opt_stop_level;
+
     my @accumulator;
     my %counter;
     my $printed_something;
 
-    if ( grep /^-/, @{ $self->extra_argv } ) {
-        say STDERR "Unknown option: ", join( q{ }, grep /^-/, @{ $self->extra_argv } );
-        say STDERR "Run \"zonemaster-cli -h\" to get the valid options";
-        return $EXIT_USAGE_ERROR;
-    }
-
-    if ( $self->locale ) {
+    if ( $opt_locale ) {
         undef $ENV{LANGUAGE};
-        $ENV{LC_ALL} = $self->locale;
+        $ENV{LC_ALL} = $opt_locale;
     }
 
     # Set LC_MESSAGES and LC_CTYPE separately (https://www.gnu.org/software/gettext/manual/html_node/Triggering.html#Triggering)
@@ -327,31 +174,31 @@ sub run {
         $ENV{LC_ALL} || $ENV{LC_CTYPE};
     }
 
-    if ( $self->version ) {
+    if ( $opt_version ) {
         print_versions();
         return $EXIT_SUCCESS;
     }
 
-    if ( $self->list_tests ) {
+    if ( $opt_list_tests ) {
         print_test_list();
         return $EXIT_SUCCESS;
     }
 
     # errors and warnings
-    if ( $self->json_stream and not $self->json and grep( /^--no-?json$/, @{ $self->ARGV } ) ) {
+    if ( defined $opt_encoding ) {
+        say STDERR __( "Warning: deprecated --encoding, simply remove it from your usage." );
+    }
+
+    if ( $opt_json_stream and defined $opt_json and not $opt_json ) {
         say STDERR __( "Error: --json-stream and --no-json can't be used together." );
         return $EXIT_USAGE_ERROR;
     }
 
-    if ( $self->encoding ) {
-        say STDERR __( "Warning: deprecated --encoding, simply remove it from your usage." );
-    }
-
-    if ( defined $self->json_translate ) {
-        unless ( $self->json or $self->json_stream ) {
+    if ( defined $opt_json_translate ) {
+        unless ( $opt_json or $opt_json_stream ) {
             printf STDERR __( "Warning: --json-translate has no effect without either --json or --json-stream." ) . "\n";
         }
-        if ( $self->json_translate ) {
+        if ( $opt_json_translate ) {
             printf STDERR __( "Warning: deprecated --json-translate, use --no-raw instead." ) . "\n";
         }
         else {
@@ -360,29 +207,29 @@ sub run {
     }
 
     # align values
-    $self->json( 1 ) if $self->json_stream;
-    $self->raw( $self->raw // ( defined $self->json_translate ? !$self->json_translate : 0 ) );
+    $opt_json = 1 if $opt_json_stream;
+    $opt_raw //= defined $opt_json_translate ? !$opt_json_translate : 0;
 
     # Filehandle for diagnostics output
-    my $fh_diag = ( $self->json or $self->raw or $self->dump_profile )
+    my $fh_diag = ( $opt_json or $opt_raw or $opt_dump_profile )
       ? *STDERR     # Structured output mode (e.g. JSON)
       : *STDOUT;    # Human readable output mode
 
-    my $show_progress = $self->progress // !!-t STDOUT && !$self->json && !$self->raw;
+    my $show_progress = $opt_progress // !!-t STDOUT && !$opt_json && !$opt_raw;
 
-    if ( $self->profile ) {
-        say $fh_diag __x( "Loading profile from {path}.", path => $self->profile );
-        my $json    = read_file( $self->profile );
+    if ( $opt_profile ) {
+        say $fh_diag __x( "Loading profile from {path}.", path => $opt_profile );
+        my $json    = read_file( $opt_profile );
         my $foo     = Zonemaster::Engine::Profile->from_json( $json );
         my $profile = Zonemaster::Engine::Profile->default;
         $profile->merge( $foo );
         Zonemaster::Engine::Profile->effective->merge( $profile );
     }
 
-    if ( defined $self->sourceaddr4 ) {
+    if ( defined $opt_sourceaddr4 ) {
         local $@;
         eval {
-            Zonemaster::Engine::Profile->effective->set( q{resolver.source4}, $self->sourceaddr4 );
+            Zonemaster::Engine::Profile->effective->set( q{resolver.source4}, $opt_sourceaddr4 );
             1;
         } or do {
             say STDERR __x( "Error: invalid value for --sourceaddr4: {reason}", reason => $@ );
@@ -390,10 +237,10 @@ sub run {
         };
     }
 
-    if ( defined $self->sourceaddr6 ) {
+    if ( defined $opt_sourceaddr6 ) {
         local $@;
         eval {
-            Zonemaster::Engine::Profile->effective->set( q{resolver.source6}, $self->sourceaddr6 );
+            Zonemaster::Engine::Profile->effective->set( q{resolver.source6}, $opt_sourceaddr6 );
             1;
         } or do {
             say STDERR __x( "Error: invalid value for --sourceaddr6: {reason}", reason => $@ );
@@ -402,12 +249,12 @@ sub run {
     }
 
     my @testing_suite;
-    if ( $self->test and @{ $self->test } > 0 ) {
+    if ( @opt_test ) {
         my %existing_tests = Zonemaster::Engine->all_methods;
         my @existing_test_modules = keys %existing_tests;
         my @existing_test_cases = map { @{ $existing_tests{$_} } } @existing_test_modules;
 
-        foreach my $t ( @{ $self->test } ) {
+        foreach my $t ( @opt_test ) {
             # There should be at most one slash character
             if ( $t =~ tr/\/// > 1 ) {
                 say STDERR __( "Error: Invalid input '$t' in --test. There must be at most one slash ('/') character.");
@@ -491,35 +338,35 @@ sub run {
 
     # These two must come after any profile from command line has been loaded
     # to make any IPv4/IPv6 option override the profile setting.
-    if ( defined ($self->ipv4) ) {
-        Zonemaster::Engine::Profile->effective->set( q{net.ipv4}, 0+$self->ipv4 );
+    if ( defined( $opt_ipv4 ) ) {
+        Zonemaster::Engine::Profile->effective->set( q{net.ipv4}, $opt_ipv4 );
     }
-    if ( defined ($self->ipv6) ) {
-        Zonemaster::Engine::Profile->effective->set( q{net.ipv6}, 0+$self->ipv6 );
+    if ( defined( $opt_ipv6 ) ) {
+        Zonemaster::Engine::Profile->effective->set( q{net.ipv6}, $opt_ipv6 );
     }
 
-    if ( $self->dump_profile ) {
+    if ( $opt_dump_profile ) {
         do_dump_profile();
         return $EXIT_SUCCESS;
     }
 
-    if ( $self->stop_level and not defined( $numeric{ $self->stop_level } ) ) {
-        say STDERR __x( "Failed to recognize stop level 'level'.", level => $self->stop_level );
+    if ( $opt_stop_level and not defined( $numeric{$opt_stop_level} ) ) {
+        say STDERR __x( "Failed to recognize stop level 'level'.", level => $opt_stop_level );
         return $EXIT_USAGE_ERROR;
     }
 
-    if ( not defined $numeric{ $self->level } ) {
+    if ( not defined $numeric{$opt_level} ) {
         say STDERR __( "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 or DEBUG3." );
         return $EXIT_USAGE_ERROR;
     }
 
-    if ( $self->restore ) {
-        Zonemaster::Engine->preload_cache( $self->restore );
+    if ( $opt_restore ) {
+        Zonemaster::Engine->preload_cache( $opt_restore );
     }
 
     my $level_width = 0;
     foreach ( keys %numeric ) {
-        if ( $numeric{ $self->level } <= $numeric{$_} ) {
+        if ( $numeric{$opt_level} <= $numeric{$_} ) {
             my $width_l10n = length( decode_utf8( translate_severity( $_ ) ) );
             $level_width = $width_l10n if $width_l10n > $level_width;
         }
@@ -534,19 +381,6 @@ sub run {
     );
     my %header_names = ();
     my %remaining_space = ();
-    if ( not $self->raw ) {
-        %header_names = (
-            seconds  => __( 'Seconds' ),
-            level    => __( 'Level' ),
-            module   => __( 'Module' ),
-            testcase => __( 'Testcase' ),
-            message  => __( 'Message' )
-        );
-        foreach ( keys %header_names ) {
-            $field_width{$_} = _max( $field_width{$_}, length( decode_utf8( $header_names{$_} ) ) );
-            $remaining_space{$_} = $field_width{$_} - length( decode_utf8( $header_names{$_} ) );
-        }
-    }
 
     # Callback defined here so it closes over the setup above.
     Zonemaster::Engine->logger->callback(
@@ -557,46 +391,47 @@ sub run {
 
             $counter{ uc $entry->level } += 1;
 
-            if ( $numeric{ uc $entry->level } >= $numeric{ $self->level } ) {
+            if ( $numeric{ uc $entry->level } >= $numeric{$opt_level} ) {
                 $printed_something = 1;
 
-                if ( $self->json and $self->json_stream ) {
+                if ( $opt_json and $opt_json_stream ) {
                     my %r;
 
-                    $r{timestamp} = $entry->timestamp if $self->time;
-                    $r{module}    = $entry->module if $self->show_module;
-                    $r{testcase}  = $entry->testcase if $self->show_testcase;
+                    $r{timestamp} = $entry->timestamp if $opt_time;
+                    $r{module}    = $entry->module    if $opt_show_module;
+                    $r{testcase}  = $entry->testcase  if $opt_show_testcase;
                     $r{tag}       = $entry->tag;
-                    $r{level}     = $entry->level if $self->show_level;
-                    $r{args}      = $entry->args if $entry->args;
-                    $r{message}   = $translator->translate_tag( $entry ) unless $self->raw;
+                    $r{level}     = $entry->level if $opt_show_level;
+                    $r{args}      = $entry->args  if $entry->args;
+                    $r{message}   = $translator->translate_tag( $entry ) unless $opt_raw;
 
                     say $JSON->encode( \%r );
                 }
-                elsif ( $self->json and not $self->json_stream ) {
+                elsif ( $opt_json and not $opt_json_stream ) {
                     # Don't do anything
                 }
                 else {
                     my $prefix = q{};
-                    if ( $self->time ) {
+                    if ( $opt_time ) {
                         $prefix .= sprintf "%*.2f ", ${field_width{seconds}}, $entry->timestamp;
                     }
 
-                    if ( $self->show_level ) {
-                        $prefix .= $self->raw ? $entry->level : translate_severity( $entry->level );
-                        my $space_l10n = ${field_width{level}} - length( decode_utf8( translate_severity($entry->level) ) ) + 1;
+                    if ( $opt_show_level ) {
+                        $prefix .= $opt_raw ? $entry->level : translate_severity( $entry->level );
+                        my $space_l10n =
+                          ${ field_width { level } } - length( decode_utf8( translate_severity( $entry->level ) ) ) + 1;
                         $prefix .= ' ' x $space_l10n;
                     }
 
-                    if ( $self->show_module ) {
+                    if ( $opt_show_module ) {
                         $prefix .= sprintf "%-*s ", ${field_width{module}}, $entry->module;
                     }
 
-                    if ( $self->show_testcase ) {
+                    if ( $opt_show_testcase ) {
                         $prefix .= sprintf "%-*s ", ${field_width{testcase}}, $entry->testcase;
                     }
 
-                    if ( $self->raw ) {
+                    if ( $opt_raw ) {
                         $prefix .= $entry->tag;
 
                         my $message = $entry->argstr;
@@ -623,30 +458,30 @@ sub run {
                     }
                 }
             }
-            if ( $self->stop_level and $numeric{ uc $entry->level } >= $numeric{ $self->stop_level } ) {
+            if ( $opt_stop_level and $numeric{ uc $entry->level } >= $numeric{$opt_stop_level} ) {
                 die( Zonemaster::Engine::Exception::NormalExit->new( { message => "Saw message at level " . $entry->level } ) );
             }
         }
     );
 
-    if ( scalar @{ $self->extra_argv } > 1 ) {
-        say STDERR __( "Only one domain can be given for testing. Did you forget to prepend an option with '--<OPTION>'?" );
+    if ( @argv > 1 ) {
+        say STDERR __(
+            "Only one domain can be given for testing. Did you forget to prepend an option with '--<OPTION>'?" );
         return $EXIT_USAGE_ERROR;
     }
-
-    my ( $domain ) = @{ $self->extra_argv };
-
-    if ( !defined $domain ) {
+    elsif ( @argv < 1 ) {
         say STDERR __( "Must give the name of a domain to test." );
         return $EXIT_USAGE_ERROR;
     }
 
+    my ( $domain ) = @argv;
+
     ( my $errors, $domain ) = normalize_name( decode( 'utf8', $domain ) );
 
-    if ( $self->ns and @{ $self->ns } > 0 ) {
+    if ( @opt_ns ) {
         local $@;
         eval {
-            $self->check_fake_delegation( $domain );
+            check_fake_delegation( $domain, @opt_ns );
             1;
         } or do {
             print STDERR $@;
@@ -654,8 +489,8 @@ sub run {
         };
     }
 
-    if ( $self->ds and @{ $self->ds } ) {
-        $self->check_fake_ds( $domain );
+    if ( @opt_ds ) {
+        check_fake_ds( @opt_ds );
     }
 
     if ( scalar @$errors > 0 ) {
@@ -667,11 +502,11 @@ sub run {
         return $EXIT_USAGE_ERROR;
     }
 
-    if ( defined $self->hints ) {
+    if ( defined $opt_hints ) {
         my $hints_data;
         my $error = undef;
         try {
-            my $hints_text = read_file( $self->hints ) // die "read_file failed\n";
+            my $hints_text = read_file( $opt_hints ) // die "read_file failed\n";
             local $SIG{__WARN__} = \&die;
             $hints_data = parse_hints( $hints_text )
         }
@@ -688,10 +523,10 @@ sub run {
         Zonemaster::Engine::Recursor->add_fake_addresses( '.', $hints_data );
     }
 
-    if ( $self->ns and @{ $self->ns } > 0 ) {
+    if ( @opt_ns ) {
         local $@;
         eval {
-            $self->add_fake_delegation( $domain );
+            add_fake_delegation( $domain, @opt_ns );
             1;
         } or do {
             print STDERR $@;
@@ -699,48 +534,60 @@ sub run {
         };
     }
 
-    if ( $self->ds and @{ $self->ds } ) {
-        $self->add_fake_ds( $domain );
+    if ( @opt_ds ) {
+        add_fake_ds( $domain, @opt_ds );
     }
 
-    if ( not $self->raw ) {
+    if ( not $opt_raw ) {
         $translator = Zonemaster::Engine::Translator->new;
-        $translator->locale( $self->locale )
-          if $self->locale;
+        $translator->locale( $opt_locale )
+          if $opt_locale;
+
+        %header_names = (
+            seconds  => __( 'Seconds' ),
+            level    => __( 'Level' ),
+            module   => __( 'Module' ),
+            testcase => __( 'Testcase' ),
+            message  => __( 'Message' )
+        );
+        foreach ( keys %header_names ) {
+            $field_width{$_}     = _max( $field_width{$_}, length( decode_utf8( $header_names{$_} ) ) );
+            $remaining_space{$_} = $field_width{$_} - length( decode_utf8( $header_names{$_} ) );
+        }
     }
 
-    if ( $self->profile or $self->test ) {
+    if ( $opt_profile or @opt_test ) {
         # Separate initialization from main output in human readable output mode
         print "\n" if $fh_diag eq *STDOUT;
     }
 
-    if ( not $self->raw and not $self->json ) {
+    if ( not $opt_raw and not $opt_json ) {
         my $header = q{};
 
-        if ( $self->time ) {
+        if ( $opt_time ) {
             $header .= sprintf "%s%s ", $header_names{seconds}, " " x $remaining_space{seconds};
         }
-        if ( $self->show_level ) {
+        if ( $opt_show_level ) {
             $header .= sprintf "%s%s ", $header_names{level}, " " x $remaining_space{level};
         }
-        if ( $self->show_module ) {
+        if ( $opt_show_module ) {
             $header .= sprintf "%s%s ", $header_names{module}, " " x $remaining_space{module};
         }
-        if ( $self->show_testcase ) {
+        if ( $opt_show_testcase ) {
             $header .= sprintf "%s%s ", $header_names{testcase}, " " x $remaining_space{testcase};
         }
         $header .= sprintf "%s\n", $header_names{message};
 
-        if ( $self->time ) {
+        if ( $opt_time ) {
             $header .= sprintf "%s ", "=" x $field_width{seconds};
         }
-        if ( $self->show_level ) {
+        if ( $opt_show_level ) {
             $header .= sprintf "%s ", "=" x $field_width{level};
         }
-        if ( $self->show_module ) {
+        if ( $opt_show_module ) {
             $header .= sprintf "%s ", "=" x $field_width{module};
         }
-        if ( $self->show_testcase ) {
+        if ( $opt_show_testcase ) {
             $header .= sprintf "%s ", "=" x $field_width{testcase};
         }
         $header .= sprintf "%s\n", "=" x $field_width{message};
@@ -748,17 +595,17 @@ sub run {
         print $header;
     }
 
-    if ( $self->ns and @{ $self->ns } > 0 ) {
-        $self->add_fake_delegation( $domain );
+    if ( @opt_ns ) {
+        add_fake_delegation( $domain, @opt_ns );
     }
 
-    if ( $self->ds and @{ $self->ds } ) {
-        $self->add_fake_ds( $domain );
+    if ( @opt_ds ) {
+        add_fake_ds( $domain, @opt_ds );
     }
 
     # Actually run tests!
     eval {
-        if ( $self->test and @{ $self->test } > 0 ) {
+        if ( @opt_test ) {
             foreach my $t ( @testing_suite ) {
                 # Either a module/method, or just a module
                 my ( $module, $method ) = split('/', $t);
@@ -775,7 +622,7 @@ sub run {
         }
     };
 
-    if ( not $self->raw and not $self->json ) {
+    if ( not $opt_raw and not $opt_json ) {
         if ( not $printed_something ) {
             say __( "Looks OK." );
         }
@@ -793,8 +640,8 @@ sub run {
 
     my $json_output = {};
 
-    if ( $self->count ) {
-        if ( $self->json ) {
+    if ( $opt_count ) {
+        if ( $opt_json ) {
             $json_output->{count} = {};
             foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
                 $json_output->{count}{$level} = $counter{$level};
@@ -809,11 +656,11 @@ sub run {
         }
     }
 
-    if ( $self->nstimes ) {
+    if ( $opt_nstimes ) {
         my $zone = Zonemaster::Engine->zone( $domain );
         my $max = max map { length( "$_" ) } ( @{ $zone->ns }, q{Server} );
 
-        if ( $self->json ) {
+        if ( $opt_json ) {
             my @times = ();
             foreach my $ns ( @{ $zone->ns } ) {
                 push @times, {
@@ -845,10 +692,10 @@ sub run {
         }
     }
 
-    if ($self->elapsed) {
+    if ( $opt_elapsed ) {
         my $last = Zonemaster::Engine->logger->entries->[-1];
 
-        if ( $self->json ) {
+        if ( $opt_json ) {
             $json_output->{elapsed} = $last->timestamp;
         }
         else {
@@ -856,19 +703,19 @@ sub run {
         }
     }
 
-    if ( $self->json and not $self->json_stream ) {
-        my $res = Zonemaster::Engine->logger->json( $self->level );
+    if ( $opt_json and not $opt_json_stream ) {
+        my $res = Zonemaster::Engine->logger->json( $opt_level );
         $res = $JSON->decode( $res );
         foreach ( @$res ) {
-            unless ( $self->raw ) {
+            unless ( $opt_raw ) {
                 my %e = %$_;
                 my $entry = Zonemaster::Engine::Logger::Entry->new( \%e );
                 $_->{message} = $translator->translate_tag( $entry );
             }
-            delete $_->{timestamp} unless $self->time;
-            delete $_->{level} unless $self->show_level;
-            delete $_->{module} unless $self->show_module;
-            delete $_->{testcase} unless $self->show_testcase;
+            delete $_->{timestamp} unless $opt_time;
+            delete $_->{level}     unless $opt_show_level;
+            delete $_->{module}    unless $opt_show_module;
+            delete $_->{testcase}  unless $opt_show_testcase;
         }
         $json_output->{results} = $res;
     }
@@ -877,18 +724,17 @@ sub run {
         say $JSON->encode( $json_output );
     }
 
-    if ( $self->save ) {
-        Zonemaster::Engine->save_cache( $self->save );
+    if ( $opt_save ) {
+        Zonemaster::Engine->save_cache( $opt_save );
     }
 
     return $EXIT_SUCCESS;
 }
 
-
 sub check_fake_delegation {
-    my ( $self ) = @_;
+    my ( $domain, @ns ) = @_;
 
-    foreach my $pair ( @{ $self->ns } ) {
+    foreach my $pair ( @ns ) {
         my ( $name, $ip ) = split( '/', $pair, 2 );
 
         if ( $pair =~ tr/\/// > 1 or not $name ) {
@@ -918,9 +764,9 @@ sub check_fake_delegation {
 }
 
 sub check_fake_ds {
-    my ( $self ) = @_;
+    my ( @ds ) = @_;
 
-    foreach my $str ( @{ $self->ds } ) {
+    foreach my $str ( @ds ) {
         unless ( $str =~ /$DS_RE/ ) {
             say STDERR __( "--ds ds data must be in the form \"keytag,algorithm,type,digest\". E.g. space is not permitted anywhere in the string.");
             exit( 1 );
@@ -931,11 +777,11 @@ sub check_fake_ds {
 }
 
 sub add_fake_delegation {
-    my ( $self, $domain ) = @_;
+    my ( $domain, @ns ) = @_;
     my @ns_with_no_ip;
     my %data;
 
-    foreach my $pair ( @{ $self->ns } ) {
+    foreach my $pair ( @ns ) {
         my ( $name, $ip ) = split( '/', $pair, 2 );
 
         ( my $errors, $name ) = normalize_name( decode( 'utf8', $name ) );
@@ -959,10 +805,10 @@ sub add_fake_delegation {
 }
 
 sub add_fake_ds {
-    my ( $self, $domain ) = @_;
+    my ( $domain, @ds ) = @_;
     my @data;
 
-    foreach my $str ( @{ $self->ds } ) {
+    foreach my $str ( @ds ) {
         my ( $tag, $algo, $type, $digest ) = split( /,/, $str );
         push @data, { keytag => $tag, algorithm => $algo, type => $type, digest => $digest };
     }

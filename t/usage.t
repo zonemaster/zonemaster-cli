@@ -538,10 +538,22 @@ do {
       qr{error loading hints file}i;
 
     check_success '--help', ['--help'], qr{
+        ^Usage:$
+        .*
+        zonemaster-cli
+        .*
+        ^Options:$
+        .*
         --test
     }msx;
 
     check_success '-h', ['-h'], qr{
+        ^Usage:$
+        .*
+        zonemaster-cli
+        .*
+        ^Options:$
+        .*
         --test
     }msx;
 
