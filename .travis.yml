@@ -10,7 +10,7 @@ perl:
 addons:
   apt:
     packages:
-      # From Zonemaster Engine installation instruction
+      # From Zonemaster Engine installation instruction for Ubuntu
     - autoconf
     - automake
     - build-essential
@@ -38,8 +38,10 @@ addons:
     - libtext-csv-perl
     - libtool
     - m4
-      # From Zonemaster CLI installation instruction
-    - libtext-reflow-perl
+      # From Zonemaster CLI installation instruction for Ubuntu
+    - libmoosex-getopt-perl
+    - libmodule-install-perl
+    - libtry-tiny-perl
 
 before_install:
   # Help Perl find modules installed from OS packages
