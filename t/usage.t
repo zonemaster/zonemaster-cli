@@ -214,6 +214,37 @@ do {
     check_success '--dump-profile', ['--dump-profile'], qr{
         "no_network"
     }msx;
+
+    check_success 'override profile', [ '--dump-profile', '--profile=t/usage.profile' ], sub {
+        my ( $profile ) = parse_json_stream( $_[0] );
+
+        my $ipv4    = exists $profile->{net}{ipv4} ? ( $profile->{net}{ipv4} ? '1' : '0' ) : '<missing>';
+        my $ipv6    = exists $profile->{net}{ipv6} ? ( $profile->{net}{ipv6} ? '1' : '0' ) : '<missing>';
+        my $source4 = $profile->{resolver}{source4} // '<missing>';
+        my $source6 = $profile->{resolver}{source6} // '<missing>';
+
+        return
+             ( $ipv4 eq '0' )
+          && ( $ipv6 eq '0' )
+          && ( $source4 eq '192.0.2.1' )
+          && ( $source6 eq '2001:db8::1' );
+    };
+
+    check_success 'override net.ipv4', [ '--dump-profile', '--profile=t/usage.profile', '--ipv4' ], sub {
+        my ( $profile ) = parse_json_stream( $_[0] );
+
+        my $value = $profile->{net}{ipv4} // '<missing>';
+
+        return $value eq '1';
+    };
+
+    check_success 'override net.ipv6', [ '--dump-profile', '--profile=t/usage.profile', '--ipv6' ], sub {
+        my ( $profile ) = parse_json_stream( $_[0] );
+
+        my $value = $profile->{net}{ipv6} // '';
+
+        return $value eq '1';
+    };
 };
 
 do {
@@ -325,6 +356,18 @@ do {
         .*
         \QTotal test run time:\E
     }msx;
+
+    check_success '--stop-level',
+      [
+        '--profile=t/usage.profile', '--ipv4', '--sourceaddr4',        '',
+        '--test=basic',              '--raw',  '--stop-level=warning', '.'
+      ],
+      sub {
+        my $stdout = $_[0];
+
+        return ( $stdout =~ qr{NOTICE .* WARNING}msx )
+          && ( $stdout !~ qr{ERROR}m );
+      };
 };
 
 do {

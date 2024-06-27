@@ -376,7 +376,7 @@ sub run {
     $self->raw( $self->raw // ( defined $self->json_translate ? !$self->json_translate : 0 ) );
 
     # Filehandle for diagnostics output
-    my $fh_diag = ( $self->json or $self->raw )
+    my $fh_diag = ( $self->json or $self->raw or $self->dump_profile )
       ? *STDERR     # Structured output mode (e.g. JSON)
       : *STDOUT;    # Human readable output mode
 
