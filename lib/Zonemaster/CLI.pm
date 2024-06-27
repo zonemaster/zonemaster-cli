@@ -345,14 +345,6 @@ sub run {
         return $EXIT_SUCCESS;
     }
 
-    if ( $self->sourceaddr4 ) {
-        Zonemaster::Engine::Profile->effective->set( q{resolver.source4}, $self->sourceaddr4 );
-    }
-
-    if ( $self->sourceaddr6 ) {
-        Zonemaster::Engine::Profile->effective->set( q{resolver.source6}, $self->sourceaddr6 );
-    }
-
     # errors and warnings
     if ( $self->json_stream and not $self->json and grep( /^--no-?json$/, @{ $self->ARGV } ) ) {
         say STDERR __( "Error: --json-stream and --no-json can't be used together." );
@@ -387,6 +379,28 @@ sub run {
         my $profile = Zonemaster::Engine::Profile->default;
         $profile->merge( $foo );
         Zonemaster::Engine::Profile->effective->merge( $profile );
+    }
+
+    if ( defined $self->sourceaddr4 ) {
+        local $@;
+        eval {
+            Zonemaster::Engine::Profile->effective->set( q{resolver.source4}, $self->sourceaddr4 );
+            1;
+        } or do {
+            say STDERR __x( "Error: invalid value for --sourceaddr4: {reason}", reason => $@ );
+            return $EXIT_USAGE_ERROR;
+        };
+    }
+
+    if ( defined $self->sourceaddr6 ) {
+        local $@;
+        eval {
+            Zonemaster::Engine::Profile->effective->set( q{resolver.source6}, $self->sourceaddr6 );
+            1;
+        } or do {
+            say STDERR __x( "Error: invalid value for --sourceaddr6: {reason}", reason => $@ );
+            return $EXIT_USAGE_ERROR;
+        };
     }
 
     my @testing_suite;

@@ -190,6 +190,10 @@ do {
 
     check_usage_error '--ns NAME/BAD_IP', [ '--ns', 'ns1.example/foobar', 'example.' ], qr{invalid ip address}i;
 
+    check_usage_error '--sourceaddr4', [ '--sourceaddr4', 'foobar', 'example.' ], qr{invalid value}i;
+
+    check_usage_error '--sourceaddr6', [ '--sourceaddr6', 'foobar', 'example.' ], qr{invalid value}i;
+
     check_usage_error '--level BAD_LEVEL', [ '--level', 'foobar', 'example.' ], qr{--level}i;
 
     check_usage_error '--stop-level BAD_LEVEL', [ '--stop-level', 'foobar', 'example.' ],
@@ -245,6 +249,24 @@ do {
 
         return $value eq '1';
     };
+
+    check_success 'override resolver.source4',
+      [ '--dump-profile', '--profile=t/usage.profile', '--sourceaddr4', '192.0.2.2' ], sub {
+        my ( $profile ) = parse_json_stream( $_[0] );
+
+        my $value = $profile->{resolver}{source4} // '';
+
+        return $value eq '192.0.2.2';
+      };
+
+    check_success 'override resolver.source6',
+      [ '--dump-profile', '--profile=t/usage.profile', '--sourceaddr6', '2001:db8::2' ], sub {
+        my ( $profile ) = parse_json_stream( $_[0] );
+
+        my $value = $profile->{resolver}{source6} // '';
+
+        return $value eq '2001:db8::2';
+      };
 };
 
 do {
@@ -356,6 +378,15 @@ do {
         .*
         \QTotal test run time:\E
     }msx;
+
+    check_success '--level',
+      [ '--profile=t/usage.profile', '--ipv4', '--sourceaddr4', '', '--test=basic', '--raw', '--level=notice', '.' ],
+      sub {
+        my $stdout = $_[0];
+
+        return ( $stdout =~ qr{NOTICE .* WARNING .* ERROR}msx )
+          && ( $stdout !~ qr{INFO}msx );
+      };
 
     check_success '--stop-level',
       [
