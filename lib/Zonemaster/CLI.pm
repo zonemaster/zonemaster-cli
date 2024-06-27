@@ -513,10 +513,6 @@ sub run {
         return $EXIT_USAGE_ERROR;
     }
 
-    my $translator;
-    $translator = Zonemaster::Engine::Translator->new unless $self->raw;
-    $translator->locale( $self->locale ) if $translator and $self->locale;
-
     if ( $self->restore ) {
         Zonemaster::Engine->preload_cache( $self->restore );
     }
@@ -529,6 +525,7 @@ sub run {
         }
     }
 
+    my $translator;
     my %field_width = (
         seconds  => 7,
         level    => $level_width,
@@ -537,7 +534,7 @@ sub run {
     );
     my %header_names = ();
     my %remaining_space = ();
-    if ( $translator ) {
+    if ( not $self->raw ) {
         %header_names = (
             seconds  => __( 'Seconds' ),
             level    => __( 'Level' ),
@@ -689,6 +686,27 @@ sub run {
 
         Zonemaster::Engine::Recursor->remove_fake_addresses( '.' );
         Zonemaster::Engine::Recursor->add_fake_addresses( '.', $hints_data );
+    }
+
+    if ( $self->ns and @{ $self->ns } > 0 ) {
+        local $@;
+        eval {
+            $self->add_fake_delegation( $domain );
+            1;
+        } or do {
+            print STDERR $@;
+            return $EXIT_USAGE_ERROR;
+        };
+    }
+
+    if ( $self->ds and @{ $self->ds } ) {
+        $self->add_fake_ds( $domain );
+    }
+
+    if ( not $self->raw ) {
+        $translator = Zonemaster::Engine::Translator->new;
+        $translator->locale( $self->locale )
+          if $self->locale;
     }
 
     if ( $self->profile or $self->test ) {
