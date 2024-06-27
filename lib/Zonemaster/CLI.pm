@@ -38,6 +38,9 @@ use Zonemaster::Engine::Util qw[parse_hints];
 our %numeric = Zonemaster::Engine::Logger::Entry->levels;
 our $JSON    = JSON::XS->new->allow_blessed->convert_blessed->canonical;
 
+Readonly our $EXIT_SUCCESS       => 0;
+Readonly our $EXIT_GENERIC_ERROR => 1;
+
 Readonly our $IPV4_RE => qr/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/;
 Readonly our $IPV6_RE => qr/^[0-9a-f:]*:[0-9a-f:]+(:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})?$/i;
 
@@ -303,6 +306,7 @@ has 'elapsed' => (
     documentation => __( 'Print elapsed time (in seconds) at end of run.' ),
 );
 
+# Returns an integer representing an OS exit status.
 sub run {
     my ( $self ) = @_;
     my @accumulator;
@@ -811,7 +815,7 @@ sub run {
         Zonemaster::Engine->save_cache( $self->save );
     }
 
-    return;
+    return $EXIT_SUCCESS;
 }
 
 sub add_fake_delegation {
