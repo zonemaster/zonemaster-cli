@@ -1,6 +1,21 @@
 Release history for Zonemaster component Zonemaster-CLI 
 
 
+v7.0.0 2024-07-01 (part of Zonemaster v2024.1 release)
+
+ [Release information]
+ - Translations have not been fully updated in this release. They will
+   be updated in an upcoming release.
+
+ [Breaking change]
+ - Removes deprecated '--sourceaddr' option, can break custom cli.args
+   file (#370)
+
+ [Fixes]
+ - Fixes command line argument handling of domain names (#365)
+ - Speeds up Docker build (#374)
+
+
 v6.1.0 2024-03-18 (public release version)
 
  [Features]
