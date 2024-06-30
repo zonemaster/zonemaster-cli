@@ -39,8 +39,8 @@ addons:
     - libtool
     - m4
       # From Zonemaster CLI installation instruction for Ubuntu
-    - libmoosex-getopt-perl
-    - libmodule-install-perl
+    # libmoosex-getopt-perl, see cpan-install below
+    # libmodule-install-perl, see cpan-install below
     - libtry-tiny-perl
 
 before_install:
