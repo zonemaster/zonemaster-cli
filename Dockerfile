@@ -1,18 +1,26 @@
 FROM zonemaster/engine:local as build
 
 RUN apk add --no-cache \
-    # Only needed for Net::Interface
     build-base \
+    make \
+    perl-app-cpanminus \
+    perl-cpan-meta-check \
+    perl-data-dump \
     perl-dev \
     perl-doc \
+    perl-json-xs \
     perl-lwp-protocol-https \
-    make \
-    # Compile-time dependencies
-    perl-app-cpanminus \
+    perl-module-build \
+    perl-module-build-tiny \
     perl-module-install \
+    perl-moose \
+    perl-namespace-autoclean \
+    perl-params-validate \
+    perl-path-tiny \
+    perl-test-deep \
+    perl-test-needs \
  && cpanm --no-wget --from https://cpan.metacpan.org/ \
-    MooseX::Getopt \
-    Text::Reflow
+    MooseX::Getopt
 
 ARG version
 
@@ -22,6 +30,12 @@ RUN cpanm --no-wget \
     ./Zonemaster-CLI-${version}.tar.gz
 
 FROM zonemaster/engine:local
+
+RUN apk add --no-cache \
+    perl-namespace-autoclean \
+    perl-params-validate \
+    perl-json-xs \
+    perl-moose
 
 COPY --from=build /usr/local/bin/zonemaster-cli /usr/local/bin/zonemaster-cli
 # Include all the Perl modules we built

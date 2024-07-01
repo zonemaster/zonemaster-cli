@@ -11,7 +11,7 @@ use 5.014002;
 use strict;
 use warnings;
 
-use version; our $VERSION = version->declare( "v6.1.0" );
+use version; our $VERSION = version->declare( "v7.0.0" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 use Moose;
@@ -24,8 +24,6 @@ use JSON::XS;
 use List::Util qw[max uniq];
 use POSIX qw[setlocale LC_MESSAGES LC_CTYPE];
 use Scalar::Util qw[blessed];
-use Socket qw[AF_INET AF_INET6];
-use Text::Reflow qw[reflow_string];
 use Try::Tiny;
 use Net::IP::XS;
 
@@ -36,7 +34,6 @@ use Zonemaster::Engine::Normalization qw[normalize_name];
 use Zonemaster::Engine::Logger::Entry;
 use Zonemaster::Engine::Translator;
 use Zonemaster::Engine::Util qw[parse_hints];
-use Zonemaster::Engine::Zone;
 
 our %numeric = Zonemaster::Engine::Logger::Entry->levels;
 our $JSON    = JSON::XS->new->allow_blessed->convert_blessed->canonical;
@@ -278,26 +275,13 @@ has 'dump_profile' => (
     documentation => __( 'Print the effective profile used in JSON format, then exit.' ),
 );
 
-has 'sourceaddr' => (
-    is            => 'ro',
-    isa           => 'Str',
-    required      => 0,
-    documentation => __(
-            'Deprecated (planned removal: v2024.1). '
-          . 'Use --sourceaddr4 and/or --sourceaddr6. '
-          . 'Source IP address used to send queries. '
-          . 'Setting an IP address not correctly configured on a local network interface causes cryptic error messages.'
-    ),
-);
-
 has 'sourceaddr4' => (
     is            => 'ro',
     isa           => 'Str',
     required      => 0,
     documentation => __(
             'Source IPv4 address used to send queries. '
-          . 'Setting an IPv4 address not correctly configured on a local network interface fails silently. '
-          . 'Can not be combined with --sourceaddr.'
+          . 'Setting an IPv4 address not correctly configured on a local network interface fails silently.'
     ),
 );
 
@@ -307,8 +291,7 @@ has 'sourceaddr6' => (
     required      => 0,
     documentation => __(
             'Source IPv6 address used to send queries. '
-          . 'Setting an IPv6 address not correctly configured on a local network interface fails silently. '
-          . 'Can not be combined with --sourceaddr.'
+          . 'Setting an IPv6 address not correctly configured on a local network interface fails silently.'
     ),
 );
 
@@ -354,14 +337,6 @@ sub run {
 
     if ( $self->list_tests ) {
         print_test_list();
-    }
-
-    if ( $self->sourceaddr ) {
-        if ( $self->sourceaddr4 or $self->sourceaddr6 ) {
-            die __( "Error: --sourceaddr can't be combined with --sourceaddr4 or --sourceaddr6." ) . "\n";
-        }
-        printf STDERR "%s\n\n", __( "Warning: --sourceaddr is deprecated (planned removal: v2024.1). Use --sourceaddr4 and/or --sourceaddr6 instead." );
-        Zonemaster::Engine::Profile->effective->set( q{resolver.source}, $self->sourceaddr );
     }
 
     if ( $self->sourceaddr4 ) {
@@ -631,18 +606,13 @@ sub run {
         }
     );
 
-    if ( $self->profile or $self->test ) {
-        # Separate initialization from main output in human readable output mode
-        print "\n" if $fh_diag eq *STDOUT;
-    }
-
     if ( scalar @{ $self->extra_argv } > 1 ) {
         die __( "Only one domain can be given for testing. Did you forget to prepend an option with '--<OPTION>'?\n" );
     }
 
     my ( $domain ) = @{ $self->extra_argv };
 
-    if ( not $domain ) {
+    if ( !defined $domain ) {
         die __( "Must give the name of a domain to test.\n" );
     }
 
@@ -675,6 +645,11 @@ sub run {
 
     if ( $self->ds and @{ $self->ds } ) {
         $self->add_fake_ds( $domain );
+    }
+
+    if ( $self->profile or $self->test ) {
+        # Separate initialization from main output in human readable output mode
+        print "\n" if $fh_diag eq *STDOUT;
     }
 
     if ( not $self->raw and not $self->json ) {
