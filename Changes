@@ -8,8 +8,9 @@ v7.0.0 2024-07-01 (part of Zonemaster v2024.1 release)
    be updated in an upcoming release.
 
  [Breaking change]
- - Removes deprecated '--sourceaddr' option, can break custom cli.args
-   file (#370)
+ - Removes deprecated '--sourceaddr' option. Breaks custom 'cli.args'
+   using this option. Use '--sourceaddr4' and '--sourceaddr6'
+   instead. (#370)
 
  [Fixes]
  - Fixes command line argument handling of domain names (#365)
