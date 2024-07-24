@@ -657,13 +657,14 @@ sub run {
     }
 
     if ( $self->ns and @{ $self->ns } > 0 ) {
+        local $@;
         eval {
             $self->add_fake_delegation( $domain );
-            1
+            1;
         } or do {
             print STDERR $@;
             return $EXIT_USAGE_ERROR;
-        }
+        };
     }
 
     if ( $self->ds and @{ $self->ds } ) {
@@ -846,8 +847,7 @@ sub add_fake_delegation {
         my ( $name, $ip ) = split( '/', $pair, 2 );
 
         if ( $pair =~ tr/\/// > 1 or not $name ) {
-            say STDERR __( "--ns must be a name or a name/ip pair." );
-            exit( 1 );
+            die __( "--ns must be a name or a name/ip pair." ) . "\n";
         }
 
         ( my $errors, $name ) = normalize_name( decode( 'utf8', $name ) );

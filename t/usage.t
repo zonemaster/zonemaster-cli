@@ -186,6 +186,8 @@ do {
 
     check_usage_error '--ns BAD_NAME', [ '--ns', '!%~&', 'example.' ], qr{invalid name}i;
 
+    check_usage_error '--ns NAME//IP', [ '--ns', 'ns1.example//192.0.2.1', 'example.' ], qr{--ns}i;
+
     check_usage_error '--ns NAME/BAD_IP', [ '--ns', 'ns1.example/foobar', 'example.' ], qr{invalid ip address}i;
 
     check_usage_error '--level BAD_LEVEL', [ '--level', 'foobar', 'example.' ], qr{--level}i;
