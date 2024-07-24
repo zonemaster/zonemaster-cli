@@ -315,9 +315,9 @@ sub run {
     my $printed_something;
 
     if ( grep /^-/, @{ $self->extra_argv } ) {
-        print "Unknown option: ", join( q{ }, grep /^-/, @{ $self->extra_argv } ), "\n";
-        print "Run \"zonemaster-cli -h\" to get the valid options\n";
-        exit;
+        say STDERR "Unknown option: ", join( q{ }, grep /^-/, @{ $self->extra_argv } );
+        say STDERR "Run \"zonemaster-cli -h\" to get the valid options";
+        return $EXIT_USAGE_ERROR;
     }
 
     if ( $self->locale ) {

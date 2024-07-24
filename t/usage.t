@@ -172,6 +172,8 @@ do {
 
     check_usage_error 'invalid domain', ['!%~&'], qr{character not permitted}i;
 
+    check_usage_error 'unrecognized option', ['--foobar'], qr{unknown option}i;
+
     check_usage_error '--test BAD_MODULE', [ '--test', '!%~&', 'example.' ], qr{invalid input}i;
 
     check_usage_error '--test UNKNOWN_MODULE/TESTCASE', [ '--test', 'foobar/foobar01', 'example.' ],
