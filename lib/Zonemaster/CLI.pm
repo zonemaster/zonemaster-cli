@@ -40,6 +40,7 @@ our $JSON    = JSON::XS->new->allow_blessed->convert_blessed->canonical;
 
 Readonly our $EXIT_SUCCESS       => 0;
 Readonly our $EXIT_GENERIC_ERROR => 1;
+Readonly our $EXIT_USAGE_ERROR   => 2;
 
 Readonly our $IPV4_RE => qr/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/;
 Readonly our $IPV6_RE => qr/^[0-9a-f:]*:[0-9a-f:]+(:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})?$/i;
@@ -354,7 +355,8 @@ sub run {
 
     # errors and warnings
     if ( $self->json_stream and not $self->json and grep( /^--no-?json$/, @{ $self->ARGV } ) ) {
-        die __( "Error: --json-stream and --no-json can't be used together." ) . "\n";
+        say STDERR __( "Error: --json-stream and --no-json can't be used together." );
+        return $EXIT_USAGE_ERROR;
     }
 
     if ( defined $self->json_translate ) {
@@ -396,7 +398,8 @@ sub run {
         foreach my $t ( @{ $self->test } ) {
             # There should be at most one slash character
             if ( $t =~ tr/\/// > 1 ) {
-                die __( "Error: Invalid input '$t' in --test. There must be at most one slash ('/') character.\n");
+                say STDERR __( "Error: Invalid input '$t' in --test. There must be at most one slash ('/') character.");
+                return $EXIT_USAGE_ERROR;
             }
 
             # The case does not matter
@@ -415,11 +418,13 @@ sub run {
                         push @testing_suite, "$module/$method";
                     }
                     else {
-                        die __( "Error: Unrecognized test case '$method' in --test. Use --list-tests for a list of valid choices.\n" );
+                        say STDERR __( "Error: Unrecognized test case '$method' in --test. Use --list-tests for a list of valid choices." );
+                        return $EXIT_USAGE_ERROR;
                     }
                 }
                 else {
-                    die __( "Error: Unrecognized test module '$module' in --test. Use --list-tests for a list of valid choices.\n" );
+                    say STDERR __( "Error: Unrecognized test module '$module' in --test. Use --list-tests for a list of valid choices." );
+                    return $EXIT_USAGE_ERROR;
                 }
             }
             # Just a module name (e.g. Example) or something invalid.
@@ -430,7 +435,8 @@ sub run {
                     push @testing_suite, $t;
                 }
                 else {
-                    die __( "Error: Invalid input '$t' in --test.\n" );
+                    say STDERR __( "Error: Invalid input '$t' in --test." );
+                    return $EXIT_USAGE_ERROR;
                 }
             }
         }
@@ -486,11 +492,13 @@ sub run {
     }
 
     if ( $self->stop_level and not defined( $numeric{ $self->stop_level } ) ) {
-        die __( "Failed to recognize stop level '" ) . $self->stop_level . "'.\n";
+        say STDERR __x( "Failed to recognize stop level 'level'.", level => $self->stop_level );
+        return $EXIT_USAGE_ERROR;
     }
 
     if ( not defined $numeric{ $self->level } ) {
-        die __( "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 or DEBUG3.\n" );
+        say STDERR __( "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 or DEBUG3." );
+        return $EXIT_USAGE_ERROR;
     }
 
     my $translator;
@@ -613,13 +621,15 @@ sub run {
     );
 
     if ( scalar @{ $self->extra_argv } > 1 ) {
-        die __( "Only one domain can be given for testing. Did you forget to prepend an option with '--<OPTION>'?\n" );
+        say STDERR __( "Only one domain can be given for testing. Did you forget to prepend an option with '--<OPTION>'?" );
+        return $EXIT_USAGE_ERROR;
     }
 
     my ( $domain ) = @{ $self->extra_argv };
 
     if ( !defined $domain ) {
-        die __( "Must give the name of a domain to test.\n" );
+        say STDERR __( "Must give the name of a domain to test." );
+        return $EXIT_USAGE_ERROR;
     }
 
     ( my $errors, $domain ) = normalize_name( decode( 'utf8', $domain ) );
@@ -629,7 +639,8 @@ sub run {
         foreach my $err ( @$errors ) {
             $error_message .= $err->string . "\n";
         }
-        die $error_message;
+        print STDERR $error_message;
+        return $EXIT_USAGE_ERROR;
     }
 
     if ( defined $self->hints ) {
@@ -646,7 +657,13 @@ sub run {
     }
 
     if ( $self->ns and @{ $self->ns } > 0 ) {
-        $self->add_fake_delegation( $domain );
+        eval {
+            $self->add_fake_delegation( $domain );
+            1
+        } or do {
+            print STDERR $@;
+            return $EXIT_USAGE_ERROR;
+        }
     }
 
     if ( $self->ds and @{ $self->ds } ) {

@@ -14,6 +14,7 @@ use JSON::XS;
 use POSIX;
 use Readonly;
 use Symbol qw( gensym );
+use Test::Differences;
 use Zonemaster::CLI;
 
 # CONSTANTS
@@ -73,6 +74,26 @@ sub check_success {
         is $exitstatus, $Zonemaster::CLI::EXIT_SUCCESS, 'success exit status';
     };
 } ## end sub check_success
+
+sub check_usage_error {
+    my ( $name, $args, $error_pattern ) = @_;
+
+    subtest $name => sub {
+        my $result = _run_zonemaster_cli( undef, @$args );
+
+        my $stderr = delete $result->{stderr};
+        like $stderr, $error_pattern, 'expected error message';
+
+        eq_or_diff(
+            $result,
+            {
+                stdout     => '',
+                exitstatus => $Zonemaster::CLI::EXIT_USAGE_ERROR,
+            },
+            'no stdout and usage error exit code'
+        ) or note "stderr:\n$stderr" =~ s/\n/\n    /gr;
+    };
+}
 
 sub parse_json_stream {
     my ( $text ) = @_;
@@ -143,6 +164,35 @@ sub _run_zonemaster_cli {
 do {
     local $test_datafile = undef;
     note "TESTS USING NO NETWORK AND NO FILE FOR RECORDED DATA:";
+
+    check_usage_error 'no domain', [], qr{must give the name of a domain to test}i;
+
+    check_usage_error 'too many domains', [ 'example.com', 'example.net' ],
+      qr{only one domain can be given for testing}i;
+
+    check_usage_error 'invalid domain', ['!%~&'], qr{character not permitted}i;
+
+    check_usage_error '--test BAD_MODULE', [ '--test', '!%~&', 'example.' ], qr{invalid input}i;
+
+    check_usage_error '--test UNKNOWN_MODULE/TESTCASE', [ '--test', 'foobar/foobar01', 'example.' ],
+      qr{unrecognized test module}i;
+
+    check_usage_error '--test MODULE/UNKNOWN_TESTCASE', [ '--test', 'basic/foobar01', 'example.' ],
+      qr{unrecognized test case}i;
+
+    check_usage_error '--test MODULE//TESTCASE', [ '--test', 'basic//basic01', 'example.' ], qr{invalid input}i;
+
+    check_usage_error '--ns BAD_NAME', [ '--ns', '!%~&', 'example.' ], qr{invalid name}i;
+
+    check_usage_error '--ns NAME/BAD_IP', [ '--ns', 'ns1.example/foobar', 'example.' ], qr{invalid ip address}i;
+
+    check_usage_error '--level BAD_LEVEL', [ '--level', 'foobar', 'example.' ], qr{--level}i;
+
+    check_usage_error '--stop-level BAD_LEVEL', [ '--stop-level', 'foobar', 'example.' ],
+      qr{failed to recognize stop level}i;
+
+    check_usage_error '--json-stream and --no-json', [ '--json-stream', '--no-json', 'example.' ],
+      qr{can't be used together}i;
 
     check_success '--version', ['--version'], qr{
         ^\QZonemaster-CLI version\E .*
