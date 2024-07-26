@@ -141,6 +141,28 @@ sub _run_zonemaster_cli {
 # TESTS
 
 do {
+    local $test_datafile = undef;
+    note "TESTS USING NO NETWORK AND NO FILE FOR RECORDED DATA:";
+
+    check_success '--version', ['--version'], qr{
+        ^\QZonemaster-CLI version\E .*
+        ^\QZonemaster-Engine version\E .*
+        ^\QZonemaster-LDNS version\E .*
+        ^\QNL NetLabs LDNS version\E .*
+    }msx;
+
+    check_success '--list-tests', ['--list-tests'], qr{
+        Basic
+        .*
+        basic01
+    }msx;
+
+    check_success '--dump-profile', ['--dump-profile'], qr{
+        "no_network"
+    }msx;
+};
+
+do {
     local $test_datafile = $PATH_NORMAL_DATAFILE;
     note "TESTS USING $test_datafile FOR RECORDED DATA:";
 

@@ -336,11 +336,12 @@ sub run {
 
     if ( $self->version ) {
         print_versions();
-        exit;
+        return $EXIT_SUCCESS;
     }
 
     if ( $self->list_tests ) {
         print_test_list();
+        return $EXIT_SUCCESS;
     }
 
     if ( $self->sourceaddr4 ) {
@@ -481,6 +482,7 @@ sub run {
 
     if ( $self->dump_profile ) {
         do_dump_profile();
+        return $EXIT_SUCCESS;
     }
 
     if ( $self->stop_level and not defined( $numeric{ $self->stop_level } ) ) {
@@ -917,7 +919,8 @@ sub print_test_list {
         }
         print "\n";
     }
-    exit( 0 );
+
+    return;
 }
 
 sub do_dump_profile {
@@ -925,7 +928,7 @@ sub do_dump_profile {
 
     print $json->encode( Zonemaster::Engine::Profile->effective->{ q{profile} } );
 
-    exit;
+    return;
 }
 
 sub translate_severity {
