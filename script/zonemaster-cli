@@ -246,12 +246,7 @@ Default: on (if the process' standard output is a TTY)
 
 =item --encoding=ENCODING
 
-Specify the character encoding that is used for command line arguments. This
-will be used to convert non-ASCII names to IDNA format, on which the testing
-suite will then be run.
-
-The default value will be taken from the C<LC_CTYPE> environment variable if
-possible, and set to UTF-8 if not.
+Deprecated: Simply remove it from your usage. It is ignored.
 
 =item --nstimes
 
