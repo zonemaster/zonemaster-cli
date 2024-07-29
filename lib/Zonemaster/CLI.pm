@@ -251,13 +251,7 @@ has 'progress' => (
 has 'encoding' => (
     is            => 'ro',
     isa           => 'Str',
-    default       => sub {
-        my $locale = $ENV{LC_CTYPE} // 'C';
-        my ( $e ) = $locale =~ m|\.(.*)$|;
-        $e //= 'UTF-8';
-        return $e;
-    },
-    documentation => __( 'Name of the character encoding used for command line arguments' ),
+    documentation => __( 'Deprecated: Simply remove it from your usage. It is ignored.' ),
 );
 
 has 'nstimes' => (
@@ -349,6 +343,10 @@ sub run {
     if ( $self->json_stream and not $self->json and grep( /^--no-?json$/, @{ $self->ARGV } ) ) {
         say STDERR __( "Error: --json-stream and --no-json can't be used together." );
         return $EXIT_USAGE_ERROR;
+    }
+
+    if ( $self->encoding ) {
+        say STDERR __( "Warning: deprecated --encoding, simply remove it from your usage." );
     }
 
     if ( defined $self->json_translate ) {
