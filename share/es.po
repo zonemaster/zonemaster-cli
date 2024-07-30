@@ -122,8 +122,8 @@ msgstr "Nombre del archivo de perfiles a cargar. (DEFAULT)"
 
 msgid "Strings with DS data on the form \"keytag,algorithm,type,digest\""
 msgstr ""
-"Etiquetas con los datos DS en la forma \"tag,algoritmo,tipo,"
-"resumen\" (\"keytag,algorithm,type,digest\")"
+"Etiquetas con los datos DS en la forma \"tag,algoritmo,tipo,resumen\" "
+"(\"keytag,algorithm,type,digest\")"
 
 msgid "Print a count of the number of messages at each level"
 msgstr "Despliega un contador de la cantidad de mensajes en cada nivel"

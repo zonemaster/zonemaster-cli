@@ -1,4 +1,5 @@
 dist: jammy
+group: previous
 
 language: perl
 
