@@ -22,7 +22,6 @@ requires(
     'Net::IP::XS'        => 0,
     'JSON::XS'           => 0,
     'Locale::TextDomain' => 1.23,
-    'MooseX::Getopt'     => 0,
     'Try::Tiny'          => 0,
     'Zonemaster::LDNS'   => 4.000002,  # v4.0.2
     'Zonemaster::Engine' => 6.000000,  # v6.0.0
