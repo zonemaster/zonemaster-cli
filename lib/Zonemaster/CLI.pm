@@ -18,22 +18,23 @@ use Moose;
 with 'MooseX::Getopt::GLD' => { getopt_conf => [ 'pass_through' ] };
 
 use Encode;
-use Readonly;
 use File::Slurp;
 use JSON::XS;
 use List::Util qw[max uniq];
+use Net::IP::XS;
 use POSIX qw[setlocale LC_MESSAGES LC_CTYPE];
+use Readonly;
 use Scalar::Util qw[blessed];
 use Try::Tiny;
-use Net::IP::XS;
-
-use Zonemaster::LDNS;
-use Zonemaster::Engine;
 use Zonemaster::Engine::Exception;
-use Zonemaster::Engine::Normalization qw[normalize_name];
 use Zonemaster::Engine::Logger::Entry;
+use Zonemaster::Engine::Normalization qw[normalize_name];
 use Zonemaster::Engine::Translator;
 use Zonemaster::Engine::Util qw[parse_hints];
+use Zonemaster::Engine;
+use Zonemaster::LDNS;
+
+use Zonemaster::CLI::TestCaseSet;
 
 our %numeric = Zonemaster::Engine::Logger::Entry->levels;
 our $JSON    = JSON::XS->new->allow_blessed->convert_blessed->canonical;
@@ -193,11 +194,21 @@ has 'list_tests' => (
 
 has 'test' => (
     is            => 'ro',
-    isa           => 'ArrayRef',
+    isa           => 'Str',
+    default       => '',
     required      => 0,
     documentation => __(
-'Specify test case to be run. Should be the case-insensitive name of a test module (e.g. "Delegation") and/or a test case (e.g. "Delegation/delegation01" or "delegation01"). This switch can be repeated.'
-    )
+            'An expression specifying or modifying the set of tests to run.'
+          . ' Here are some examples:'
+          . ' "nameserver" runs the entire Nameserver test module, and the Basic test module which cannot be disabled, and nothing else.'
+          . ' "nameserver01" runs the Nameserver01 test case, and the Basic test module, and nothing else.'
+          . ' "dnssec-dnssec05" runs the entire DNSSEC test module except the DNSSEC05 test case, and the Basic module, and nothing else.'
+          . ' "all-nameserver+nameserver03" runs all test cases of all test modules except for the Nameserver test module in which only the Nameserver03 test case is run.'
+          . ' "-dnssec" removes all test cases of the DNSSEC module from the set of tests that would otherwise have run.'
+          . ' "+syntax01+syntax02" adds the Syntax01 and Syntax02 test cases to the set of tests that would otherwise have run.'
+          . ' "" leaves the set of tests to run unmodified.'
+          . ' Default is "".'
+    ),
 );
 
 has 'stop_level' => (
@@ -382,88 +393,23 @@ sub run {
         Zonemaster::Engine::Profile->effective->merge( $profile );
     }
 
-    my @testing_suite;
-    if ( $self->test and @{ $self->test } > 0 ) {
-        my %existing_tests = Zonemaster::Engine->all_methods;
-        my @existing_test_modules = keys %existing_tests;
-        my @existing_test_cases = map { @{ $existing_tests{$_} } } @existing_test_modules;
+    {
+        my $cases = Zonemaster::CLI::TestCaseSet->new(
+            Zonemaster::Engine::Profile->effective->get( q{test_cases} ),
+            Zonemaster::Engine->all_methods,
+        );
 
-        foreach my $t ( @{ $self->test } ) {
-            # There should be at most one slash character
-            if ( $t =~ tr/\/// > 1 ) {
-                die __( "Error: Invalid input '$t' in --test. There must be at most one slash ('/') character.\n");
-            }
+        my @modifiers = Zonemaster::CLI::TestCaseSet->parse_modifier_expr( $self->test );
+        while ( @modifiers ) {
+            my $op   = shift @modifiers;
+            my $term = shift @modifiers;
 
-            # The case does not matter
-            $t = lc( $t );
-
-            my ( $module, $method );
-            # Fully qualified module and test case (e.g. Example/example12), or just a test case (e.g. example12). Note the different capturing order.
-            if ( ( ($module, $method) = $t =~ m#^ ( [a-z]+ ) / ( [a-z]+[0-9]{2} ) $#ix )
-                or
-                 ( ($method, $module) = $t =~ m#^ ( ( [a-z]+ ) [0-9]{2} ) $#ix ) )
-            {
-                # Check that test module exists
-                if ( grep( /^$module$/,  map { lc($_) } @existing_test_modules ) ) {
-                    # Check that test case exists
-                    if ( grep( /^$method$/, @existing_test_cases ) ) {
-                        push @testing_suite, "$module/$method";
-                    }
-                    else {
-                        die __( "Error: Unrecognized test case '$method' in --test. Use --list-tests for a list of valid choices.\n" );
-                    }
-                }
-                else {
-                    die __( "Error: Unrecognized test module '$module' in --test. Use --list-tests for a list of valid choices.\n" );
-                }
-            }
-            # Just a module name (e.g. Example) or something invalid.
-            else {
-                $t =~ s{/$}{};
-                # Check that test module exists
-                if ( grep( /^$t$/,  map { lc($_) } @existing_test_modules ) ) {
-                    push @testing_suite, $t;
-                }
-                else {
-                    die __( "Error: Invalid input '$t' in --test.\n" );
-                }
+            if ( !$cases->apply_modifier( $op, $term ) ) {
+                die __( "Error: Unrecognized term '$term' in --test.\n" );
             }
         }
 
-        # Start with all profile-enabled test cases
-        my @actual_test_cases = @{ Zonemaster::Engine::Profile->effective->get( 'test_cases' ) };
-
-        # Derive test module from each profile-enabled test case
-        my %actual_test_modules;
-        foreach my $t ( @actual_test_cases ) {
-            my ( $module ) = $t =~ m#^ ( [a-z]+ ) [0-9]{2} $#ix;
-            $actual_test_modules{$module} = 1;
-        }
-
-        # Check if more test cases need to be included in the profile
-        foreach my $t ( @testing_suite ) {
-            # Either a module/method, or just a module
-            my ( $module, $method ) = split('/', $t);
-            if ( $method ) {
-                # Test case in not already in the profile, we add it explicitly and notify the user
-                if ( not grep( /^$method$/, @actual_test_cases ) ) {
-                    say $fh_diag __x( "Notice: Engine does not have test case '$method' enabled in the profile. Forcing...");
-                    push @actual_test_cases, $method;
-                }
-            }
-            else {
-                # No test case from this module is already in the profile, we can add them all
-                if ( not grep( /^$module$/, keys %actual_test_modules ) ) {
-                    # Get the test module with the right case
-                    ( $module ) = grep { lc( $module ) eq lc( $_ ) } @existing_test_modules;
-                    # No need to bother to check for duplicates here
-                    push @actual_test_cases, @{ $existing_tests{$module} };
-                }
-            }
-        }
-
-        # Configure Engine to include all of the required test cases in the profile
-        Zonemaster::Engine::Profile->effective->set( 'test_cases', [ uniq sort @actual_test_cases ] );
+        Zonemaster::Engine::Profile->effective->set( q{test_cases}, [$cases->to_list] ),
     }
 
     # These two must come after any profile from command line has been loaded
@@ -688,21 +634,7 @@ sub run {
 
     # Actually run tests!
     eval {
-        if ( $self->test and @{ $self->test } > 0 ) {
-            foreach my $t ( @testing_suite ) {
-                # Either a module/method, or just a module
-                my ( $module, $method ) = split('/', $t);
-                if ( $method ) {
-                    Zonemaster::Engine->test_method( $module, $method, $domain );
-                }
-                else {
-                    Zonemaster::Engine->test_module( $module, $domain );
-                }
-            }
-        }
-        else {
-            Zonemaster::Engine->test_zone( $domain );
-        }
+        Zonemaster::Engine->test_zone( $domain );
     };
 
     if ( not $self->raw and not $self->json ) {
