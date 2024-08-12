@@ -43,6 +43,7 @@ Readonly our $EXIT_USAGE_ERROR   => 2;
 
 Readonly our $IPV4_RE => qr/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/;
 Readonly our $IPV6_RE => qr/^[0-9a-f:]*:[0-9a-f:]+(:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})?$/i;
+Readonly our $DS_RE => qr/^(?:[[:digit:]]+,){3}[[:xdigit:]]+$/;
 
 STDOUT->autoflush( 1 );
 
@@ -858,7 +859,8 @@ sub run {
     return $EXIT_SUCCESS;
 }
 
-sub add_fake_delegation {
+
+sub check_fake_delegation {
     my ( $self, $domain ) = @_;
     my @ns_with_no_ip;
     my %data;
@@ -882,15 +884,48 @@ sub add_fake_delegation {
 
         if ( $ip ) {
             my $net_ip = Net::IP::XS->new( $ip );
-            if ( ( $ip =~ /($IPV4_RE)/ && Net::IP::XS::ip_is_ipv4( $ip ) )
-                or
-                 ( $ip =~ /($IPV6_RE)/ && Net::IP::XS::ip_is_ipv6( $ip ) )
-            ) {
-                push @{ $data{ $name } }, $ip;
-            }
-            else {
+            if ( not(
+                     ( $ip =~ /($IPV4_RE)/ && Net::IP::XS::ip_is_ipv4( $ip ) )
+                      or
+                     ( $ip =~ /($IPV6_RE)/ && Net::IP::XS::ip_is_ipv6( $ip ) )
+                    )
+            )
+	    {
                 die Net::IP::XS::Error() ? "Invalid IP address in --ns argument:\n\t". Net::IP::XS::Error() ."\n" : "Invalid IP address in --ns argument.\n";
             }
+        }
+    }
+
+    return;
+
+}
+
+sub check_fake_ds {
+    my ( $self, $domain ) = @_;
+    my @data;
+
+    foreach my $str ( @{ $self->ds } ) {
+
+        if ( not $str =~ /$DS_RE/g ) {
+            say STDERR __( "--ds ds data must be in the form \"keytag,algorithm,type,digest\"");
+            exit( 1 );
+        }
+    }
+
+    return;
+}
+sub add_fake_delegation {
+    my ( $self, $domain ) = @_;
+    my @ns_with_no_ip;
+    my %data;
+
+    foreach my $pair ( @{ $self->ns } ) {
+        my ( $name, $ip ) = split( '/', $pair, 2 );
+
+        ( my $errors, $name ) = normalize_name( decode( 'utf8', $name ) );
+
+        if ( $ip ) {
+            push @{ $data{ $name } }, $ip;
         }
         else {
             push @ns_with_no_ip, $name;
