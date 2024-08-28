@@ -908,7 +908,7 @@ sub check_fake_ds {
     my ( $self ) = @_;
 
     foreach my $str ( @{ $self->ds } ) {
-        if ( not $str =~ /$DS_RE/g ) {
+        unless ( $str =~ /$DS_RE/ ) {
             say STDERR __( "--ds ds data must be in the form \"keytag,algorithm,type,digest\"");
             exit( 1 );
         }
