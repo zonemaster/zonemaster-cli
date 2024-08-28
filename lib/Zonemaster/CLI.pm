@@ -861,9 +861,7 @@ sub run {
 
 
 sub check_fake_delegation {
-    my ( $self, $domain ) = @_;
-    my @ns_with_no_ip;
-    my %data;
+    my ( $self ) = @_;
 
     foreach my $pair ( @{ $self->ns } ) {
         my ( $name, $ip ) = split( '/', $pair, 2 );
@@ -900,8 +898,7 @@ sub check_fake_delegation {
 }
 
 sub check_fake_ds {
-    my ( $self, $domain ) = @_;
-    my @data;
+    my ( $self ) = @_;
 
     foreach my $str ( @{ $self->ds } ) {
         if ( not $str =~ /$DS_RE/g ) {
