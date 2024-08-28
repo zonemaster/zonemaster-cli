@@ -619,6 +619,14 @@ sub run {
 
     ( my $errors, $domain ) = normalize_name( decode( 'utf8', $domain ) );
 
+    if ( $self->ns and @{ $self->ns } > 0 ) {
+        $self->check_fake_delegation( $domain );
+    }
+
+    if ( $self->ds and @{ $self->ds } ) {
+        $self->check_fake_ds( $domain );
+    }
+
     if ( scalar @$errors > 0 ) {
         my $error_message;
         foreach my $err ( @$errors ) {
@@ -638,14 +646,6 @@ sub run {
         }
         Zonemaster::Engine::Recursor->remove_fake_addresses( '.' );
         Zonemaster::Engine::Recursor->add_fake_addresses( '.', $hints_data );
-    }
-
-    if ( $self->ns and @{ $self->ns } > 0 ) {
-        $self->check_fake_delegation( $domain );
-    }
-
-    if ( $self->ds and @{ $self->ds } ) {
-        $self->check_fake_ds( $domain );
     }
 
     if ( $self->profile or $self->test ) {
