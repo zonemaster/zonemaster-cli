@@ -640,7 +640,6 @@ sub run {
         Zonemaster::Engine::Recursor->add_fake_addresses( '.', $hints_data );
     }
 
-
     if ( $self->ns and @{ $self->ns } > 0 ) {
         $self->check_fake_delegation( $domain );
     }
@@ -687,7 +686,6 @@ sub run {
 
         print $header;
     }
-
 
     if ( $self->ns and @{ $self->ns } > 0 ) {
         $self->add_fake_delegation( $domain );
@@ -864,7 +862,6 @@ sub check_fake_delegation {
     }
 
     return;
-
 }
 
 sub check_fake_ds {
@@ -872,7 +869,6 @@ sub check_fake_ds {
     my @data;
 
     foreach my $str ( @{ $self->ds } ) {
-
         if ( not $str =~ /$DS_RE/g ) {
             say STDERR __( "--ds ds data must be in the form \"keytag,algorithm,type,digest\"");
             exit( 1 );
@@ -881,6 +877,7 @@ sub check_fake_ds {
 
     return;
 }
+
 sub add_fake_delegation {
     my ( $self, $domain ) = @_;
     my @ns_with_no_ip;
