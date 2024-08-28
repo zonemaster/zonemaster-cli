@@ -882,11 +882,10 @@ sub check_fake_delegation {
 
         if ( $ip ) {
             my $net_ip = Net::IP::XS->new( $ip );
-            if ( not(
-                     ( $ip =~ /($IPV4_RE)/ && Net::IP::XS::ip_is_ipv4( $ip ) )
-                      or
-                     ( $ip =~ /($IPV6_RE)/ && Net::IP::XS::ip_is_ipv6( $ip ) )
-                    )
+            unless (
+                ( $ip =~ /($IPV4_RE)/ && Net::IP::XS::ip_is_ipv4( $ip ) )
+                or
+                ( $ip =~ /($IPV6_RE)/ && Net::IP::XS::ip_is_ipv6( $ip ) )
             )
 	    {
                 die Net::IP::XS::Error() ? "Invalid IP address in --ns argument:\n\t". Net::IP::XS::Error() ."\n" : "Invalid IP address in --ns argument.\n";
