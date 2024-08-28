@@ -647,6 +647,14 @@ sub run {
 
     ( my $errors, $domain ) = normalize_name( decode( 'utf8', $domain ) );
 
+    if ( $self->ns and @{ $self->ns } > 0 ) {
+        $self->check_fake_delegation( $domain );
+    }
+
+    if ( $self->ds and @{ $self->ds } ) {
+        $self->check_fake_ds( $domain );
+    }
+
     if ( scalar @$errors > 0 ) {
         my $error_message;
         foreach my $err ( @$errors ) {
