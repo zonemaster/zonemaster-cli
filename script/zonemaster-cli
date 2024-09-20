@@ -52,7 +52,13 @@ if ( defined $global_conf_file ) {
 
 }
 
-Zonemaster::CLI->new_with_options->run;
+eval {
+    my $exitstatus = Zonemaster::CLI->new_with_options->run;
+    exit $exitstatus;
+};
+
+print STDERR $@;
+exit $Zonemaster::CLI::EXIT_GENERIC_ERROR;
 
 =head1 NAME
 

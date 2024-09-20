@@ -38,6 +38,10 @@ use Zonemaster::Engine::Util qw[parse_hints];
 our %numeric = Zonemaster::Engine::Logger::Entry->levels;
 our $JSON    = JSON::XS->new->allow_blessed->convert_blessed->canonical;
 
+Readonly our $EXIT_SUCCESS       => 0;
+Readonly our $EXIT_GENERIC_ERROR => 1;
+Readonly our $EXIT_USAGE_ERROR   => 2;
+
 Readonly our $IPV4_RE => qr/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/;
 Readonly our $IPV6_RE => qr/^[0-9a-f:]*:[0-9a-f:]+(:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})?$/i;
 
@@ -303,6 +307,7 @@ has 'elapsed' => (
     documentation => __( 'Print elapsed time (in seconds) at end of run.' ),
 );
 
+# Returns an integer representing an OS exit status.
 sub run {
     my ( $self ) = @_;
     my @accumulator;
@@ -310,9 +315,9 @@ sub run {
     my $printed_something;
 
     if ( grep /^-/, @{ $self->extra_argv } ) {
-        print "Unknown option: ", join( q{ }, grep /^-/, @{ $self->extra_argv } ), "\n";
-        print "Run \"zonemaster-cli -h\" to get the valid options\n";
-        exit;
+        say STDERR "Unknown option: ", join( q{ }, grep /^-/, @{ $self->extra_argv } );
+        say STDERR "Run \"zonemaster-cli -h\" to get the valid options";
+        return $EXIT_USAGE_ERROR;
     }
 
     if ( $self->locale ) {
@@ -332,24 +337,18 @@ sub run {
 
     if ( $self->version ) {
         print_versions();
-        exit;
+        return $EXIT_SUCCESS;
     }
 
     if ( $self->list_tests ) {
         print_test_list();
-    }
-
-    if ( $self->sourceaddr4 ) {
-        Zonemaster::Engine::Profile->effective->set( q{resolver.source4}, $self->sourceaddr4 );
-    }
-
-    if ( $self->sourceaddr6 ) {
-        Zonemaster::Engine::Profile->effective->set( q{resolver.source6}, $self->sourceaddr6 );
+        return $EXIT_SUCCESS;
     }
 
     # errors and warnings
     if ( $self->json_stream and not $self->json and grep( /^--no-?json$/, @{ $self->ARGV } ) ) {
-        die __( "Error: --json-stream and --no-json can't be used together." ) . "\n";
+        say STDERR __( "Error: --json-stream and --no-json can't be used together." );
+        return $EXIT_USAGE_ERROR;
     }
 
     if ( defined $self->json_translate ) {
@@ -369,7 +368,7 @@ sub run {
     $self->raw( $self->raw // ( defined $self->json_translate ? !$self->json_translate : 0 ) );
 
     # Filehandle for diagnostics output
-    my $fh_diag = ( $self->json or $self->raw )
+    my $fh_diag = ( $self->json or $self->raw or $self->dump_profile )
       ? *STDERR     # Structured output mode (e.g. JSON)
       : *STDOUT;    # Human readable output mode
 
@@ -382,6 +381,28 @@ sub run {
         Zonemaster::Engine::Profile->effective->merge( $profile );
     }
 
+    if ( defined $self->sourceaddr4 ) {
+        local $@;
+        eval {
+            Zonemaster::Engine::Profile->effective->set( q{resolver.source4}, $self->sourceaddr4 );
+            1;
+        } or do {
+            say STDERR __x( "Error: invalid value for --sourceaddr4: {reason}", reason => $@ );
+            return $EXIT_USAGE_ERROR;
+        };
+    }
+
+    if ( defined $self->sourceaddr6 ) {
+        local $@;
+        eval {
+            Zonemaster::Engine::Profile->effective->set( q{resolver.source6}, $self->sourceaddr6 );
+            1;
+        } or do {
+            say STDERR __x( "Error: invalid value for --sourceaddr6: {reason}", reason => $@ );
+            return $EXIT_USAGE_ERROR;
+        };
+    }
+
     my @testing_suite;
     if ( $self->test and @{ $self->test } > 0 ) {
         my %existing_tests = Zonemaster::Engine->all_methods;
@@ -391,7 +412,8 @@ sub run {
         foreach my $t ( @{ $self->test } ) {
             # There should be at most one slash character
             if ( $t =~ tr/\/// > 1 ) {
-                die __( "Error: Invalid input '$t' in --test. There must be at most one slash ('/') character.\n");
+                say STDERR __( "Error: Invalid input '$t' in --test. There must be at most one slash ('/') character.");
+                return $EXIT_USAGE_ERROR;
             }
 
             # The case does not matter
@@ -410,11 +432,13 @@ sub run {
                         push @testing_suite, "$module/$method";
                     }
                     else {
-                        die __( "Error: Unrecognized test case '$method' in --test. Use --list-tests for a list of valid choices.\n" );
+                        say STDERR __( "Error: Unrecognized test case '$method' in --test. Use --list-tests for a list of valid choices." );
+                        return $EXIT_USAGE_ERROR;
                     }
                 }
                 else {
-                    die __( "Error: Unrecognized test module '$module' in --test. Use --list-tests for a list of valid choices.\n" );
+                    say STDERR __( "Error: Unrecognized test module '$module' in --test. Use --list-tests for a list of valid choices." );
+                    return $EXIT_USAGE_ERROR;
                 }
             }
             # Just a module name (e.g. Example) or something invalid.
@@ -425,7 +449,8 @@ sub run {
                     push @testing_suite, $t;
                 }
                 else {
-                    die __( "Error: Invalid input '$t' in --test.\n" );
+                    say STDERR __( "Error: Invalid input '$t' in --test." );
+                    return $EXIT_USAGE_ERROR;
                 }
             }
         }
@@ -477,14 +502,17 @@ sub run {
 
     if ( $self->dump_profile ) {
         do_dump_profile();
+        return $EXIT_SUCCESS;
     }
 
     if ( $self->stop_level and not defined( $numeric{ $self->stop_level } ) ) {
-        die __( "Failed to recognize stop level '" ) . $self->stop_level . "'.\n";
+        say STDERR __x( "Failed to recognize stop level 'level'.", level => $self->stop_level );
+        return $EXIT_USAGE_ERROR;
     }
 
     if ( not defined $numeric{ $self->level } ) {
-        die __( "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 or DEBUG3.\n" );
+        say STDERR __( "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 or DEBUG3." );
+        return $EXIT_USAGE_ERROR;
     }
 
     my $translator;
@@ -607,13 +635,15 @@ sub run {
     );
 
     if ( scalar @{ $self->extra_argv } > 1 ) {
-        die __( "Only one domain can be given for testing. Did you forget to prepend an option with '--<OPTION>'?\n" );
+        say STDERR __( "Only one domain can be given for testing. Did you forget to prepend an option with '--<OPTION>'?" );
+        return $EXIT_USAGE_ERROR;
     }
 
     my ( $domain ) = @{ $self->extra_argv };
 
     if ( !defined $domain ) {
-        die __( "Must give the name of a domain to test.\n" );
+        say STDERR __( "Must give the name of a domain to test." );
+        return $EXIT_USAGE_ERROR;
     }
 
     ( my $errors, $domain ) = normalize_name( decode( 'utf8', $domain ) );
@@ -623,7 +653,8 @@ sub run {
         foreach my $err ( @$errors ) {
             $error_message .= $err->string . "\n";
         }
-        die $error_message;
+        print STDERR $error_message;
+        return $EXIT_USAGE_ERROR;
     }
 
     if ( defined $self->hints ) {
@@ -640,7 +671,14 @@ sub run {
     }
 
     if ( $self->ns and @{ $self->ns } > 0 ) {
-        $self->add_fake_delegation( $domain );
+        local $@;
+        eval {
+            $self->add_fake_delegation( $domain );
+            1;
+        } or do {
+            print STDERR $@;
+            return $EXIT_USAGE_ERROR;
+        };
     }
 
     if ( $self->ds and @{ $self->ds } ) {
@@ -811,7 +849,7 @@ sub run {
         Zonemaster::Engine->save_cache( $self->save );
     }
 
-    return;
+    return $EXIT_SUCCESS;
 }
 
 sub add_fake_delegation {
@@ -823,8 +861,7 @@ sub add_fake_delegation {
         my ( $name, $ip ) = split( '/', $pair, 2 );
 
         if ( $pair =~ tr/\/// > 1 or not $name ) {
-            say STDERR __( "--ns must be a name or a name/ip pair." );
-            exit( 1 );
+            die __( "--ns must be a name or a name/ip pair." ) . "\n";
         }
 
         ( my $errors, $name ) = normalize_name( decode( 'utf8', $name ) );
@@ -913,7 +950,8 @@ sub print_test_list {
         }
         print "\n";
     }
-    exit( 0 );
+
+    return;
 }
 
 sub do_dump_profile {
@@ -921,7 +959,7 @@ sub do_dump_profile {
 
     print $json->encode( Zonemaster::Engine::Profile->effective->{ q{profile} } );
 
-    exit;
+    return;
 }
 
 sub translate_severity {

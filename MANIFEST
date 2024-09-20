@@ -28,3 +28,10 @@ share/locale/fr/LC_MESSAGES/Zonemaster-CLI.mo
 share/locale/nb/LC_MESSAGES/Zonemaster-CLI.mo
 share/locale/sv/LC_MESSAGES/Zonemaster-CLI.mo
 t/00-load.t
+t/usage.fake-data.data
+t/usage.fake-root.data
+t/usage.hints
+t/usage.normal.data
+t/usage.profile
+t/usage.t
+t/usage.wrapper.pl
