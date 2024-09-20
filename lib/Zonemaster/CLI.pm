@@ -244,7 +244,6 @@ has 'count' => (
 has 'progress' => (
     is            => 'ro',
     isa           => 'Bool',
-    default       => !!( -t STDOUT ),
     documentation => __( 'Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off if it is not. Disable with --no-progress.' ),
 );
 
@@ -369,6 +368,8 @@ sub run {
     my $fh_diag = ( $self->json or $self->raw or $self->dump_profile )
       ? *STDERR     # Structured output mode (e.g. JSON)
       : *STDOUT;    # Human readable output mode
+
+    my $show_progress = $self->progress // !!-t STDOUT && !$self->json && !$self->raw;
 
     if ( $self->profile ) {
         say $fh_diag __x( "Loading profile from {path}.", path => $self->profile );
@@ -556,7 +557,7 @@ sub run {
         sub {
             my ( $entry ) = @_;
 
-            $self->print_spinner() if $fh_diag eq *STDOUT;
+            print_spinner() if $show_progress;
 
             $counter{ uc $entry->level } += 1;
 
@@ -925,11 +926,9 @@ sub print_versions {
 my @spinner_strings = ( '  | ', '  / ', '  - ', '  \\ ' );
 
 sub print_spinner {
-    my ( $self ) = @_;
-
     state $counter = 0;
 
-    printf "%s\r", $spinner_strings[ $counter++ % 4 ] if $self->progress;
+    printf "%s\r", $spinner_strings[ $counter++ % 4 ];
 
     return;
 }
