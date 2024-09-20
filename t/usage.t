@@ -237,35 +237,35 @@ do {
     check_success 'override net.ipv4', [ '--dump-profile', '--profile=t/usage.profile', '--ipv4' ], sub {
         my ( $profile ) = parse_json_stream( $_[0] );
 
-        my $value = $profile->{net}{ipv4} // '<missing>';
+        my $ipv4 = exists $profile->{net}{ipv4} ? ( $profile->{net}{ipv4} ? '1' : '0' ) : '<missing>';
 
-        return $value eq '1';
+        return $ipv4 eq '1';
     };
 
     check_success 'override net.ipv6', [ '--dump-profile', '--profile=t/usage.profile', '--ipv6' ], sub {
         my ( $profile ) = parse_json_stream( $_[0] );
 
-        my $value = $profile->{net}{ipv6} // '';
+        my $ipv6 = exists $profile->{net}{ipv6} ? ( $profile->{net}{ipv6} ? '1' : '0' ) : '<missing>';
 
-        return $value eq '1';
+        return $ipv6 eq '1';
     };
 
     check_success 'override resolver.source4',
       [ '--dump-profile', '--profile=t/usage.profile', '--sourceaddr4', '192.0.2.2' ], sub {
         my ( $profile ) = parse_json_stream( $_[0] );
 
-        my $value = $profile->{resolver}{source4} // '';
+        my $source4 = $profile->{resolver}{source4} // '<missing>';
 
-        return $value eq '192.0.2.2';
+        return $source4 eq '192.0.2.2';
       };
 
     check_success 'override resolver.source6',
       [ '--dump-profile', '--profile=t/usage.profile', '--sourceaddr6', '2001:db8::2' ], sub {
         my ( $profile ) = parse_json_stream( $_[0] );
 
-        my $value = $profile->{resolver}{source6} // '';
+        my $source6 = $profile->{resolver}{source6} // '<missing>';
 
-        return $value eq '2001:db8::2';
+        return $source6 eq '2001:db8::2';
       };
 };
 
