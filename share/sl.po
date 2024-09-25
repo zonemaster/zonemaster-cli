@@ -1,0 +1,251 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-05-22 07:23+0200\n"
+"PO-Revision-Date: 2024-09-18 08:58+0200\n"
+"Last-Translator: milijan@arnes.si\n"
+"Language-Team: register.si\n"
+"Language: sl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.5\n"
+
+msgid "Print version information and exit."
+msgstr "Izpis verzije in izhod."
+
+msgid "The minimum severity level to display. Must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO or DEBUG."
+msgstr ""
+"Prikaz najmanjše stopnje resnosti. Možne vrednosti so KRITIČNO, NAPAKA, OPOZORILO, OBVESTILO, INFO in DEBUG."
+
+msgid "The locale to use for messages translation."
+msgstr "Lokalna natavitev za prevajanje sporočil."
+
+msgid "Flag indicating if output should be in JSON or not."
+msgstr "Opcija ali naj je output v JSON obliki ali ne."
+
+msgid "Flag indicating if output should be streaming JSON or not."
+msgstr "Opcija ali naj je output v streaming JSON obliki ali ne."
+
+msgid "Deprecated. Flag indicating if JSON output should include the translated message of the tag or not."
+msgstr "Zastarelo. Opcija ali naj JSON vsebuje prevedena sporočila oznak ali ne."
+
+msgid "Flag indicating if output should be translated to human language or dumped raw."
+msgstr "Opcija ali naj je output preveden v človeško berljivo obliko ali raw."
+
+msgid "Print timestamp on entries."
+msgstr "Izpiši timestamp za vnose."
+
+msgid "Print level on entries."
+msgstr "Izpiši stopnjo resnosti."
+
+msgid "Print the name of the module on entries."
+msgstr "Izpiši imena modulov."
+
+msgid "Print the name of the test case on entries."
+msgstr "Izpiši imena posameznih testov."
+
+msgid ""
+"A name/ip string giving a nameserver for undelegated tests, or just a name which will be looked up for IP "
+"addresses. Can be given multiple times."
+msgstr "Ime ali IP strežnika za nedelegirane teste. Lahko se večkrat vnese."
+
+msgid "Name of a root hints file to override the defaults."
+msgstr "Ime root hints datoteke, ki bo namesto privzetih nastavitev."
+
+msgid "Name of a file to save DNS data to after running tests."
+msgstr "Ime datoteke kjer bodo shranjeni DNS podatki po opravljenih testih."
+
+msgid "Name of a file to restore DNS data from before running test."
+msgstr "Ime datoteke iz katere se obnovijo DNS podatki pred testiranjem."
+
+msgid "Flag to permit or deny queries being sent via IPv4. --ipv4 permits IPv4 traffic, --no-ipv4 forbids it."
+msgstr "Opcija za poizvedbe prek IPv4. --ipv4 dovoli promet, --no-ipv4 ne dovoli promet."
+
+msgid "Flag to permit or deny queries being sent via IPv6. --ipv6 permits IPv6 traffic, --no-ipv6 forbids it."
+msgstr "Opcija za poizvedbe prek IPv6. --ipv6 dovoli promet, --no-ipv6 ne dovoli prometa."
+
+msgid "Instead of running a test, list all available tests."
+msgstr "Namesto testiranja izpiši vse možne teste."
+
+msgid ""
+"Specify test to run. Should be either the name of a module, or the name of a module and the name of a method in "
+"that module separated by a \"/\" character (Example: \"Basic/basic1\"). The method specified must be one that "
+"takes a zone object as its single argument. This switch can be repeated."
+msgstr ""
+"Izberi test. Mora biti ime modula ali ime modula in ime metode iz modula ločeno z \"/\" (Npr.: \"Basic/"
+"basic1\"). Metoda mora imeti cono kot edini argument. Ta opcija se lahko ponavlja."
+
+msgid ""
+"As soon as a message at this level or higher is logged, execution will stop. Must be one of CRITICAL, ERROR, "
+"WARNING, NOTICE, INFO or DEBUG."
+msgstr ""
+"Testiranje se bo ustavilo, takoj, ko se pojavi sporočilo te stopnje ali višje. Mora biti eno izmed KRITIČNO, "
+"NAPAKA, OPOZORILO, OBVESTILO, INFO ali DEBUG."
+
+msgid "Name of profile file to load. (DEFAULT)"
+msgstr "Ime datoteke profila, ki jo želiš naložiti. (DEFAULT)"
+
+msgid "Strings with DS data on the form \"keytag,algorithm,type,digest\""
+msgstr "DS podatki na obrazcu \"keytag,algorithm,type,digest\"."
+
+msgid "Print a count of the number of messages at each level"
+msgstr "Izpiši število sporočil za vsako stopnjo resnosti"
+
+msgid ""
+"Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off if it is not. Disable with --no-"
+"progress."
+msgstr ""
+"Zastavica za indikator aktivnosti. Privzeto je aktivirana, če je STDOUT tty. Onemogoči se z --no-progress."
+
+msgid "Name of the character encoding used for command line arguments"
+msgstr "Encoding za argumente ukazne vrstice"
+
+msgid ""
+"At the end of a run, print a summary of the times (in milliseconds) the zone's name servers took to answer."
+msgstr "Na koncu izvajanja izpiši čas (v milisekundah), ki so ga strežniki potrebovali za odgovor."
+
+msgid "Print the effective profile used in JSON format, then exit."
+msgstr "Prikaži profil v uporabi v JSON obliki, nato zaključi."
+
+msgid ""
+"Deprecated (planned removal: v2024.1). Use --sourceaddr4 and/or --sourceaddr6. Source IP address used to send "
+"queries. Setting an IP address not correctly configured on a local network interface causes cryptic error "
+"messages."
+msgstr ""
+"Zastarelo (odstranjeno bo v v2024.1). Uporaba --sourceaddr4 in/ali --sourceaddr6. Določi IP naslov za "
+"pošiljanje poizvedb. Nastavljanje IP naslova, ki ni pravilno konfiguriran na lokalnem omrežju, lahko povzroči "
+"čudna error sporočila."
+
+msgid ""
+"Source IPv4 address used to send queries. Setting an IPv4 address not correctly configured on a local network "
+"interface fails silently. Can not be combined with --sourceaddr."
+msgstr ""
+"IPv4 naslov iz katerega se bodo pošiljale poizvedbe. Nepravilna konfiguracija naslova na lokalnem omrežju "
+"povzroči silent fail vmesnika. Ni možno kombinirati z --sourceaddr."
+
+msgid ""
+"Source IPv6 address used to send queries. Setting an IPv6 address not correctly configured on a local network "
+"interface fails silently. Can not be combined with --sourceaddr."
+msgstr ""
+"IPv6 naslov iz katerega se bodo pošiljale poizvedbe. Nepravilna konfiguracija naslova na lokalnem omrežju "
+"povzroči silent fail vmesnika. Ni možno kombinirati z --sourceaddr."
+
+msgid "Print elapsed time (in seconds) at end of run."
+msgstr "Izpiši čas (v sekundah) na koncu."
+
+#, perl-format
+msgid ""
+"Warning: setting locale category LC_MESSAGES to %s failed (is it installed on this system?).\n"
+"\n"
+msgstr ""
+"Opozorilo: Neuspešno nastavljanje jezika %s za LC_MESSAGES(Je jezik nameščen na sistemu?).\n"
+"\n"
+
+#, perl-format
+msgid ""
+"Warning: setting locale category LC_CTYPE to %s failed (is it installed on this system?).\n"
+"\n"
+msgstr ""
+"Opozorilo: Neuspešno nastavljanje jezika %s za LC_CTYPE (Je jezik nameščen na sistemu?).\n"
+"\n"
+
+msgid "Error: --sourceaddr can't be combined with --sourceaddr4 or --sourceaddr6."
+msgstr "Napaka: --sourceaddr ni možno kombinirati s --sourceaddr4 ali --sourceaddr6."
+
+msgid ""
+"Warning: --sourceaddr is deprecated (planned removal: v2024.1). Use --sourceaddr4 and/or --sourceaddr6 instead."
+msgstr ""
+"Opozorilo: --sourceaddr je zastarelo (odstranjeno v verziji: v2024.1). Uporabi --sourceaddr4 in/ali --"
+"sourceaddr6."
+
+msgid "Error: --json-stream and --no-json can't be used together."
+msgstr "Napaka : --json-stream in --no-json ne možno uporabiti hkrati."
+
+msgid "Warning: --json-translate has no effect without either --json or --json-stream."
+msgstr "Opozorilo: --json-translate nima učinka brez --json ali --json-stream."
+
+msgid "Warning: deprecated --json-translate, use --no-raw instead."
+msgstr "Opozorilo: --json-translate je zastarelo, uporabi --no-raw."
+
+msgid "Warning: deprecated --no-json-translate, use --raw instead."
+msgstr "Opozorilo: --no-json-translate je zastarelo, uporabi --raw."
+
+#, perl-brace-format
+msgid "Loading profile from {path}."
+msgstr "Nalagam profil iz {path}."
+
+msgid "Failed to recognize stop level '"
+msgstr "Ni mogoče prepoznati stopnjo resnosti, ki povzroči ustavitev '"
+
+msgid "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 or DEBUG3.\n"
+msgstr "--level mora biti eden izmed KRITIČNO, NAPAKA, OPOZORILO, OBVESTILO, INFO, DEBUG, DEBUG2 ali DEBUG3.\n"
+
+msgid "Seconds"
+msgstr "Sekund"
+
+msgid "Level"
+msgstr "Stopnja"
+
+msgid "Module"
+msgstr "Modul"
+
+msgid "Testcase"
+msgstr "Vrsta testa"
+
+msgid "Message"
+msgstr "Sporočilo"
+
+msgid "Only one domain can be given for testing. Did you forget to prepend an option with '--<OPTION>'?\n"
+msgstr "Lahko se preverja le ena domena. Ste pozabili dodati `--<OPTION>` ?\n"
+
+msgid "Must give the name of a domain to test.\n"
+msgstr "Vnesite ime domene za preverjanje.\n"
+
+msgid "The domain name contains consecutive dots.\n"
+msgstr "V domeni so zaporedne pike.\n"
+
+msgid "Looks OK."
+msgstr "Videti je v redu."
+
+msgid ""
+"\n"
+"\n"
+"   Level\tNumber of log entries"
+msgstr ""
+"\n"
+"\n"
+"   Stopnja\tŠtevilo dnevniških vnosov"
+
+#, perl-format
+msgid "%8s\t%5d entries.\n"
+msgstr "%8s\t%5d vnosov.\n"
+
+msgid "--ns must be a name or a name/ip pair."
+msgstr "--ns mora biti ime ali ime/IP."
+
+#, perl-brace-format
+msgid "The name of the nameserver '{nsname}' contains consecutive dots."
+msgstr "Strežnik '{nsname}' vsebuje zaporedne pike."
+
+msgid "Warning: Zonemaster::LDNS not compiled with IDN support, cannot handle non-ASCII names correctly."
+msgstr "Opozorilo: Zonemaster::LDNS ne podpira IDN, ni možno obdelati ne-ASCII imena."
+
+msgid "DEBUG"
+msgstr "DEBUG"
+
+msgid "INFO"
+msgstr "INFO"
+
+msgid "NOTICE"
+msgstr "OBVESTILO"
+
+msgid "WARNING"
+msgstr "OPOZORILO"
+
+msgid "ERROR"
+msgstr "NAPAKA"
+
+msgid "CRITICAL"
+msgstr "KRITIČNO"
