@@ -29,6 +29,12 @@ Readonly::Scalar my $PATH_WRAPPER            => catfile( dirname( __FILE__ ), 'u
 Readonly::Scalar my $PATH_NORMAL_DATAFILE    => catfile( dirname( __FILE__ ), 'usage.normal.data' );
 Readonly::Scalar my $PATH_FAKE_DATA_DATAFILE => catfile( dirname( __FILE__ ), 'usage.fake-data.data' );
 Readonly::Scalar my $PATH_FAKE_ROOT_DATAFILE => catfile( dirname( __FILE__ ), 'usage.fake-root.data' );
+Readonly::Array my @PERL => do {
+    # Detect whether Devel::Cover is running
+    my $is_covering = !!( eval 'Devel::Cover::get_coverage()' );
+    note $is_covering ? 'Devel::Cover running' : 'Devel::Cover not covering';
+    ( $^X, $is_covering ? ( '-MDevel::Cover=-silent,1' ) : () )
+};
 
 # MUTABLE GLOBAL VARIABLES
 
@@ -127,7 +133,7 @@ sub has_locale {
 sub _run_zonemaster_cli {
     my ( $datafile, @args ) = @_;
 
-    my @cmd = ( $PATH_WRAPPER );
+    my @cmd = ( @PERL, $PATH_WRAPPER );
     if ( defined $datafile ) {
         if ( $ENV{ZONEMASTER_RECORD} ) {
             push @cmd, '--record';
