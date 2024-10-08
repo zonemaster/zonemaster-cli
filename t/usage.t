@@ -17,6 +17,7 @@ use Readonly;
 use Symbol qw( gensym );
 use Test::Differences;
 use Zonemaster::CLI;
+use JSON::Validator;
 
 # CONSTANTS
 
@@ -51,6 +52,13 @@ if ( $ENV{ZONEMASTER_RECORD} ) {
 
 # HELPERS
 
+sub json_schema {
+  my ( $schema ) = @_;
+    my $validator = JSON::Validator->new;
+    $validator->schema( $schema );
+    return $validator;
+}
+
 sub check_success {
     my ( $name, $args, $predicate ) = @_;
 
@@ -74,13 +82,50 @@ sub check_success {
                 diag "actual stdout:\n$stdout" =~ s/\n/\n    /gr;
             }
         }
-        else {
+        elsif ( ref $predicate eq 'Regexp' ) {
             like $stdout, $predicate, 'expected stdout (regex)';
+        }
+        elsif ( blessed $predicate && blessed $predicate eq 'JSON::Validator' ) {
+            my @items  = parse_json_stream( $stdout );
+            my @errors = $predicate->validate( [@items] );
+            if ( !eq_or_diff \@errors, [], "schema validation" ) {
+                diag "actual stdout:\n$stdout" =~ s/\n/\n    /gr;
+            }
+        }
+        else {
+            BAIL_OUT( "unrecognized predicate type" );
         }
 
         is $exitstatus, $Zonemaster::CLI::EXIT_SUCCESS, 'success exit status';
     };
 } ## end sub check_success
+
+sub check_success_report {
+    my ( $name, $args, $predicates ) = @_;
+
+    subtest $name => sub {
+        check_success 'normal mode', $args, $predicates->{text};
+
+        check_success 'raw mode', $args, $predicates->{text};
+
+        check_success 'json mode', [ '--json', @$args ],
+          json_schema(
+            {
+                type  => "array",
+                items => $predicates->{json},
+            }
+          );
+
+        check_success 'json-stream mode', [ '--json-stream', @$args ],
+          json_schema(
+            {
+                type  => "array",
+                contains => $predicates->{json},
+            }
+          );
+    };
+
+}
 
 sub check_usage_error {
     my ( $name, $args, $error_pattern ) = @_;
@@ -98,7 +143,7 @@ sub check_usage_error {
                 exitstatus => $Zonemaster::CLI::EXIT_USAGE_ERROR,
             },
             'no stdout and usage error exit code'
-        ) or note "stderr:\n$stderr" =~ s/\n/\n    /gr;
+        ) or diag "stderr:\n$stderr" =~ s/\n/\n    /gr;
     };
 }
 
@@ -315,29 +360,66 @@ do {
         }msx;
     } ## end SKIP:
 
-    check_success '--count', [ '--test=basic01', '--count', '.' ], qr{
-        \QLooks OK.\E
-        .*
-        Level \s+ \QNumber of log entries\E
-        .*
-        INFO \s+ \d+
-        .*
-        DEBUG \s+ \d+
-    }msx;
+    check_success_report '--count', [ '--test=basic01', '--count', '.' ], {
+        text => qr{
+            \QLooks OK.\E
+            .*
+            Level \s+ \QNumber of log entries\E
+            .*
+            INFO \s+ \d+
+            .*
+            DEBUG \s+ \d+
+        }msx,
+        json => {
+            type       => "object",
+            required   => ["count"],
+            patternProperties => {
+                '^[A-Z]+[0-9]*$' => {
+                    type  => "integer",
+                },
+            },
+        },
+    };
 
-    check_success '--nstimes', [ '--test=basic01', '--nstimes', '.' ], qr{
-        \QLooks OK.\E
-        .*
-        Server \s+ Max \s+ Min \s+ Avg \s+ Stddev \s+ Median \s+ Total
-        .*
-        \Qa.root-servers.net/\E
-    }msx;
+    check_success_report '--nstimes', [ '--test=basic01', '--nstimes', '.' ], {
+        text => qr{
+            \QLooks OK.\E
+            .*
+            Server \s+ Max \s+ Min \s+ Avg \s+ Stddev \s+ Median \s+ Total
+            .*
+            \Qa.root-servers.net/\E
+        }msx,
+        json => {
+            type       => "object",
+            required   => ["nstimes"],
+            properties => {
+                nstimes => {
+                    type  => "array",
+                    items => {
+                        type     => "object",
+                        required => [qw( avg max median min ns stddev total)],
+                    },
+                },
+            },
+        },
+    };
 
-    check_success '--elapsed', [ '--test=basic01', '--elapsed', '.' ], qr{
-        \QLooks OK.\E
-        .*
-        \QTotal test run time:\E
-    }msx;
+    check_success_report '--elapsed', [ '--test=basic01', '--elapsed', '.' ], {
+        text => qr{
+            \QLooks OK.\E
+            .*
+            \QTotal test run time:\E
+        }msx,
+        json => {
+            type       => "object",
+            required   => ["elapsed"],
+            properties => {
+                elapsed => {
+                    type  => "number",
+                },
+            },
+        },
+    };
 
     check_success '--level',
       [ '--profile=t/usage.profile', '--ipv4', '--sourceaddr4', '', '--test=basic', '--raw', '--level=notice', '.' ],

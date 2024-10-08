@@ -28,6 +28,11 @@ requires(
     'Zonemaster::Engine' => 6.000000,  # v6.0.0
 );
 
+test_requires(
+    'JSON::Validator'   => 0,
+    'Test::Differences' => 0,
+);
+
 # Make all platforms include inc/Module/Install/External.pm
 requires_external_bin 'find';
 if ($^O eq "freebsd") {
