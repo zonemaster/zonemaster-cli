@@ -449,6 +449,12 @@ do {
     check_usage_error '--json-stream and --no-json', [ '--json-stream', '--no-json', 'example.' ],
       qr{can't be used together}i;
 
+    check_usage_error 'Bad --hints (directory)', [ '--hints', '/', 'example.' ],
+      qr{error loading hints file}i;
+
+    check_usage_error 'Bad --hints (syntax)', [ '--hints', 't/usage.t', 'example.' ],
+      qr{error loading hints file}i;
+
     check_success '--version', ['--version'], qr{
         ^\QZonemaster-CLI version\E .*
         ^\QZonemaster-Engine version\E .*

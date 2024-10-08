@@ -658,13 +658,21 @@ sub run {
 
     if ( defined $self->hints ) {
         my $hints_data;
+        my $error = undef;
         try {
-            my $hints_text = read_file( $self->hints );
+            my $hints_text = read_file( $self->hints ) // die "read_file failed\n";
+            local $SIG{__WARN__} = \&die;
             $hints_data = parse_hints( $hints_text )
         }
         catch {
-            die "Error loading hints file: $_";
+            $error = $_;
+        };
+
+        if ( defined $error ) {
+            print STDERR __x( "Error loading hints file: {message}", message => $error );
+            return $EXIT_USAGE_ERROR;
         }
+
         Zonemaster::Engine::Recursor->remove_fake_addresses( '.' );
         Zonemaster::Engine::Recursor->add_fake_addresses( '.', $hints_data );
     }
