@@ -18,15 +18,14 @@ use Moose;
 with 'MooseX::Getopt::GLD' => { getopt_conf => [ 'pass_through' ] };
 
 use Encode;
-use Readonly;
 use File::Slurp;
 use JSON::XS;
 use List::Util qw[max uniq];
+use Net::IP::XS;
 use POSIX qw[setlocale LC_MESSAGES LC_CTYPE];
+use Readonly;
 use Scalar::Util qw[blessed];
 use Try::Tiny;
-use Net::IP::XS;
-
 use Zonemaster::LDNS;
 use Zonemaster::Engine;
 use Zonemaster::Engine::Exception;
