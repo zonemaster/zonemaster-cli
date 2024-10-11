@@ -78,3 +78,6 @@ t/po-files.t
 
 # Development mode aid for File::ShareDir
 ^lib/auto/share/dist/Zonemaster-CLI
+
+# Avoid MANIFEST test
+t/manifest.t
