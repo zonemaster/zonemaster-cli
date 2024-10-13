@@ -82,7 +82,9 @@ printed. See the available options below.
 
 =head1 OPTIONS
 
-=over
+=head2 General Options
+
+=over 4
 
 =item -h -? --usage --help
 
@@ -92,6 +94,30 @@ Print the available command line switches, then exit.
 
 Print the versions of this program as well as the ones from the underlying 
 L<Zonemaster> test engine, then exit.
+
+=item --list_tests, --list-tests
+
+Print all test cases listed in the test modules, then exit.
+
+=item --dump_profile, --dump-profile
+
+Print the effective profile used in JSON format, then exit.
+
+=back
+
+=head2 Testing Options
+
+=over 4
+
+=item --test=MODULE, --test=MODULE/TESTCASE, --test=TESTCASE
+
+Limit the testing suite to run only the specified tests.
+This can be the name of a testing module, in which case all test cases from
+that module will be run, or the name of a module followed by a slash and the
+name of a test case (test case identifier) in that module, or the name of the
+test case.
+Can be specified multiple times.
+This option is case-insensitive.
 
 =item --level=LEVEL
 
@@ -104,12 +130,53 @@ not useful for most users.
 
 Default: NOTICE
 
-=item --locale=LOCALE
+=item --stop_level=LEVEL, --stop-level=LEVEL
 
-Specify which locale to be used by the translation system. If not given, the
-translation system itself will look at environment variables to try and guess.
-If the requested translation does not exist, it will fallback to the local
-locale, and if that doesn't exist either, to English.
+Specify the minimum severity level after which the testing suite is terminated.
+The levels are, from highest to lowest: CRITICAL, ERROR, WARNING, NOTICE,
+INFO, DEBUG, DEBUG2 and DEBUG3.
+
+=item --[no-]progress
+
+Print an activity indicator ("spinner"). Useful to know that something is
+happening during a run.
+
+Default: on (if the process' standard output is a TTY)
+
+=item --[no-]ipv4
+
+Allow the sending of IPv4 packets.
+
+Default: on
+
+=item --[no-]ipv6
+
+Allow the sending of IPv6 packets.
+
+Default: on
+
+=item --sourceaddr4=IPADDR
+
+Specify the source IPv4 address used to send queries.
+Setting an IPv4 address not correctly configured on a local network interface
+fails silently.
+
+=item --sourceaddr6=IPADDR
+
+Specify the source IPv6 address used to send queries.
+Setting an IPv6 address not correctly configured on a local network interface
+fails silently.
+
+=item --profile=FILE
+
+Override the Zonemaster Engine default profile data with values from
+the given profile JSON file.
+
+=back
+
+=head2 Formatting Options
+
+=over 4
 
 =item --[no-]json
 
@@ -124,16 +191,17 @@ machine-readable way.
 
 Default: off
 
-=item --[no-]json_translate, --[no-]json-translate
-
-Deprecated since v2023.1, use --no-raw instead.
-
-For streaming JSON output, include the translated message of the tag.
-
 =item --[no-]raw
 
 Print messages as raw dumps (message identifiers) instead of translating them
 to human language.
+
+=item --locale=LOCALE
+
+Specify which locale to be used by the translation system. If not given, the
+translation system itself will look at environment variables to try and guess.
+If the requested translation does not exist, it will fallback to the local
+locale, and if that doesn't exist either, to English.
 
 =item --[no-]time
 
@@ -159,6 +227,36 @@ Print the name of the test case (test case identifier) which produced the messag
 
 Default: off
 
+=back
+
+=head2 Summary Options
+
+=over 4
+
+=item --[no-]count
+
+Print a summary, at the end of a run, of the numbers of messages for each severity
+level that were logged during the run.
+
+Default: off
+
+=item --nstimes
+
+Print a summary, at the end of a run, of the times (in milliseconds) the zone's
+name servers took to answer.
+
+=item --[no-]elapsed
+
+Print elapsed time (in seconds) at end of a run.
+
+Default: off
+
+=back
+
+=head2 Undelegated Test Options
+
+=over 4
+
 =item --ns=NAME[/IP]
 
 Provide information about a nameserver, for undelegated tests. The argument
@@ -171,9 +269,22 @@ This switch can be given multiple times. As long as any of these switches
 are present, their aggregated content will be used as the
 entirety of the parent-side delegation information.
 
+=item --ds=KEYTAG,ALGORITHM,TYPE,DIGEST
+
+Provide a DS record for undelegated testing (that is, a test where the
+delegating nameserver information is given via --ns switches). The four pieces
+of data (keytag, algorithm, type, digest) should be in the same format they would
+have in a zone file.
+
 =item --hints=FILENAME
 
 Name of a root hints file to override the defaults.
+
+=back
+
+=head2 Cache Options
+
+=over 4
 
 =item --save=FILENAME
 
@@ -186,94 +297,21 @@ Prime the DNS packet cache with the contents from the file with the given name
 before starting the testing suite. The format of the file should be from one
 produced by the --save switch.
 
-=item --[no-]ipv4
+=back
 
-Allow the sending of IPv4 packets.
+=head2 Deprecated Options
 
-Default: on
-
-=item --[no-]ipv6
-
-Allow the sending of IPv6 packets.
-
-Default: on
-
-=item --list_tests, --list-tests
-
-Print all test cases listed in the test modules, then exit.
-
-=item --test=MODULE, --test=MODULE/TESTCASE, --test=TESTCASE
-
-Limit the testing suite to run only the specified tests.
-This can be the name of a testing module, in which case all test cases from
-that module will be run, or the name of a module followed by a slash and the
-name of a test case (test case identifier) in that module, or the name of the
-test case.
-Can be specified multiple times.
-This option is case-insensitive.
-
-=item --stop_level=LEVEL, --stop-level=LEVEL
-
-Specify the minimum severity level after which the testing suite is terminated.
-The levels are, from highest to lowest: CRITICAL, ERROR, WARNING, NOTICE,
-INFO, DEBUG, DEBUG2 and DEBUG3.
-
-=item --profile=FILE
-
-Override the Zonemaster Engine default profile data with values from
-the given profile JSON file.
-
-=item --ds=KEYTAG,ALGORITHM,TYPE,DIGEST
-
-Provide a DS record for undelegated testing (that is, a test where the
-delegating nameserver information is given via --ns switches). The four pieces
-of data (keytag, algorithm, type, digest) should be in the same format they would
-have in a zone file.
-
-=item --[no-]count
-
-Print a summary, at the end of a run, of the numbers of messages for each severity
-level that were logged during the run.
-
-Default: off
-
-=item --[no-]progress
-
-Print an activity indicator ("spinner"). Useful to know that something is
-happening during a run.
-
-Default: on (if the process' standard output is a TTY)
+=over 4
 
 =item --encoding=ENCODING
 
 Deprecated: Simply remove it from your usage. It is ignored.
 
-=item --nstimes
+=item --[no-]json_translate, --[no-]json-translate
 
-Print a summary, at the end of a run, of the times (in milliseconds) the zone's
-name servers took to answer.
+Deprecated since v2023.1, use --no-raw instead.
 
-=item --dump_profile, --dump-profile
-
-Print the effective profile used in JSON format, then exit.
-
-=item --sourceaddr4=IPADDR
-
-Specify the source IPv4 address used to send queries.
-Setting an IPv4 address not correctly configured on a local network interface
-fails silently.
-
-=item --sourceaddr6=IPADDR
-
-Specify the source IPv6 address used to send queries.
-Setting an IPv6 address not correctly configured on a local network interface
-fails silently.
-
-=item --[no-]elapsed
-
-Print elapsed time (in seconds) at end of a run.
-
-Default: off
+For streaming JSON output, include the translated message of the tag.
 
 =back
 
