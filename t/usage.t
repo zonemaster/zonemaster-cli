@@ -7,8 +7,9 @@ use Test::More;
 use Config '%Config';
 use Encode                qw( decode_utf8 );
 use File::Basename        qw( dirname );
-use File::Slurp           qw( write_file );
+use File::Slurp           qw( read_file write_file );
 use File::Spec::Functions qw( catfile );
+use File::Temp            qw( tempdir );
 use IPC::Open3;
 use JSON::XS;
 use POSIX;
@@ -16,6 +17,7 @@ use Readonly;
 use Symbol qw( gensym );
 use Test::Differences;
 use Zonemaster::CLI;
+use JSON::Validator;
 
 # CONSTANTS
 
@@ -29,6 +31,12 @@ Readonly::Scalar my $PATH_WRAPPER            => catfile( dirname( __FILE__ ), 'u
 Readonly::Scalar my $PATH_NORMAL_DATAFILE    => catfile( dirname( __FILE__ ), 'usage.normal.data' );
 Readonly::Scalar my $PATH_FAKE_DATA_DATAFILE => catfile( dirname( __FILE__ ), 'usage.fake-data.data' );
 Readonly::Scalar my $PATH_FAKE_ROOT_DATAFILE => catfile( dirname( __FILE__ ), 'usage.fake-root.data' );
+Readonly::Array my @PERL => do {
+    # Detect whether Devel::Cover is running
+    my $is_covering = !!( eval 'Devel::Cover::get_coverage()' );
+    note $is_covering ? 'Devel::Cover running' : 'Devel::Cover not covering';
+    ( $^X, $is_covering ? ( '-MDevel::Cover=-silent,1' ) : () )
+};
 
 # MUTABLE GLOBAL VARIABLES
 
@@ -43,6 +51,13 @@ if ( $ENV{ZONEMASTER_RECORD} ) {
 }
 
 # HELPERS
+
+sub json_schema {
+  my ( $schema ) = @_;
+    my $validator = JSON::Validator->new;
+    $validator->schema( $schema );
+    return $validator;
+}
 
 sub check_success {
     my ( $name, $args, $predicate ) = @_;
@@ -67,13 +82,50 @@ sub check_success {
                 diag "actual stdout:\n$stdout" =~ s/\n/\n    /gr;
             }
         }
-        else {
+        elsif ( ref $predicate eq 'Regexp' ) {
             like $stdout, $predicate, 'expected stdout (regex)';
+        }
+        elsif ( blessed $predicate && blessed $predicate eq 'JSON::Validator' ) {
+            my @items  = parse_json_stream( $stdout );
+            my @errors = $predicate->validate( [@items] );
+            if ( !eq_or_diff \@errors, [], "schema validation" ) {
+                diag "actual stdout:\n$stdout" =~ s/\n/\n    /gr;
+            }
+        }
+        else {
+            BAIL_OUT( "unrecognized predicate type" );
         }
 
         is $exitstatus, $Zonemaster::CLI::EXIT_SUCCESS, 'success exit status';
     };
 } ## end sub check_success
+
+sub check_success_report {
+    my ( $name, $args, $predicates ) = @_;
+
+    subtest $name => sub {
+        check_success 'normal mode', $args, $predicates->{text};
+
+        check_success 'raw mode', $args, $predicates->{text};
+
+        check_success 'json mode', [ '--json', @$args ],
+          json_schema(
+            {
+                type  => "array",
+                items => $predicates->{json},
+            }
+          );
+
+        check_success 'json-stream mode', [ '--json-stream', @$args ],
+          json_schema(
+            {
+                type  => "array",
+                contains => $predicates->{json},
+            }
+          );
+    };
+
+}
 
 sub check_usage_error {
     my ( $name, $args, $error_pattern ) = @_;
@@ -91,7 +143,7 @@ sub check_usage_error {
                 exitstatus => $Zonemaster::CLI::EXIT_USAGE_ERROR,
             },
             'no stdout and usage error exit code'
-        ) or note "stderr:\n$stderr" =~ s/\n/\n    /gr;
+        ) or diag "stderr:\n$stderr" =~ s/\n/\n    /gr;
     };
 }
 
@@ -127,7 +179,7 @@ sub has_locale {
 sub _run_zonemaster_cli {
     my ( $datafile, @args ) = @_;
 
-    my @cmd = ( $PATH_WRAPPER );
+    my @cmd = ( @PERL, $PATH_WRAPPER );
     if ( defined $datafile ) {
         if ( $ENV{ZONEMASTER_RECORD} ) {
             push @cmd, '--record';
@@ -160,6 +212,283 @@ sub _run_zonemaster_cli {
 } ## end sub _run_zonemaster_cli
 
 # TESTS
+
+do {
+    local $test_datafile = $PATH_NORMAL_DATAFILE;
+    note "TESTS USING $test_datafile FOR RECORDED DATA:";
+
+    check_success 'normal table output', [ '--test=basic01', '--level=INFO', '.' ], qr{
+        ^
+        Seconds \s+ Level \s+ Message \n
+        =+ \s =+ \s =+ \n
+        \s* \Q0.00\E \s+ INFO \s+ .* \s [v0-9.]+ \s  .* \n
+    }msx;
+
+    check_success 'normal table output, no optional fields',
+      [ '--test=basic01', '--level=INFO', '--no-time', '--no-show-level', '.' ], qr{
+        ^
+        Message \n
+        =+ \n
+        Using .* \n
+    }msx;
+
+    check_success 'normal table output, no optional fields, using underscore alias',
+      [ '--test=basic01', '--level=INFO', '--no-time', '--no-show_level', '.' ], qr{
+        ^
+        Message \n
+        =+ \n
+        Using .* \n
+    }msx;
+
+    check_success 'normal table output, all fields',
+      [ '--test=basic01', '--level=INFO', '--show-module', '--show-testcase', '.' ], qr{
+        ^
+        Seconds \s+ Level \s+ Module \s+ Testcase \s+ Message \n
+        =+ \s =+ \s =+ \s =+ \s =+ \n
+        \s* \Q0.00\E \s+ INFO \s+ System \s+ Unspecified \s+ Using .* \n
+    }msx;
+
+    check_success 'normal table output, all fields, using underscore aliases',
+      [ '--test=basic01', '--level=INFO', '--show_module', '--show_testcase', '.' ], qr{
+        ^
+        Seconds \s+ Level \s+ Module \s+ Testcase \s+ Message \n
+        =+ \s =+ \s =+ \s =+ \s =+ \n
+        \s* \Q0.00\E \s+ INFO \s+ System \s+ Unspecified \s+ Using .* \n
+    }msx;
+
+    check_success '--encoding', [ '--test=basic01', '--json', '--encoding', 'foobar', '.' ], qr{
+        \Q{"results":[]}\E
+    }msx;
+
+    check_success '--json', [ '--test=basic01', '--json', '.' ], qr{
+        \Q{"results":[]}\E
+    }msx;
+
+    check_success '--json-stream', [ '--test=basic01', '--json-stream', '--level=INFO', '.' ], sub {
+        my $found = 0;
+        for my $item ( parse_json_stream( $_[0] ) ) {
+            if ( $item->{tag} eq 'GLOBAL_VERSION' ) {
+                if ( $item->{message} !~ /^Using / ) {
+                    return 0;
+                }
+                $found = 1;
+            }
+        }
+        return $found;
+    };
+
+    check_success '--json_stream', [ '--test=basic01', '--json_stream', '--level=INFO', '.' ], sub {
+        my $found = 0;
+        for my $item ( parse_json_stream( $_[0] ) ) {
+            if ( $item->{tag} eq 'GLOBAL_VERSION' ) {
+                if ( $item->{message} !~ /^Using / ) {
+                    return 0;
+                }
+                $found = 1;
+            }
+        }
+        return $found;
+    };
+
+    check_success '--raw', [ '--test=basic01', '--level=INFO', '--raw', '.' ], qr{
+        ^
+        \s* \Q0.00\E \s+ INFO \s+ GLOBAL_VERSION \s+ version= [v0-9.]+ \n
+    }msx;
+
+  SKIP: {
+        skip 'sv_SE.utf8 locale is unavailable', 5
+          if !has_locale( 'sv_SE.utf8' );
+
+        check_success '--json-stream --no-raw',
+          [ '--test=basic01', '--json-stream', '--no-raw', '--locale=sv_SE.utf8', '--level=INFO', '.' ], sub {
+            my $found = 0;
+            for my $item ( parse_json_stream( decode_utf8( $_[0] ) ) ) {
+                if ( $item->{tag} eq 'GLOBAL_VERSION' ) {
+                    if ( $item->{message} !~ qr{^Använder } ) {
+                        return 0;
+                    }
+                    $found = 1;
+                }
+            }
+            return $found;
+          };
+
+        check_success '--json-stream --json-translate',
+          [ '--test=basic01', '--json-stream', '--json-translate', '--locale=sv_SE.utf8', '--level=INFO', '.' ], sub {
+            my $found = 0;
+            for my $item ( parse_json_stream( decode_utf8( $_[0] ) ) ) {
+                if ( $item->{tag} eq 'GLOBAL_VERSION' ) {
+                    if ( $item->{message} !~ qr{^Använder } ) {
+                        return 0;
+                    }
+                    $found = 1;
+                }
+            }
+            return $found;
+          };
+
+        check_success '--json-stream --no-raw --locale',
+          [ '--test=basic01', '--json-stream', '--no-raw', '--locale=sv_SE.utf8', '--level=INFO', '.' ], sub {
+            my $found = 0;
+            for my $item ( parse_json_stream( decode_utf8( $_[0] ) ) ) {
+                if ( $item->{tag} eq 'GLOBAL_VERSION' ) {
+                    if ( $item->{message} !~ qr{^Använder } ) {
+                        return 0;
+                    }
+                    $found = 1;
+                }
+            }
+            return $found;
+          };
+
+        check_success '--json-stream --json-translate --locale',
+          [ '--test=basic01', '--json-stream', '--no-raw', '--locale=sv_SE.utf8', '--level=INFO', '.' ], sub {
+            my $found = 0;
+            for my $item ( parse_json_stream( decode_utf8( $_[0] ) ) ) {
+                if ( $item->{tag} eq 'GLOBAL_VERSION' ) {
+                    if ( $item->{message} !~ qr{^Använder } ) {
+                        return 0;
+                    }
+                    $found = 1;
+                }
+            }
+            return $found;
+          };
+
+        check_success '--locale', [ '--test=basic01', '--locale=sv_SE.utf8', '.' ], qr{
+            \QSer OK ut.\E
+        }msx;
+    } ## end SKIP:
+
+    check_success_report '--count', [ '--test=basic01', '--count', '.' ], {
+        text => qr{
+            \QLooks OK.\E
+            .*
+            Level \s+ \QNumber of log entries\E
+            .*
+            INFO \s+ \d+
+            .*
+            DEBUG \s+ \d+
+        }msx,
+        json => {
+            type       => "object",
+            required   => ["count"],
+            patternProperties => {
+                '^[A-Z]+[0-9]*$' => {
+                    type  => "integer",
+                },
+            },
+        },
+    };
+
+    check_success_report '--nstimes', [ '--test=basic01', '--nstimes', '.' ], {
+        text => qr{
+            \QLooks OK.\E
+            .*
+            Server \s+ Max \s+ Min \s+ Avg \s+ Stddev \s+ Median \s+ Total
+            .*
+            \Qa.root-servers.net/\E
+        }msx,
+        json => {
+            type       => "object",
+            required   => ["nstimes"],
+            properties => {
+                nstimes => {
+                    type  => "array",
+                    items => {
+                        type     => "object",
+                        required => [qw( avg max median min ns stddev total)],
+                    },
+                },
+            },
+        },
+    };
+
+    check_success_report '--elapsed', [ '--test=basic01', '--elapsed', '.' ], {
+        text => qr{
+            \QLooks OK.\E
+            .*
+            \QTotal test run time:\E
+        }msx,
+        json => {
+            type       => "object",
+            required   => ["elapsed"],
+            properties => {
+                elapsed => {
+                    type  => "number",
+                },
+            },
+        },
+    };
+
+    check_success '--level',
+      [ '--profile=t/usage.profile', '--ipv4', '--sourceaddr4', '', '--test=basic', '--raw', '--level=notice', '.' ],
+      sub {
+        my $stdout = $_[0];
+
+        return ( $stdout =~ qr{NOTICE .* WARNING .* ERROR}msx )
+          && ( $stdout !~ qr{INFO}msx );
+      };
+
+    check_success '--stop-level',
+      [
+        '--profile=t/usage.profile', '--ipv4', '--sourceaddr4',        '',
+        '--test=basic',              '--raw',  '--stop-level=warning', '.'
+      ],
+      sub {
+        my $stdout = $_[0];
+
+        return ( $stdout =~ qr{NOTICE .* WARNING}msx )
+          && ( $stdout !~ qr{ERROR}m );
+      };
+
+    check_success '--stop_level',
+      [
+        '--profile=t/usage.profile', '--ipv4', '--sourceaddr4',        '',
+        '--test=basic',              '--raw',  '--stop_level=warning', '.'
+      ],
+      sub {
+        my $stdout = $_[0];
+
+        return ( $stdout =~ qr{NOTICE .* WARNING}msx )
+          && ( $stdout !~ qr{ERROR}m );
+      };
+
+    my $tempdir  = tempdir( CLEANUP => 1 );
+    my $savefile = catfile( $tempdir, 'saved.data' );
+    check_success 'run command', [ "--save=$savefile", '--test=basic01', '.' ], sub {
+        my @saved_lines    = read_file $savefile;
+        my @expected_lines = read_file $PATH_NORMAL_DATAFILE;
+        return scalar( @saved_lines ) == scalar( @expected_lines );
+    };
+};
+
+do {
+    local $test_datafile = $PATH_FAKE_DATA_DATAFILE;
+    note "TESTS USING $test_datafile FOR RECORDED DATA:";
+
+  SKIP: {
+        skip 'crashing test that has never worked on replay (FIXME)', 2
+          if not $ENV{ZONEMASTER_RECORD};
+
+        check_success '--ns', [ '--noipv6', '--raw', '--ns=ns1.a.example/9.9.9.9', 'a.se' ], qr{B02_NO_WORKING_NS};
+
+        check_success '--ds',
+          [
+            '--noipv6', '--raw', '--test=dnssec02',
+            '--ds=0,8,2,0000000000000000000000000000000000000000000000000000000000000000',
+            'zonemaster.net'
+          ],
+          qr{DS02_NO_DNSKEY_FOR_DS};
+    }
+};
+
+do {
+    local $test_datafile = $PATH_FAKE_ROOT_DATAFILE;
+    note "TESTS USING $test_datafile FOR RECORDED DATA:";
+
+    check_success '--hints', [ '--noipv6', '--raw', '--hints=t/usage.hints', 'example.' ], qr{CANNOT_CONTINUE}i;
+};
 
 do {
     local $test_datafile = undef;
@@ -202,6 +531,12 @@ do {
     check_usage_error '--json-stream and --no-json', [ '--json-stream', '--no-json', 'example.' ],
       qr{can't be used together}i;
 
+    check_usage_error 'Bad --hints (directory)', [ '--hints', '/', 'example.' ],
+      qr{error loading hints file}i;
+
+    check_usage_error 'Bad --hints (syntax)', [ '--hints', 't/usage.t', 'example.' ],
+      qr{error loading hints file}i;
+
     check_success '--version', ['--version'], qr{
         ^\QZonemaster-CLI version\E .*
         ^\QZonemaster-Engine version\E .*
@@ -215,7 +550,17 @@ do {
         basic01
     }msx;
 
+    check_success '--list_tests', ['--list_tests'], qr{
+        Basic
+        .*
+        basic01
+    }msx;
+
     check_success '--dump-profile', ['--dump-profile'], qr{
+        "no_network"
+    }msx;
+
+    check_success '--dump_profile', ['--dump_profile'], qr{
         "no_network"
     }msx;
 
@@ -237,195 +582,39 @@ do {
     check_success 'override net.ipv4', [ '--dump-profile', '--profile=t/usage.profile', '--ipv4' ], sub {
         my ( $profile ) = parse_json_stream( $_[0] );
 
-        my $value = $profile->{net}{ipv4} // '<missing>';
+        my $ipv4 = exists $profile->{net}{ipv4} ? ( $profile->{net}{ipv4} ? '1' : '0' ) : '<missing>';
 
-        return $value eq '1';
+        return $ipv4 eq '1';
     };
 
     check_success 'override net.ipv6', [ '--dump-profile', '--profile=t/usage.profile', '--ipv6' ], sub {
         my ( $profile ) = parse_json_stream( $_[0] );
 
-        my $value = $profile->{net}{ipv6} // '';
+        my $ipv6 = exists $profile->{net}{ipv6} ? ( $profile->{net}{ipv6} ? '1' : '0' ) : '<missing>';
 
-        return $value eq '1';
+        return $ipv6 eq '1';
     };
 
     check_success 'override resolver.source4',
       [ '--dump-profile', '--profile=t/usage.profile', '--sourceaddr4', '192.0.2.2' ], sub {
         my ( $profile ) = parse_json_stream( $_[0] );
 
-        my $value = $profile->{resolver}{source4} // '';
+        my $source4 = $profile->{resolver}{source4} // '<missing>';
 
-        return $value eq '192.0.2.2';
+        return $source4 eq '192.0.2.2';
       };
 
     check_success 'override resolver.source6',
       [ '--dump-profile', '--profile=t/usage.profile', '--sourceaddr6', '2001:db8::2' ], sub {
         my ( $profile ) = parse_json_stream( $_[0] );
 
-        my $value = $profile->{resolver}{source6} // '';
+        my $source6 = $profile->{resolver}{source6} // '<missing>';
 
-        return $value eq '2001:db8::2';
-      };
-};
-
-do {
-    local $test_datafile = $PATH_NORMAL_DATAFILE;
-    note "TESTS USING $test_datafile FOR RECORDED DATA:";
-
-    check_success 'normal table output', [ '--test=basic01', '--level=INFO', '.' ], qr{
-        ^
-        Seconds \s+ Level \s+ Message \n
-        =+ \s =+ \s =+ \n
-        \s* \Q0.00\E \s+ INFO \s+ .* \s [v0-9.]+ \s  .* \n
-    }msx;
-
-    check_success 'normal table output, no optional fields',
-      [ '--test=basic01', '--level=INFO', '--no-time', '--no-show-level', '.' ], qr{
-        ^
-        Message \n
-        =+ \n
-        Using .* \n
-    }msx;
-
-    check_success 'normal table output, all fields',
-      [ '--test=basic01', '--level=INFO', '--show-module', '--show-testcase', '.' ], qr{
-        ^
-        Seconds \s+ Level \s+ Module \s+ Testcase \s+ Message \n
-        =+ \s =+ \s =+ \s =+ \s =+ \n
-        \s* \Q0.00\E \s+ INFO \s+ System \s+ Unspecified \s+ Using .* \n
-    }msx;
-
-    check_success '--json', [ '--test=basic01', '--json', '.' ], qr{
-        \Q{"results":[]}\E
-    }msx;
-
-    check_success '--json-stream', [ '--test=basic01', '--json-stream', '--level=INFO', '.' ], sub {
-        my $found = 0;
-        for my $item ( parse_json_stream( $_[0] ) ) {
-            if ( $item->{tag} eq 'GLOBAL_VERSION' ) {
-                if ( $item->{message} !~ /^Using / ) {
-                    return 0;
-                }
-                $found = 1;
-            }
-        }
-        return $found;
-    };
-
-    check_success '--raw', [ '--test=basic01', '--level=INFO', '--raw', '.' ], qr{
-        ^
-        \s* \Q0.00\E \s+ INFO \s+ GLOBAL_VERSION \s+ version= [v0-9.]+ \n
-    }msx;
-
-  SKIP: {
-        skip 'sv_SE.utf8 locale is unavailable', 3
-          if !has_locale( 'sv_SE.utf8' );
-
-        check_success '--json-stream --no-raw',
-          [ '--test=basic01', '--json-stream', '--no-raw', '--locale=sv_SE.utf8', '--level=INFO', '.' ], sub {
-            my $found = 0;
-            for my $item ( parse_json_stream( decode_utf8( $_[0] ) ) ) {
-                if ( $item->{tag} eq 'GLOBAL_VERSION' ) {
-                    if ( $item->{message} !~ qr{^Använder } ) {
-                        return 0;
-                    }
-                    $found = 1;
-                }
-            }
-            return $found;
-          };
-
-        check_success '--json-stream --no-raw --locale',
-          [ '--test=basic01', '--json-stream', '--no-raw', '--locale=sv_SE.utf8', '--level=INFO', '.' ], sub {
-            my $found = 0;
-            for my $item ( parse_json_stream( decode_utf8( $_[0] ) ) ) {
-                if ( $item->{tag} eq 'GLOBAL_VERSION' ) {
-                    if ( $item->{message} !~ qr{^Använder } ) {
-                        return 0;
-                    }
-                    $found = 1;
-                }
-            }
-            return $found;
-          };
-
-        check_success '--locale', [ '--test=basic01', '--locale=sv_SE.utf8', '.' ], qr{
-            \QSer OK ut.\E
-        }msx;
-    } ## end SKIP:
-
-    check_success '--count', [ '--test=basic01', '--count', '.' ], qr{
-        \QLooks OK.\E
-        .*
-        Level \s+ \QNumber of log entries\E
-        .*
-        INFO \s+ \d+
-        .*
-        DEBUG \s+ \d+
-    }msx;
-
-    check_success '--nstimes', [ '--test=basic01', '--nstimes', '.' ], qr{
-        \QLooks OK.\E
-        .*
-        Server \s+ Max \s+ Min \s+ Avg \s+ Stddev \s+ Median \s+ Total
-        .*
-        \Qa.root-servers.net/\E
-    }msx;
-
-    check_success '--elapsed', [ '--test=basic01', '--elapsed', '.' ], qr{
-        \QLooks OK.\E
-        .*
-        \QTotal test run time:\E
-    }msx;
-
-    check_success '--level',
-      [ '--profile=t/usage.profile', '--ipv4', '--sourceaddr4', '', '--test=basic', '--raw', '--level=notice', '.' ],
-      sub {
-        my $stdout = $_[0];
-
-        return ( $stdout =~ qr{NOTICE .* WARNING .* ERROR}msx )
-          && ( $stdout !~ qr{INFO}msx );
+        return $source6 eq '2001:db8::2';
       };
 
-    check_success '--stop-level',
-      [
-        '--profile=t/usage.profile', '--ipv4', '--sourceaddr4',        '',
-        '--test=basic',              '--raw',  '--stop-level=warning', '.'
-      ],
-      sub {
-        my $stdout = $_[0];
-
-        return ( $stdout =~ qr{NOTICE .* WARNING}msx )
-          && ( $stdout !~ qr{ERROR}m );
-      };
-};
-
-do {
-    local $test_datafile = $PATH_FAKE_DATA_DATAFILE;
-    note "TESTS USING $test_datafile FOR RECORDED DATA:";
-
-  SKIP: {
-        skip 'crashing test that has never worked on replay (FIXME)', 2
-          if not $ENV{ZONEMASTER_RECORD};
-
-        check_success '--ns', [ '--noipv6', '--raw', '--ns=ns1.a.example/9.9.9.9', 'a.se' ], qr{B02_NO_WORKING_NS};
-
-        check_success '--ds',
-          [
-            '--noipv6', '--raw', '--test=dnssec02',
-            '--ds=0,8,2,0000000000000000000000000000000000000000000000000000000000000000',
-            'zonemaster.net'
-          ],
-          qr{DS02_NO_DNSKEY_FOR_DS};
-    }
-};
-
-do {
-    local $test_datafile = $PATH_FAKE_ROOT_DATAFILE;
-    note "TESTS USING $test_datafile FOR RECORDED DATA:";
-
-    check_success '--hints', [ '--noipv6', '--raw', '--hints=t/usage.hints', 'example.' ], qr{CANNOT_CONTINUE}i;
+    check_success '--restore', [ "--restore=$PATH_NORMAL_DATAFILE", '--test=basic01', '--level=INFO', '--raw', '.' ],
+      qr{B01_CHILD_FOUND};
 };
 
 done_testing;

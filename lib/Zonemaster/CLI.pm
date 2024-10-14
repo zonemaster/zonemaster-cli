@@ -18,15 +18,14 @@ use Moose;
 with 'MooseX::Getopt::GLD' => { getopt_conf => [ 'pass_through' ] };
 
 use Encode;
-use Readonly;
 use File::Slurp;
 use JSON::XS;
 use List::Util qw[max uniq];
+use Net::IP::XS;
 use POSIX qw[setlocale LC_MESSAGES LC_CTYPE];
+use Readonly;
 use Scalar::Util qw[blessed];
 use Try::Tiny;
-use Net::IP::XS;
-
 use Zonemaster::LDNS;
 use Zonemaster::Engine;
 use Zonemaster::Engine::Exception;
@@ -244,20 +243,13 @@ has 'count' => (
 has 'progress' => (
     is            => 'ro',
     isa           => 'Bool',
-    default       => !!( -t STDOUT ),
     documentation => __( 'Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off if it is not. Disable with --no-progress.' ),
 );
 
 has 'encoding' => (
     is            => 'ro',
     isa           => 'Str',
-    default       => sub {
-        my $locale = $ENV{LC_CTYPE} // 'C';
-        my ( $e ) = $locale =~ m|\.(.*)$|;
-        $e //= 'UTF-8';
-        return $e;
-    },
-    documentation => __( 'Name of the character encoding used for command line arguments' ),
+    documentation => __( 'Deprecated: Simply remove it from your usage. It is ignored.' ),
 );
 
 has 'nstimes' => (
@@ -351,6 +343,10 @@ sub run {
         return $EXIT_USAGE_ERROR;
     }
 
+    if ( $self->encoding ) {
+        say STDERR __( "Warning: deprecated --encoding, simply remove it from your usage." );
+    }
+
     if ( defined $self->json_translate ) {
         unless ( $self->json or $self->json_stream ) {
             printf STDERR __( "Warning: --json-translate has no effect without either --json or --json-stream." ) . "\n";
@@ -371,6 +367,8 @@ sub run {
     my $fh_diag = ( $self->json or $self->raw or $self->dump_profile )
       ? *STDERR     # Structured output mode (e.g. JSON)
       : *STDOUT;    # Human readable output mode
+
+    my $show_progress = $self->progress // !!-t STDOUT && !$self->json && !$self->raw;
 
     if ( $self->profile ) {
         say $fh_diag __x( "Loading profile from {path}.", path => $self->profile );
@@ -558,7 +556,7 @@ sub run {
         sub {
             my ( $entry ) = @_;
 
-            $self->print_spinner() if $fh_diag eq *STDOUT;
+            print_spinner() if $show_progress;
 
             $counter{ uc $entry->level } += 1;
 
@@ -659,13 +657,21 @@ sub run {
 
     if ( defined $self->hints ) {
         my $hints_data;
+        my $error = undef;
         try {
-            my $hints_text = read_file( $self->hints );
+            my $hints_text = read_file( $self->hints ) // die "read_file failed\n";
+            local $SIG{__WARN__} = \&die;
             $hints_data = parse_hints( $hints_text )
         }
         catch {
-            die "Error loading hints file: $_";
+            $error = $_;
+        };
+
+        if ( defined $error ) {
+            print STDERR __x( "Error loading hints file: {message}", message => $error );
+            return $EXIT_USAGE_ERROR;
         }
+
         Zonemaster::Engine::Recursor->remove_fake_addresses( '.' );
         Zonemaster::Engine::Recursor->add_fake_addresses( '.', $hints_data );
     }
@@ -927,11 +933,9 @@ sub print_versions {
 my @spinner_strings = ( '  | ', '  / ', '  - ', '  \\ ' );
 
 sub print_spinner {
-    my ( $self ) = @_;
-
     state $counter = 0;
 
-    printf "%s\r", $spinner_strings[ $counter++ % 4 ] if $self->progress;
+    printf "%s\r", $spinner_strings[ $counter++ % 4 ];
 
     return;
 }
