@@ -18,7 +18,6 @@ MANIFEST			This list of files
 META.yml
 README.md
 script/zonemaster-cli
-script/zonemaster-info
 share/GNUmakefile
 share/Makefile
 share/locale/da/LC_MESSAGES/Zonemaster-CLI.mo
