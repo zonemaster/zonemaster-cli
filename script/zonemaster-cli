@@ -86,22 +86,22 @@ printed. See the available options below.
 
 =over 4
 
-=item -h -? --usage --help
+=item B<-h>, B<--help>
 
 Print the available command line switches, then exit.
 
-=item --version
+=item B<--version>
 
 Print version information and exit.
 
 =for :man The printed version numbers are the versions of this program as well as the ones from the underlying
 L<Zonemaster> test engine.
 
-=item --list_tests, --list-tests
+=item B<--list-tests>
 
 Print all test cases listed in the test modules, then exit.
 
-=item --dump_profile, --dump-profile
+=item B<--dump-profile>
 
 Print the effective profile used in JSON format, then exit.
 
@@ -111,7 +111,7 @@ Print the effective profile used in JSON format, then exit.
 
 =over 4
 
-=item --test=MODULE, --test=MODULE/TESTCASE, --test=TESTCASE
+=item B<--test>=TESTCASE, B<--test>=TESTMODULE
 
 Limit the testing suite to run only the specified tests.
 Can be specified multiple times.
@@ -122,7 +122,7 @@ name of a test case (test case identifier) in that module, or the name of the
 test case.
 This option is case-insensitive.
 
-=item --level=LEVEL
+=item B<--level>=LEVEL
 
 Specify the minimum level of a message to be printed.
 Default: NOTICE
@@ -134,7 +134,7 @@ The lowest three levels (DEBUG) add a significant amount of messages to be shown
 They reveal some of the internal workings of the test engine, and are probably
 not useful for most users.
 
-=item --stop_level=LEVEL, --stop-level=LEVEL
+=item B<--stop-level>=LEVEL
 
 Specify the minimum severity level after which the testing suite is terminated.
 (default: the empty string)
@@ -145,38 +145,38 @@ no matter what messages are emitted.
 =for :man The levels are, from highest to lowest: CRITICAL, ERROR, WARNING, NOTICE,
 INFO, DEBUG, DEBUG2 and DEBUG3.
 
-=item --[no-]progress
+=item B<--[no-]progress>
 
 Print an activity indicator ("spinner").
 Default: on (if the process' standard output is a TTY)
 
 =for :man Useful to know that something is happening during a run.
 
-=item --[no-]ipv4
+=item B<--[no-]ipv4>
 
 Allow the sending of IPv4 packets.
 Default: on
 
-=item --[no-]ipv6
+=item B<--[no-]ipv6>
 
 Allow the sending of IPv6 packets.
 Default: on
 
-=item --sourceaddr4=IPADDR
+=item B<--sourceaddr4>=IPADDR
 
 Specify the source IPv4 address used to send queries.
 
 =for :man Setting an IPv4 address not correctly configured on a local network interface
 fails silently.
 
-=item --sourceaddr6=IPADDR
+=item B<--sourceaddr6>=IPADDR
 
 Specify the source IPv6 address used to send queries.
 
 =for :man Setting an IPv6 address not correctly configured on a local network interface
 fails silently.
 
-=item --profile=FILE
+=item B<--profile>=FILE
 
 Override the Zonemaster Engine default profile data with values from
 the given profile JSON file.
@@ -187,24 +187,24 @@ the given profile JSON file.
 
 =over 4
 
-=item --[no-]json
+=item B<--[no-]json>
 
 Print results as JSON instead of human language.
 Default: off
 
-=item --[no-]json_stream, --[no-]json-stream
+=item B<--[no-]json-stream>
 
 Stream the results as JSON.
 Default: off
 
 =for :man Useful to follow the progress in a machine-readable way.
 
-=item --[no-]raw
+=item B<--[no-]raw>
 
 Print messages as raw dumps (message identifiers) instead of translating them
 to human language.
 
-=item --locale=LOCALE
+=item B<--locale>=LOCALE
 
 Specify which locale to be used by the translation system.
 
@@ -213,22 +213,22 @@ translation system itself will look at environment variables to try and guess.
 If the requested translation does not exist, it will fallback to the local
 locale, and if that doesn't exist either, to English.
 
-=item --[no-]time
+=item B<--[no-]time>
 
 Print the timestamp for each message.
 Default: on
 
-=item --[no-]show_level, --[no-]show-level
+=item B<--[no-]show-level>
 
 Print the severity level for each message.
 Default: on
 
-=item --[no-]show_module, --[no-]show-module
+=item B<--[no-]show-module>
 
 Print the name of the module which produced the message.
 Default: off
 
-=item --[no-]show_testcase, --[no-]show-testcase
+=item B<--[no-]show-testcase>
 
 Print the name of the test case (test case identifier) which produced the message.
 Default: off
@@ -239,18 +239,18 @@ Default: off
 
 =over 4
 
-=item --[no-]count
+=item B<--[no-]count>
 
 Print a summary, at the end of a run, of the numbers of messages for each severity
 level that were logged during the run.
 Default: off
 
-=item --nstimes
+=item B<--[no-]nstimes>
 
 Print a summary, at the end of a run, of the times (in milliseconds) the zone's
 name servers took to answer.
 
-=item --[no-]elapsed
+=item B<--[no-]elapsed>
 
 Print elapsed time (in seconds) at end of a run.
 Default: off
@@ -261,7 +261,7 @@ Default: off
 
 =over 4
 
-=item --ns=NAME[/IP]
+=item B<--ns>=DOMAINNAME, B<--ns>=DOMAINNAME/IPADDR
 
 Provide information about a nameserver, for undelegated tests.
 
@@ -275,7 +275,7 @@ overridden by --hints) and from which the results of that lookup will be used.
 are present, their aggregated content will be used as the
 entirety of the parent-side delegation information.
 
-=item --ds=KEYTAG,ALGORITHM,TYPE,DIGEST
+=item B<--ds>=KEYTAG,ALGORITHM,TYPE,DIGEST
 
 Provide a DS record for undelegated testing (that is, a test where the
 delegating nameserver information is given via --ns switches).
@@ -284,7 +284,7 @@ delegating nameserver information is given via --ns switches).
 of data (keytag, algorithm, type, digest) should be in the same format they would
 have in a zone file.
 
-=item --hints=FILENAME
+=item B<--hints>=FILE
 
 Name of a root hints file to override the defaults.
 
@@ -294,12 +294,12 @@ Name of a root hints file to override the defaults.
 
 =over 4
 
-=item --save=FILENAME
+=item B<--save>=FILE
 
 Write the contents of the accumulated DNS packet cache to a file with the given name
 after the testing suite has finished running.
 
-=item --restore=FILENAME
+=item B<--restore>=FILE
 
 Prime the DNS packet cache with the contents from the file with the given name
 before starting the testing suite.
@@ -313,15 +313,44 @@ switch.
 
 =over 4
 
-=item --encoding=ENCODING
+=item B<--encoding>=ENCODING
 
 Deprecated: Simply remove it from your usage. It is ignored.
 
-=item --[no-]json_translate, --[no-]json-translate
+=item B<--[no-]json-translate>
 
 Deprecated since v2023.1, use --no-raw instead.
 
 =for :man For streaming JSON output, include the translated message of the tag.
+
+=head2 Option Aliases
+
+These options are provided for compatibility with older scripts.
+The first two are aliases for C<--help>.
+The rest are aliases for their namesakes spelled with dash C<-> instead of
+underscore C<_>.
+
+=over 4
+
+=item B<-?>
+
+=item B<--usage>
+
+=item B<--dump_profile>
+
+=item B<--[no-]json_stream>
+
+=item B<--[no-]json_translate>
+
+=item B<--list_tests>
+
+=item B<--[no-]show_level>
+
+=item B<--[no-]show_module>
+
+=item B<--[no-]show_testcase>
+
+=item B<--stop_level>=LEVEL
 
 =back
 
