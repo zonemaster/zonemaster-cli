@@ -149,6 +149,9 @@ sub run {
 
     if ( $opt_help ) {
         my_pod2usage( verbosity => 1, output => \*STDOUT );
+        say "Severity levels from highest to lowest:";
+        say "  CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2, DEBUG3";
+
         return 0;
     }
 
