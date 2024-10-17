@@ -66,10 +66,9 @@ zonemaster-cli - run Zonemaster tests from the command line
 
 =head1 SYNOPSIS
 
-    zonemaster-cli zonemaster.net
-    zonemaster-cli --test=delegation --level=info --no-time zonemaster.net
-    zonemaster-cli --test=delegation/delegation01 --level=debug zonemaster.net
-    zonemaster-cli --list_tests
+    zonemaster-cli [--help | --version | --list-tests]
+    zonemaster-cli [OPTIONS] --dump-profile
+    zonemaster-cli [OPTIONS] DOMAINNAME
 
 =head1 DESCRIPTION
 
@@ -92,16 +91,22 @@ Print the available command line switches, then exit.
 
 =item B<--version>
 
-Print the versions of this program as well as the ones from the underlying 
-L<Zonemaster> test engine, then exit.
+Print version information and exit.
+
+The printed version numbers are the versions of this program as well as the ones from the underlying
+L<Zonemaster> test engine.
 
 =item B<--list-tests>
 
 Print all test cases listed in the test modules, then exit.
 
+=begin :man
+
 =item B<--dump-profile>
 
 Print the effective profile used in JSON format, then exit.
+
+=end :man
 
 =back
 
@@ -112,65 +117,72 @@ Print the effective profile used in JSON format, then exit.
 =item B<--test>=TESTCASE, B<--test>=TESTMODULE
 
 Limit the testing suite to run only the specified tests.
-This can be the name of a testing module, in which case all test cases from
+Can be specified multiple times.
+
+=for :man This can be the name of a testing module, in which case all test cases from
 that module will be run, or the name of a module followed by a slash and the
 name of a test case (test case identifier) in that module, or the name of the
 test case.
-Can be specified multiple times.
 This option is case-insensitive.
 
 =item B<--level>=LEVEL
 
-Specify the minimum level of a message to be printed. Messages with this level
+Specify the minimum level of a message to be printed.
+Default: NOTICE
+
+=for :man Messages with this level
 (or higher) will be printed. The levels are, from highest to lowest: 
 CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 and DEBUG3.
 The lowest three levels (DEBUG) add a significant amount of messages to be shown.
 They reveal some of the internal workings of the test engine, and are probably 
 not useful for most users.
 
-Default: NOTICE
-
 =item B<--stop-level>=LEVEL
 
 Specify the minimum severity level after which the testing suite is terminated.
-The levels are, from highest to lowest: CRITICAL, ERROR, WARNING, NOTICE,
+
+=for :man The levels are, from highest to lowest: CRITICAL, ERROR, WARNING, NOTICE,
 INFO, DEBUG, DEBUG2 and DEBUG3.
 
 =item B<--[no-]progress>
 
-Print an activity indicator ("spinner"). Useful to know that something is
-happening during a run.
-
+Print an activity indicator ("spinner").
 Default: on (if the process' standard output is a TTY)
+
+=for :man Useful to know that something is happening during a run.
 
 =item B<--[no-]ipv4>
 
 Allow the sending of IPv4 packets.
-
 Default: on
 
 =item B<--[no-]ipv6>
 
 Allow the sending of IPv6 packets.
-
 Default: on
 
 =item B<--sourceaddr4>=IPADDR
 
 Specify the source IPv4 address used to send queries.
-Setting an IPv4 address not correctly configured on a local network interface
+
+=for :man Setting an IPv4 address not correctly configured on a local network interface
 fails silently.
 
 =item B<--sourceaddr6>=IPADDR
 
 Specify the source IPv6 address used to send queries.
-Setting an IPv6 address not correctly configured on a local network interface
+
+=for :man Setting an IPv6 address not correctly configured on a local network interface
 fails silently.
+
+=begin :man
 
 =item B<--profile>=FILE
 
 Override the Zonemaster Engine default profile data with values from
 the given profile JSON file.
+
+=end :man
 
 =back
 
@@ -181,15 +193,14 @@ the given profile JSON file.
 =item B<--[no-]json>
 
 Print results as JSON instead of human language.
-
-Default: off
+Default: on
 
 =item B<--[no-]json-stream>
 
-Stream the results as JSON. Useful to follow the progress in a
-machine-readable way.
-
+Stream the results as JSON.
 Default: off
+
+=for :man Useful to follow the progress in a machine-readable way.
 
 =item B<--[no-]raw>
 
@@ -198,36 +209,40 @@ to human language.
 
 =item B<--locale>=LOCALE
 
-Specify which locale to be used by the translation system. If not given, the
+Specify which locale to be used by the translation system.
+
+=for :man If not given, the
 translation system itself will look at environment variables to try and guess.
 If the requested translation does not exist, it will fallback to the local
 locale, and if that doesn't exist either, to English.
 
+=begin :man
+
 =item B<--[no-]time>
 
 Print the timestamp for each message.
-
 Default: on
 
 =item B<--[no-]show-level>
 
 Print the severity level for each message.
-
 Default: on
 
 =item B<--[no-]show-module>
 
 Print the name of the module which produced the message.
-
 Default: off
 
 =item B<--[no-]show-testcase>
 
 Print the name of the test case (test case identifier) which produced the message.
-
 Default: off
 
+=end :man
+
 =back
+
+=begin :man
 
 =head2 Summary Options
 
@@ -237,7 +252,6 @@ Default: off
 
 Print a summary, at the end of a run, of the numbers of messages for each severity
 level that were logged during the run.
-
 Default: off
 
 =item B<--nstimes>
@@ -248,7 +262,6 @@ name servers took to answer.
 =item B<--[no-]elapsed>
 
 Print elapsed time (in seconds) at end of a run.
-
 Default: off
 
 =back
@@ -313,6 +326,8 @@ Deprecated since v2023.1, use --no-raw instead.
 
 For streaming JSON output, include the translated message of the tag.
 
+=back
+
 =head2 Option Aliases
 
 These options are aliases for their namesakes spelled with dash C<-> instead of
@@ -337,6 +352,18 @@ underscore C<_>.
 =item B<--[no-]show_testcase>
 
 =back
+
+=end :man
+
+=head1 EXAMPLES
+
+    zonemaster-cli zonemaster.net
+
+    zonemaster-cli --test=delegation --level=info --no-time zonemaster.net
+
+    zonemaster-cli --test=delegation/delegation01 --level=debug zonemaster.net
+
+    zonemaster-cli --list_tests
 
 =head1 PROFILES
 
