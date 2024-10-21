@@ -647,7 +647,14 @@ sub run {
     ( my $errors, $domain ) = normalize_name( decode( 'utf8', $domain ) );
 
     if ( $self->ns and @{ $self->ns } > 0 ) {
-        $self->check_fake_delegation( $domain );
+        local $@;
+        eval {
+            $self->check_fake_delegation( $domain );
+            1;
+        } or do {
+            print STDERR $@;
+            return $EXIT_USAGE_ERROR;
+        };
     }
 
     if ( $self->ds and @{ $self->ds } ) {
@@ -685,14 +692,7 @@ sub run {
     }
 
     if ( $self->ns and @{ $self->ns } > 0 ) {
-        local $@;
-        eval {
-            $self->add_fake_delegation( $domain );
-            1;
-        } or do {
-            print STDERR $@;
-            return $EXIT_USAGE_ERROR;
-        };
+        $self->add_fake_delegation( $domain );
     }
 
     if ( $self->ds and @{ $self->ds } ) {
