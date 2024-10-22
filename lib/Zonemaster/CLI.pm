@@ -691,14 +691,6 @@ sub run {
         Zonemaster::Engine::Recursor->add_fake_addresses( '.', $hints_data );
     }
 
-    if ( $self->ns and @{ $self->ns } > 0 ) {
-        $self->add_fake_delegation( $domain );
-    }
-
-    if ( $self->ds and @{ $self->ds } ) {
-        $self->add_fake_ds( $domain );
-    }
-
     if ( $self->profile or $self->test ) {
         # Separate initialization from main output in human readable output mode
         print "\n" if $fh_diag eq *STDOUT;
@@ -736,6 +728,14 @@ sub run {
         $header .= sprintf "%s\n", "=" x $field_width{message};
 
         print $header;
+    }
+
+    if ( $self->ns and @{ $self->ns } > 0 ) {
+        $self->add_fake_delegation( $domain );
+    }
+
+    if ( $self->ds and @{ $self->ds } ) {
+        $self->add_fake_ds( $domain );
     }
 
     # Actually run tests!
