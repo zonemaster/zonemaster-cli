@@ -33,6 +33,7 @@ use Zonemaster::Engine::Normalization qw[normalize_name];
 use Zonemaster::Engine::Logger::Entry;
 use Zonemaster::Engine::Translator;
 use Zonemaster::Engine::Util qw[parse_hints];
+use Zonemaster::Engine::Validation qw[validate_ipv4 validate_ipv6];
 
 our %numeric = Zonemaster::Engine::Logger::Entry->levels;
 our $JSON    = JSON::XS->new->allow_blessed->convert_blessed->canonical;
@@ -41,8 +42,7 @@ Readonly our $EXIT_SUCCESS       => 0;
 Readonly our $EXIT_GENERIC_ERROR => 1;
 Readonly our $EXIT_USAGE_ERROR   => 2;
 
-Readonly our $IPV4_RE => qr/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/;
-Readonly our $IPV6_RE => qr/^[0-9a-f:]*:[0-9a-f:]+(:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})?$/i;
+Readonly our $DS_RE => qr/^(?:[[:digit:]]+,){3}[[:xdigit:]]+$/;
 
 STDOUT->autoflush( 1 );
 
@@ -646,6 +646,21 @@ sub run {
 
     ( my $errors, $domain ) = normalize_name( decode( 'utf8', $domain ) );
 
+    if ( $self->ns and @{ $self->ns } > 0 ) {
+        local $@;
+        eval {
+            $self->check_fake_delegation( $domain );
+            1;
+        } or do {
+            print STDERR $@;
+            return $EXIT_USAGE_ERROR;
+        };
+    }
+
+    if ( $self->ds and @{ $self->ds } ) {
+        $self->check_fake_ds( $domain );
+    }
+
     if ( scalar @$errors > 0 ) {
         my $error_message;
         foreach my $err ( @$errors ) {
@@ -674,21 +689,6 @@ sub run {
 
         Zonemaster::Engine::Recursor->remove_fake_addresses( '.' );
         Zonemaster::Engine::Recursor->add_fake_addresses( '.', $hints_data );
-    }
-
-    if ( $self->ns and @{ $self->ns } > 0 ) {
-        local $@;
-        eval {
-            $self->add_fake_delegation( $domain );
-            1;
-        } or do {
-            print STDERR $@;
-            return $EXIT_USAGE_ERROR;
-        };
-    }
-
-    if ( $self->ds and @{ $self->ds } ) {
-        $self->add_fake_ds( $domain );
     }
 
     if ( $self->profile or $self->test ) {
@@ -728,6 +728,14 @@ sub run {
         $header .= sprintf "%s\n", "=" x $field_width{message};
 
         print $header;
+    }
+
+    if ( $self->ns and @{ $self->ns } > 0 ) {
+        $self->add_fake_delegation( $domain );
+    }
+
+    if ( $self->ds and @{ $self->ds } ) {
+        $self->add_fake_ds( $domain );
     }
 
     # Actually run tests!
@@ -858,10 +866,9 @@ sub run {
     return $EXIT_SUCCESS;
 }
 
-sub add_fake_delegation {
-    my ( $self, $domain ) = @_;
-    my @ns_with_no_ip;
-    my %data;
+
+sub check_fake_delegation {
+    my ( $self ) = @_;
 
     foreach my $pair ( @{ $self->ns } ) {
         my ( $name, $ip ) = split( '/', $pair, 2 );
@@ -882,15 +889,41 @@ sub add_fake_delegation {
 
         if ( $ip ) {
             my $net_ip = Net::IP::XS->new( $ip );
-            if ( ( $ip =~ /($IPV4_RE)/ && Net::IP::XS::ip_is_ipv4( $ip ) )
-                or
-                 ( $ip =~ /($IPV6_RE)/ && Net::IP::XS::ip_is_ipv6( $ip ) )
-            ) {
-                push @{ $data{ $name } }, $ip;
-            }
-            else {
+	    unless( validate_ipv4( $ip ) or validate_ipv6( $ip ) )
+	    {
                 die Net::IP::XS::Error() ? "Invalid IP address in --ns argument:\n\t". Net::IP::XS::Error() ."\n" : "Invalid IP address in --ns argument.\n";
             }
+        }
+    }
+
+    return;
+}
+
+sub check_fake_ds {
+    my ( $self ) = @_;
+
+    foreach my $str ( @{ $self->ds } ) {
+        unless ( $str =~ /$DS_RE/ ) {
+            say STDERR __( "--ds ds data must be in the form \"keytag,algorithm,type,digest\". E.g. space is not permitted anywhere in the string.");
+            exit( 1 );
+        }
+    }
+
+    return;
+}
+
+sub add_fake_delegation {
+    my ( $self, $domain ) = @_;
+    my @ns_with_no_ip;
+    my %data;
+
+    foreach my $pair ( @{ $self->ns } ) {
+        my ( $name, $ip ) = split( '/', $pair, 2 );
+
+        ( my $errors, $name ) = normalize_name( decode( 'utf8', $name ) );
+
+        if ( $ip ) {
+            push @{ $data{ $name } }, $ip;
         }
         else {
             push @ns_with_no_ip, $name;
