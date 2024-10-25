@@ -156,30 +156,18 @@ Default: on (if the process' standard output is a TTY)
 
 =for :man Useful to know that something is happening during a run.
 
-=item B<--[no-]ipv4>
+=item B<--[no-]ipv4>, B<--[no-]ipv6>
 
-Allow the sending of IPv4 packets.
-Default: on
-
-=item B<--[no-]ipv6>
-
-Allow the sending of IPv6 packets.
-Default: on
+Enable or disable queries over IPv4 or IPv6.
+Default: both enabled
 
 =begin :man
 
-=item B<--sourceaddr4>=IPADDR
+=item B<--sourceaddr4>=IPADDR, B<--sourceaddr6>=IPADDR
 
-Specify the source IPv4 address used to send queries.
+Set IPv4 or IPv6 source address for DNS queries.
 
-=for :man Setting an IPv4 address not correctly configured on a local network interface
-fails silently.
-
-=item B<--sourceaddr6>=IPADDR
-
-Specify the source IPv6 address used to send queries.
-
-=for :man Setting an IPv6 address not correctly configured on a local network interface
+=for :man Setting an address not correctly configured on a local network interface
 fails silently.
 
 =end :man
