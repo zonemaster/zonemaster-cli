@@ -115,6 +115,7 @@ Print the effective profile used in JSON format, then exit.
 
 Limit the testing suite to run only the specified tests.
 Can be specified multiple times.
+(default: all test cases)
 
 =for :man This can be the name of a testing module, in which case all test cases from
 that module will be run, or the name of a module followed by a slash and the
@@ -125,7 +126,7 @@ This option is case-insensitive.
 =item B<--level>=LEVEL
 
 Specify the minimum level of a message to be printed.
-Default: NOTICE
+(default: NOTICE)
 
 =for :man Messages with this level
 (or higher) will be printed. The levels are, from highest to lowest:
@@ -152,14 +153,14 @@ INFO, DEBUG, DEBUG2 and DEBUG3.
 =item B<--[no-]progress>
 
 Print an activity indicator ("spinner").
-Default: on (if the process' standard output is a TTY)
+(default: enabled if the process' standard output is a TTY)
 
 =for :man Useful to know that something is happening during a run.
 
 =item B<--[no-]ipv4>, B<--[no-]ipv6>
 
 Enable or disable queries over IPv4 or IPv6.
-Default: both enabled
+(default: both enabled)
 
 =begin :man
 
@@ -186,14 +187,14 @@ the given profile JSON file.
 =item B<--[no-]json>
 
 Print results as JSON instead of human language.
-Default: off
+(default: disabled)
 
 =begin :man
 
 =item B<--[no-]json-stream>
 
 Stream the results as JSON.
-Default: off
+(default: disabled)
 
 =for :man Useful to follow the progress in a machine-readable way.
 
@@ -207,6 +208,7 @@ to human language.
 =item B<--locale>=LOCALE
 
 Specify which locale to be used by the translation system.
+(default: system locale or English)
 
 =for :man If not given, the
 translation system itself will look at environment variables to try and guess.
@@ -218,22 +220,22 @@ locale, and if that doesn't exist either, to English.
 =item B<--[no-]time>
 
 Print the timestamp for each message.
-Default: on
+(default: enabled)
 
 =item B<--[no-]show-level>
 
 Print the severity level for each message.
-Default: on
+(default: enabled)
 
 =item B<--[no-]show-module>
 
 Print the name of the module which produced the message.
-Default: off
+(default: disabled)
 
 =item B<--[no-]show-testcase>
 
 Print the name of the test case (test case identifier) which produced the message.
-Default: off
+(default: disabled)
 
 =end :man
 
@@ -249,17 +251,18 @@ Default: off
 
 Print a summary, at the end of a run, of the numbers of messages for each severity
 level that were logged during the run.
-Default: off
+(default: disabled)
 
 =item B<--[no-]nstimes>
 
 Print a summary, at the end of a run, of the times (in milliseconds) the zone's
 name servers took to answer.
+(default: disabled)
 
 =item B<--[no-]elapsed>
 
 Print elapsed time (in seconds) at end of a run.
-Default: off
+(default: disabled)
 
 =back
 
