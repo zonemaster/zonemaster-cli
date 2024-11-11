@@ -296,11 +296,11 @@ do {
     }msx;
 
   SKIP: {
-        skip 'sv_SE.utf8 locale is unavailable', 5
-          if !has_locale( 'sv_SE.utf8' );
+        skip 'sv_SE.UTF-8 locale is unavailable', 5
+          if !has_locale( 'sv_SE.UTF-8' );
 
         check_success '--json-stream --no-raw',
-          [ '--test=basic01', '--json-stream', '--no-raw', '--locale=sv_SE.utf8', '--level=INFO', '.' ], sub {
+          [ '--test=basic01', '--json-stream', '--no-raw', '--locale=sv_SE.UTF-8', '--level=INFO', '.' ], sub {
             my $found = 0;
             for my $item ( parse_json_stream( decode_utf8( $_[0] ) ) ) {
                 if ( $item->{tag} eq 'GLOBAL_VERSION' ) {
@@ -314,7 +314,7 @@ do {
           };
 
         check_success '--json-stream --json-translate',
-          [ '--test=basic01', '--json-stream', '--json-translate', '--locale=sv_SE.utf8', '--level=INFO', '.' ], sub {
+          [ '--test=basic01', '--json-stream', '--json-translate', '--locale=sv_SE.UTF-8', '--level=INFO', '.' ], sub {
             my $found = 0;
             for my $item ( parse_json_stream( decode_utf8( $_[0] ) ) ) {
                 if ( $item->{tag} eq 'GLOBAL_VERSION' ) {
@@ -328,7 +328,7 @@ do {
           };
 
         check_success '--json-stream --no-raw --locale',
-          [ '--test=basic01', '--json-stream', '--no-raw', '--locale=sv_SE.utf8', '--level=INFO', '.' ], sub {
+          [ '--test=basic01', '--json-stream', '--no-raw', '--locale=sv_SE.UTF-8', '--level=INFO', '.' ], sub {
             my $found = 0;
             for my $item ( parse_json_stream( decode_utf8( $_[0] ) ) ) {
                 if ( $item->{tag} eq 'GLOBAL_VERSION' ) {
@@ -342,7 +342,7 @@ do {
           };
 
         check_success '--json-stream --json-translate --locale',
-          [ '--test=basic01', '--json-stream', '--no-raw', '--locale=sv_SE.utf8', '--level=INFO', '.' ], sub {
+          [ '--test=basic01', '--json-stream', '--no-raw', '--locale=sv_SE.UTF-8', '--level=INFO', '.' ], sub {
             my $found = 0;
             for my $item ( parse_json_stream( decode_utf8( $_[0] ) ) ) {
                 if ( $item->{tag} eq 'GLOBAL_VERSION' ) {
@@ -355,7 +355,7 @@ do {
             return $found;
           };
 
-        check_success '--locale', [ '--test=basic01', '--locale=sv_SE.utf8', '.' ], qr{
+        check_success '--locale', [ '--test=basic01', '--locale=sv_SE.UTF-8', '.' ], qr{
             \QSer OK ut.\E
         }msx;
     } ## end SKIP:
