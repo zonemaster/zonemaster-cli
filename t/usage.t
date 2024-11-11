@@ -556,13 +556,17 @@ do {
         basic01
     }msx;
 
-    check_success '--dump-profile', ['--dump-profile'], qr{
-        "no_network"
-    }msx;
+  SKIP: {
+        skip 'test that hang on FreeBSD (FIXME, see #388)', 2;
 
-    check_success '--dump_profile', ['--dump_profile'], qr{
-        "no_network"
-    }msx;
+        check_success '--dump-profile', ['--dump-profile'], qr{
+            "no_network"
+        }msx;
+
+        check_success '--dump_profile', ['--dump_profile'], qr{
+            "no_network"
+        }msx;
+    };
 
     check_success 'override profile', [ '--dump-profile', '--profile=t/usage.profile' ], sub {
         my ( $profile ) = parse_json_stream( $_[0] );
