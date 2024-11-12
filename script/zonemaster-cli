@@ -373,7 +373,7 @@ underscore C<_>.
 
     zonemaster-cli --test=delegation --level=info --no-time zonemaster.net
 
-    zonemaster-cli --test=delegation/delegation01 --level=debug zonemaster.net
+    zonemaster-cli --test=delegation01 --level=debug zonemaster.net
 
     zonemaster-cli --list-tests
 
