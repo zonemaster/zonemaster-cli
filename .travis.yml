@@ -55,9 +55,6 @@ before_install:
   # Zonemaster LDNS needs a newer version of Module::Install
 - cpan-install Module::Install Module::Install::XSUtil
 
-  # Moose installed from OS package depends on a newer version of Devel::OverloadInfo
-- cpan-install Devel::OverloadInfo Moose MooseX::Getopt
-
   # IO::Socket::INET6 can't find Socket6 installed from OS package
 - cpan-install Socket6 IO::Socket::INET6
 
