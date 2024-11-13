@@ -218,6 +218,10 @@ This option is case-insensitive.
 =item --stop_level=LEVEL, --stop-level=LEVEL
 
 Specify the minimum severity level after which the testing suite is terminated.
+(default: the empty string)
+
+=for :man When set to the empty string, testing is allowed to complete normally
+no matter what messages are emitted.
 
 =for :man The levels are, from highest to lowest: CRITICAL, ERROR, WARNING, NOTICE,
 INFO, DEBUG, DEBUG2 and DEBUG3.

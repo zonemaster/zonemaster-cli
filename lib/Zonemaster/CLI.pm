@@ -18,7 +18,7 @@ use Locale::TextDomain 'Zonemaster-CLI';
 
 use Encode;
 use File::Slurp;
-use Getopt::Long qw[GetOptionsFromArray :config bundling no_auto_abbrev];
+use Getopt::Long qw[GetOptionsFromArray :config gnu_compat bundling no_auto_abbrev];
 use JSON::XS;
 use List::Util qw[max uniq];
 use Net::IP::XS;
@@ -92,7 +92,7 @@ sub run {
     my $opt_show_testcase = 0;
     my $opt_sourceaddr4;
     my $opt_sourceaddr6;
-    my $opt_stop_level = 'CRITICAL';
+    my $opt_stop_level = '';
     my @opt_test       = ();
     my $opt_time       = 1;
     my $opt_version    = 0;

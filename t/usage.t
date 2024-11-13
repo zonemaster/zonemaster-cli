@@ -430,7 +430,9 @@ do {
           && ( $stdout !~ qr{INFO}msx );
       };
 
-    check_success '--stop-level',
+    check_success '--stop-level=', [ '--profile=t/usage.profile', '--stop-level=', '.' ], qr{Looks OK}i;
+
+    check_success '--stop-level=warning',
       [
         '--profile=t/usage.profile', '--ipv4', '--sourceaddr4',        '',
         '--test=basic',              '--raw',  '--stop-level=warning', '.'
