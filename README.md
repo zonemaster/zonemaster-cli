@@ -38,8 +38,13 @@ To build your own Docker image, see the [Docker Image Creation] documentation.
 
 ## Documentation
 
-Other than the installation documentation, no specific documentation is needed.
-The [USING] document provides an overview on how to use the CLI.
+Run `zonemaster-cli --help` to get brief descriptions of a selection of the most
+important command line options.
+For complete reference documentation, see the manual page by running `man
+zonemaster-cli`.
+Additional end-user documentation is available in the [USING] document.
+
+When developing Zonemaster-CLI, refer to the [development documentation].
 
 
 ## Participation, Contact and Bug reporting
@@ -54,6 +59,7 @@ This is free software under a 2-clause BSD license. The full text of the license
 be found in the [LICENSE](LICENSE) file included in this respository.
 
 
+[Development documentation]:         https://github.com/zonemaster/zonemaster/blob/master/docs/public/development/cli.md
 [Docker Image Creation]:             https://github.com/zonemaster/zonemaster/blob/master/docs/internal/maintenance/ReleaseProcess-create-docker-image.md
 [Docker Hub]:                        https://hub.docker.com/u/zonemaster
 [Installation]:                      https://github.com/zonemaster/zonemaster/blob/master/docs/public/installation/zonemaster-cli.md
