@@ -95,7 +95,7 @@ sub run {
     my $opt_sourceaddr4;
     my $opt_sourceaddr6;
     my $opt_stop_level = '';
-    my $opt_test       = '';
+    my @opt_test       = ();
     my $opt_time       = 1;
     my $opt_version    = 0;
 
@@ -140,7 +140,7 @@ sub run {
             'sourceaddr6=s'   => \$opt_sourceaddr6,
             'stop-level=s'    => \$opt_stop_level,
             'stop_level=s'    => \$opt_stop_level,
-            'test=s'          => \$opt_test,
+            'test=s'          => \@opt_test,
             'time!'           => \$opt_time,
             'version!'        => \$opt_version,
         ) or do {
@@ -259,14 +259,16 @@ sub run {
             Zonemaster::Engine->all_methods,
         );
 
-        my @modifiers = Zonemaster::CLI::TestCaseSet->parse_modifier_expr( $opt_test );
-        while ( @modifiers ) {
-            my $op   = shift @modifiers;
-            my $term = shift @modifiers;
+        for my $test ( @opt_test ) {
+            my @modifiers = Zonemaster::CLI::TestCaseSet->parse_modifier_expr( $test );
+            while ( @modifiers ) {
+                my $op   = shift @modifiers;
+                my $term = shift @modifiers;
 
-            if ( !$cases->apply_modifier( $op, $term ) ) {
-                say STDERR __x( "Error: Unrecognized term '$term' in --test.\n" );
-                return $EXIT_USAGE_ERROR;
+                if ( !$cases->apply_modifier( $op, $term ) ) {
+                    say STDERR __x( "Error: Unrecognized term '$term' in --test.\n" );
+                    return $EXIT_USAGE_ERROR;
+                }
             }
         }
 
@@ -493,7 +495,7 @@ sub run {
         }
     }
 
-    if ( $opt_profile or $opt_test ne '' ) {
+    if ( $opt_profile or @opt_test ) {
         # Separate initialization from main output in human readable output mode
         print "\n" if $fh_diag eq *STDOUT;
     }

@@ -644,6 +644,26 @@ do {
         return $source6 eq '2001:db8::2';
       };
 
+    check_success 'override test_cases',
+      [ '--dump-profile', '--profile=t/usage.profile', '--test=basic01' ], sub {
+        my ( $profile ) = parse_json_stream( $_[0] );
+
+        return
+             ref $profile->{test_cases} eq 'ARRAY'
+          && scalar @{ $profile->{test_cases} } == 1
+          && $profile->{test_cases}[0] eq 'basic01';
+      };
+
+    check_success 'override test_cases twice',
+      [ '--dump-profile', '--profile=t/usage.profile', '--test=-all', '--test=+basic01' ], sub {
+        my ( $profile ) = parse_json_stream( $_[0] );
+
+        return
+             ref $profile->{test_cases} eq 'ARRAY'
+          && scalar @{ $profile->{test_cases} } == 1
+          && $profile->{test_cases}[0] eq 'basic01';
+      };
+
     check_success '--restore', [ "--restore=$PATH_NORMAL_DATAFILE", '--test=basic01', '--level=INFO', '--raw', '.' ],
       qr{B01_CHILD_FOUND};
 };

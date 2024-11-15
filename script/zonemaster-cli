@@ -114,7 +114,7 @@ Print the effective profile used in JSON format, then exit.
 =item B<--test>=TESTCASE, B<--test>=TESTMODULE
 
 Limit the testing suite to run only the specified tests.
-(default: the empty string)
+Can be specified multiple times.
 
 =begin :man
 
