@@ -158,7 +158,9 @@ otherwise have run.
 
 =item --test=
 
-(i.e., the empty string) leaves the set of tests to run unmodified.
+(i.e., the empty string) leaves the set of tests to run unmodified,
+which means that all test cases enabled by the profile will
+be run.
 
 =back
 
