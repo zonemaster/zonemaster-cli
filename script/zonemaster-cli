@@ -123,6 +123,11 @@ Here are some examples:
 
 =over 4
 
+=item --test=all
+
+runs all defined test cases including any test cases 
+disabled by the profile.
+
 =item --test=B<nameserver>
 
 runs the entire Nameserver test module, and nothing else.
