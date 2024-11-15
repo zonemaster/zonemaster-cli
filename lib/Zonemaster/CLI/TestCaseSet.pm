@@ -11,7 +11,7 @@ use Carp qw( croak );
 
 =head1 SYNOPSIS
 
-    use Zonemaster::Engine::TestCaseSet;
+    use Zonemaster::CLI::TestCaseSet;
 
     # Construct a working subset of test methods {alpha01, alpha02, alpha03,
     # beta01} of test methods out of the full set {alpha01, alpha02, alpha03,
