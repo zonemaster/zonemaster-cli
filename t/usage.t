@@ -531,7 +531,7 @@ do {
       qr{failed to recognize stop level}i;
 
     check_usage_error '--json-stream and --no-json', [ '--json-stream', '--no-json', 'example.' ],
-      qr{can't be used together}i;
+      qr{cannot be used together}i;
 
     check_usage_error 'Bad --hints (directory)', [ '--hints', '/', 'example.' ],
       qr{error loading hints file}i;
