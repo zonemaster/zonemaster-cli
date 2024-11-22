@@ -18,11 +18,13 @@ addons:
     - cpanminus
     - libclone-perl
     - libdevel-checklib-perl
+    - libextutils-pkgconfig-perl
     - libfile-sharedir-perl
     - libfile-slurp-perl
     - libidn2-dev
     - libintl-perl
     - libjson-pp-perl
+    - liblist-compare-perl
     - liblist-moreutils-perl
     - liblocale-msgfmt-perl
     - libmail-rfc822-address-perl
