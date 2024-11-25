@@ -169,12 +169,15 @@ sub run {
 
     # Set LC_MESSAGES and LC_CTYPE separately (https://www.gnu.org/software/gettext/manual/html_node/Triggering.html#Triggering)
     if ( not defined setlocale( LC_MESSAGES, "" ) ) {
-        printf STDERR __( "Warning: setting locale category LC_MESSAGES to %s failed (is it installed on this system?).\n\n" ),
-        $ENV{LANGUAGE} || $ENV{LC_ALL} || $ENV{LC_MESSAGES};
+        my $locale = ($ENV{LANGUAGE} || $ENV{LC_ALL} || $ENV{LC_MESSAGES});
+        say STDERR __x( "Warning: setting locale category LC_MESSAGES to {locale} failed -- is it installed on this system?\n\n",
+                        locale => $locale)
     }
+    
     if ( not defined setlocale( LC_CTYPE, "" ) ) {
-        printf STDERR __( "Warning: setting locale category LC_CTYPE to %s failed (is it installed on this system?).\n\n" ),
-        $ENV{LC_ALL} || $ENV{LC_CTYPE};
+        my $locale = ($ENV{LC_ALL} || $ENV{LC_CTYPE});
+        say STDERR __x( "Warning: setting locale category LC_CTYPE to {locale} failed -- is it installed on this system?\n\n",
+                       locale => $locale)
     }
 
     if ( $opt_version ) {
@@ -193,7 +196,7 @@ sub run {
     }
 
     if ( $opt_json_stream and defined $opt_json and not $opt_json ) {
-        say STDERR __( "Error: --json-stream and --no-json can't be used together." );
+        say STDERR __( "Error: --json-stream and --no-json cannot be used together." );
         return $EXIT_USAGE_ERROR;
     }
 
@@ -260,7 +263,8 @@ sub run {
         foreach my $t ( @opt_test ) {
             # There should be at most one slash character
             if ( $t =~ tr/\/// > 1 ) {
-                say STDERR __( "Error: Invalid input '$t' in --test. There must be at most one slash ('/') character.");
+                say STDERR __x( "Error: Invalid input '{cli_arg}' in --test. There must be at most one slash ('/') character.",
+                                cli_arg => $t);
                 return $EXIT_USAGE_ERROR;
             }
 
@@ -280,12 +284,14 @@ sub run {
                         push @testing_suite, "$module/$method";
                     }
                     else {
-                        say STDERR __( "Error: Unrecognized test case '$method' in --test. Use --list-tests for a list of valid choices." );
+                        say STDERR __x( "Error: Unrecognized test case '{testcase}' in --test. Use --list-tests for a list of valid choices.",
+                                        testcase => $method );
                         return $EXIT_USAGE_ERROR;
                     }
                 }
                 else {
-                    say STDERR __( "Error: Unrecognized test module '$module' in --test. Use --list-tests for a list of valid choices." );
+                    say STDERR __x( "Error: Unrecognized test module '{module}' in --test. Use --list-tests for a list of valid choices.",
+                                    module => $module );
                     return $EXIT_USAGE_ERROR;
                 }
             }
@@ -297,7 +303,8 @@ sub run {
                     push @testing_suite, $t;
                 }
                 else {
-                    say STDERR __( "Error: Invalid input '$t' in --test." );
+                    say STDERR __x( "Error: Invalid input '{cli_arg}' in --test.",
+                                    cli_arg => $t);
                     return $EXIT_USAGE_ERROR;
                 }
             }
@@ -320,7 +327,8 @@ sub run {
             if ( $method ) {
                 # Test case in not already in the profile, we add it explicitly and notify the user
                 if ( not grep( /^$method$/, @actual_test_cases ) ) {
-                    say $fh_diag __x( "Notice: Engine does not have test case '$method' enabled in the profile. Forcing...");
+                    say $fh_diag __x( "Notice: Engine does not have test case '{testcase}' enabled in the profile. Forcing...",
+                        testcase => $method );
                     push @actual_test_cases, $method;
                 }
             }
@@ -354,7 +362,7 @@ sub run {
     }
 
     if ( $opt_stop_level and not defined( $numeric{$opt_stop_level} ) ) {
-        say STDERR __x( "Failed to recognize stop level 'level'.", level => $opt_stop_level );
+        say STDERR __x( "Failed to recognize stop level '{level}'.", level => $opt_stop_level );
         return $EXIT_USAGE_ERROR;
     }
 
