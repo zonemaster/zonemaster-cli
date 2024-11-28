@@ -1,4 +1,4 @@
-FROM zonemaster/engine:local as build
+FROM zonemaster/engine:local AS build
 
 RUN apk add --no-cache \
     make \
