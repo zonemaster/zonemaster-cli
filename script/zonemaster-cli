@@ -212,8 +212,8 @@ Specify which locale to be used by the translation system.
 
 =for :man If not given, the
 translation system itself will look at environment variables to try and guess.
-If the requested translation does not exist, it will fallback to the local
-locale, and if that doesn't exist either, to English.
+If the requested translation does not exist, it will fall back to the local
+locale, and if that does not exist either, to English.
 
 =begin :man
 
@@ -384,7 +384,7 @@ guided by a profile.
 Zonemaster Engine has a default profile with sensible defaults.
 Zonemaster CLI allows users to override the default profile data with
 values from a profile JSON file with the C<--profile> option.
-For details on profiles and how they're respresented in files, see
+For details on profiles and how they are respresented in files, see
 L<Zonemaster::Engine::Profile>.
 
 =head1 CONFIGURATION
@@ -416,7 +416,8 @@ the loaded config files.
 
 =head1 SEE ALSO
 
-L<Zonemaster>
+More complete documentation on Zonemaster and its tests can be found on
+L<https://doc.zonemaster.net>.
 
 =head1 AUTHOR
 
