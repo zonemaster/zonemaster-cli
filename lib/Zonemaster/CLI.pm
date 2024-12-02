@@ -394,86 +394,96 @@ sub run {
     my %remaining_space = ();
 
     # Callback defined here so it closes over the setup above.
-    Zonemaster::Engine->logger->callback(
-        sub {
-            my ( $entry ) = @_;
+    # But we can’t use it right now because the translator isn’t initialized.
+    my $message_printer = sub {
+        my ( $entry ) = @_;
 
-            print_spinner() if $show_progress;
+        print_spinner() if $show_progress;
 
-            $counter{ uc $entry->level } += 1;
+        $counter{ uc $entry->level } += 1;
 
-            if ( $numeric{ uc $entry->level } >= $numeric{$opt_level} ) {
-                $printed_something = 1;
+        if ( $numeric{ uc $entry->level } >= $numeric{$opt_level} ) {
+            $printed_something = 1;
 
-                if ( $opt_json and $opt_json_stream ) {
-                    my %r;
+            if ( $opt_json and $opt_json_stream ) {
+                my %r;
 
-                    $r{timestamp} = $entry->timestamp if $opt_time;
-                    $r{module}    = $entry->module    if $opt_show_module;
-                    $r{testcase}  = $entry->testcase  if $opt_show_testcase;
-                    $r{tag}       = $entry->tag;
-                    $r{level}     = $entry->level if $opt_show_level;
-                    $r{args}      = $entry->args  if $entry->args;
-                    $r{message}   = $translator->translate_tag( $entry ) unless $opt_raw;
+                $r{timestamp} = $entry->timestamp if $opt_time;
+                $r{module}    = $entry->module    if $opt_show_module;
+                $r{testcase}  = $entry->testcase  if $opt_show_testcase;
+                $r{tag}       = $entry->tag;
+                $r{level}     = $entry->level if $opt_show_level;
+                $r{args}      = $entry->args  if $entry->args;
+                $r{message}   = $translator->translate_tag( $entry ) unless $opt_raw;
 
-                    say $JSON->encode( \%r );
+                say $JSON->encode( \%r );
+            }
+            elsif ( $opt_json and not $opt_json_stream ) {
+                # Don't do anything
+            }
+            else {
+                my $prefix = q{};
+                if ( $opt_time ) {
+                    $prefix .= sprintf "%*.2f ", ${field_width{seconds}}, $entry->timestamp;
                 }
-                elsif ( $opt_json and not $opt_json_stream ) {
-                    # Don't do anything
+
+                if ( $opt_show_level ) {
+                    $prefix .= $opt_raw ? $entry->level : translate_severity( $entry->level );
+                    my $space_l10n =
+                        ${ field_width { level } } - length( decode_utf8( translate_severity( $entry->level ) ) ) + 1;
+                    $prefix .= ' ' x $space_l10n;
+                }
+
+                if ( $opt_show_module ) {
+                    $prefix .= sprintf "%-*s ", ${field_width{module}}, $entry->module;
+                }
+
+                if ( $opt_show_testcase ) {
+                    $prefix .= sprintf "%-*s ", ${field_width{testcase}}, $entry->testcase;
+                }
+
+                if ( $opt_raw ) {
+                    $prefix .= $entry->tag;
+
+                    my $message = $entry->argstr;
+                    my @lines = split /\n/, $message;
+
+                    printf "%s%s %s\n", $prefix, ' ', @lines ? shift @lines : '';
+                    for my $line ( @lines ) {
+                        printf "%s%s %s\n", $prefix, '>', $line;
+                    }
                 }
                 else {
-                    my $prefix = q{};
-                    if ( $opt_time ) {
-                        $prefix .= sprintf "%*.2f ", ${field_width{seconds}}, $entry->timestamp;
-                    }
-
-                    if ( $opt_show_level ) {
-                        $prefix .= $opt_raw ? $entry->level : translate_severity( $entry->level );
-                        my $space_l10n =
-                          ${ field_width { level } } - length( decode_utf8( translate_severity( $entry->level ) ) ) + 1;
-                        $prefix .= ' ' x $space_l10n;
-                    }
-
-                    if ( $opt_show_module ) {
-                        $prefix .= sprintf "%-*s ", ${field_width{module}}, $entry->module;
-                    }
-
-                    if ( $opt_show_testcase ) {
-                        $prefix .= sprintf "%-*s ", ${field_width{testcase}}, $entry->testcase;
-                    }
-
-                    if ( $opt_raw ) {
-                        $prefix .= $entry->tag;
-
-                        my $message = $entry->argstr;
-                        my @lines = split /\n/, $message;
-
-                        printf "%s%s %s\n", $prefix, ' ', @lines ? shift @lines : '';
-                        for my $line ( @lines ) {
-                            printf "%s%s %s\n", $prefix, '>', $line;
+                    if ( $entry->level eq q{DEBUG3} and scalar( keys %{$entry->args} ) == 1 and defined $entry->args->{packet} ) {
+                        my $packet = $entry->args->{packet};
+                        my $padding = q{ } x length $prefix;
+                        $entry->args->{packet} = q{};
+                        printf "%s%s\n", $prefix, $translator->translate_tag( $entry );
+                        foreach my $line ( split /\n/, $packet ) {
+                            printf "%s%s\n", $padding, $line;
                         }
                     }
                     else {
-                        if ( $entry->level eq q{DEBUG3} and scalar( keys %{$entry->args} ) == 1 and defined $entry->args->{packet} ) {
-                            my $packet = $entry->args->{packet};
-                            my $padding = q{ } x length $prefix;
-                            $entry->args->{packet} = q{};
-                            printf "%s%s\n", $prefix, $translator->translate_tag( $entry );
-                            foreach my $line ( split /\n/, $packet ) {
-                                printf "%s%s\n", $padding, $line;
-                            }
-                        }
-                        else {
-                            printf "%s%s\n", $prefix, $translator->translate_tag( $entry );
-                        }
+                        printf "%s%s\n", $prefix, $translator->translate_tag( $entry );
                     }
                 }
             }
-            if ( $opt_stop_level and $numeric{ uc $entry->level } >= $numeric{$opt_stop_level} ) {
-                die( Zonemaster::Engine::Exception::NormalExit->new( { message => "Saw message at level " . $entry->level } ) );
-            }
+        }
+        if ( $opt_stop_level and $numeric{ uc $entry->level } >= $numeric{$opt_stop_level} ) {
+            die( Zonemaster::Engine::Exception::NormalExit->new( { message => "Saw message at level " . $entry->level } ) );
+        }
+    };
+
+    # Instead, hold early messages in a temporary queue and switch to the
+    # actual callback when we are ready.
+    my @held_messages;
+    Zonemaster::Engine->logger->callback(
+        sub {
+            my ( $entry ) = @_;
+            push @held_messages, @_;
         }
     );
+
 
     if ( @argv > 1 ) {
         say STDERR __(
@@ -534,6 +544,7 @@ sub run {
         Zonemaster::Engine::Recursor->add_fake_addresses( '.', $hints_data );
     }
 
+    # This can generate early log messages.
     if ( @opt_ns ) {
         local $@;
         eval {
@@ -613,6 +624,13 @@ sub run {
     if ( @opt_ds ) {
         add_fake_ds( $domain, @opt_ds );
     }
+
+    # Now we are ready to actually print messages, including those that are
+    # currently in the hold queue.
+    while (my $entry = pop @held_messages) {
+        $message_printer->($entry);
+    }
+    Zonemaster::Engine->logger->callback($message_printer);
 
     # Actually run tests!
     eval {
