@@ -72,7 +72,7 @@ zonemaster-cli - run Zonemaster tests from the command line
 
 =head1 DESCRIPTION
 
-L<zonemaster-cli> is a command-line interface to the L<Zonemaster> test engine.
+L<zonemaster-cli> is a command-line interface to the Zonemaster test engine.
 It takes instructions the user provides as command line arguments, transforms
 them into suitable API calls to the engine, runs the test suite and prints the
 resulting messages. By default, the messages will be translated by the engine's
@@ -95,7 +95,7 @@ Print brief usage information and exit.
 Print version information and exit.
 
 =for :man The printed version numbers are the versions of this program as well as the ones from the underlying
-L<Zonemaster> test engine.
+Zonemaster test engine.
 
 =item B<--list-tests>
 
