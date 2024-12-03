@@ -384,7 +384,7 @@ guided by a profile.
 Zonemaster Engine has a default profile with sensible defaults.
 Zonemaster CLI allows users to override the default profile data with
 values from a profile JSON file with the C<--profile> option.
-For details on profiles and how they are respresented in files, see
+For details on profiles and how they are represented in files, see
 L<Zonemaster::Engine::Profile>.
 
 =head1 CONFIGURATION
