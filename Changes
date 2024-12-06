@@ -1,4 +1,26 @@
-Release history for Zonemaster component Zonemaster-CLI 
+Release history for Zonemaster component Zonemaster-CLI
+
+
+v7.1.0 2024-12-09 (part of Zonemaster v2024.2 release)
+
+ [Release information]
+ - Translations have not been fully updated in this release. They will
+   be updated in an upcoming extra release.
+
+ [Features]
+ - Corrects display when running 'zonemaster-cli' with '--ns' or '--ds'
+   (#382)
+ - Moves the "zonemaster-info" utility from this repository (#385)
+
+ [Fixes]
+ - Provides a useful link in man page (#401)
+ - Write “AS” in uppercase in Dockerfile (#400)
+ - Corrects gettext code (#398)
+ - Organizes "zonemaster-cli --help" text (#389)
+ - Make "zonemaster-cli" usage documentation consistent and also remove
+   dependency on the Moose library (#371, #395)
+ - Fixes the handling of invalid --hints argument (#386)
+ - Clean-up exit statuses (#381)
 
 
 v7.0.0 2024-07-01 (part of Zonemaster v2024.1 release)
