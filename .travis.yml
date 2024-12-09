@@ -1,4 +1,5 @@
 dist: jammy
+group: previous
 
 language: perl
 
@@ -17,11 +18,13 @@ addons:
     - cpanminus
     - libclone-perl
     - libdevel-checklib-perl
+    - libextutils-pkgconfig-perl
     - libfile-sharedir-perl
     - libfile-slurp-perl
     - libidn2-dev
     - libintl-perl
     - libjson-pp-perl
+    - liblist-compare-perl
     - liblist-moreutils-perl
     - liblocale-msgfmt-perl
     - libmail-rfc822-address-perl
@@ -39,7 +42,6 @@ addons:
     - libtool
     - m4
       # From Zonemaster CLI installation instruction for Ubuntu
-    # libmoosex-getopt-perl, see cpan-install below
     # libmodule-install-perl, see cpan-install below
     - libtry-tiny-perl
 
@@ -53,9 +55,6 @@ before_install:
 
   # Zonemaster LDNS needs a newer version of Module::Install
 - cpan-install Module::Install Module::Install::XSUtil
-
-  # Moose installed from OS package depends on a newer version of Devel::OverloadInfo
-- cpan-install Devel::OverloadInfo Moose MooseX::Getopt
 
   # IO::Socket::INET6 can't find Socket6 installed from OS package
 - cpan-install Socket6 IO::Socket::INET6

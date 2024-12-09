@@ -22,10 +22,14 @@ requires(
     'Net::IP::XS'        => 0,
     'JSON::XS'           => 0,
     'Locale::TextDomain' => 1.23,
-    'MooseX::Getopt'     => 0,
     'Try::Tiny'          => 0,
-    'Zonemaster::LDNS'   => 4.000002,  # v4.0.2
-    'Zonemaster::Engine' => 6.000000,  # v6.0.0
+    'Zonemaster::LDNS'   => 4.001000,  # v4.1.0
+    'Zonemaster::Engine' => 7.000000,  # v7.0.0
+);
+
+test_requires(
+    'JSON::Validator'   => 0,
+    'Test::Differences' => 0,
 );
 
 # Make all platforms include inc/Module/Install/External.pm
