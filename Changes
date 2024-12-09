@@ -10,7 +10,7 @@ v7.1.0 2024-12-09 (part of Zonemaster v2024.2 release)
  [Features]
  - Corrects display when running 'zonemaster-cli' with '--ns' or '--ds'
    (#382)
- - Moves the "zonemaster-info" utility from this repository (#385)
+ - Allows explicitly setting '--stop-level' to empty string (#395)
 
  [Fixes]
  - Provides a useful link in man page (#401)
@@ -18,8 +18,9 @@ v7.1.0 2024-12-09 (part of Zonemaster v2024.2 release)
  - Corrects gettext code (#398)
  - Organizes "zonemaster-cli --help" text (#389)
  - Make "zonemaster-cli" usage documentation consistent and also remove
-   dependency on the Moose library (#371, #395)
+   dependency on the Moose library (#371)
  - Fixes the handling of invalid --hints argument (#386)
+ - Moves the "zonemaster-info" utility from this repository (#385)
  - Clean-up exit statuses (#381)
 
 
