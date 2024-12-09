@@ -12,7 +12,7 @@ use 5.014002;
 use strict;
 use warnings;
 
-use version; our $VERSION = version->declare( "v7.0.0" );
+use version; our $VERSION = version->declare( "v7.1.0" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 
