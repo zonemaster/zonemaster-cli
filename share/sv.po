@@ -18,7 +18,7 @@ msgid ""
 "\n"
 msgstr ""
 "Varning: misslyckades med att sätta locale kategori LC_MESSAGES till "
-"'{locale}' (finns den installerad på det här systemet?).\n"
+"'{locale}' – finns den installerad på det här systemet?\n"
 "\n"
 
 #, perl-brace-format
@@ -28,7 +28,7 @@ msgid ""
 "\n"
 msgstr ""
 "Varning: misslyckades med att sätta locale kategori LC_CTYPE till '{locale}' "
-"(finns den installerad på det här systemet?).\n"
+"– finns den installerad på det här systemet?\n"
 "\n"
 
 msgid "Warning: deprecated --encoding, simply remove it from your usage."
