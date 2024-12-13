@@ -111,7 +111,7 @@ msgstr ""
 "<OPTION>' före en optionsparameter?"
 
 msgid "Must give the name of a domain to test."
-msgstr "Måste ange namnet på en domän att testa."
+msgstr "Namnet på en domän att testa måste anges."
 
 #, perl-brace-format
 msgid "Error loading hints file: {message}"
