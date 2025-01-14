@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-02 20:01+0000\n"
+"POT-Creation-Date: 2025-01-13 14:32+0000\n"
 "PO-Revision-Date: 2023-06-02 11:12+0200\n"
 "Last-Translator: haarbo@dk-hostmaster.dk\n"
 "Language-Team: Zonemaster Team\n"
@@ -12,200 +12,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.3.1\n"
 
-msgid "Print version information and exit."
-msgstr "Udskriv version og afbryd."
-
+#, perl-brace-format
 msgid ""
-"The minimum severity level to display. Must be one of CRITICAL, ERROR, "
-"WARNING, NOTICE, INFO or DEBUG."
-msgstr ""
-"Det mindste alvorlighedsniveau skal være enten CRITICAL, ERROR, WARNING, "
-"NOTICE, INFO eller DEBUG."
-
-msgid "The locale to use for messages translation."
-msgstr "Det 'locale' som skal bruges ved oversættelse af beskeder."
-
-msgid "Flag indicating if output should be in JSON or not."
-msgstr "Flag angiver om output-format skal være JSON eller ej."
-
-msgid "Flag indicating if output should be streaming JSON or not."
-msgstr "Flag angiver om output-format skal være streaming JSON eller ej."
-
-msgid ""
-"Deprecated. Flag indicating if JSON output should include the translated "
-"message of the tag or not."
-msgstr ""
-"Forældet. Flag angiver om JSON-output skal inkludere den oversatte besked af "
-"tag'et eller ej."
-
-msgid ""
-"Flag indicating if output should be translated to human language or dumped "
-"raw."
-msgstr ""
-"Flag angiver om output'et skal oversættes til menneskesprog eller vises i "
-"råt format."
-
-msgid "Print timestamp on entries."
-msgstr "Udskriv tidsstempler på poster."
-
-msgid "Print level on entries."
-msgstr "Udskriv alvorlighedsniveauer på poster."
-
-msgid "Print the name of the module on entries."
-msgstr "Udskriv modulets navn på poster."
-
-msgid "Print the name of the test case on entries."
-msgstr "Udskriv navnet på testcasen på poster."
-
-msgid ""
-"A name/ip string giving a nameserver for undelegated tests, or just a name "
-"which will be looked up for IP addresses. Can be given multiple times."
-msgstr ""
-"Et navn/IP-adresse som angiver navneserveren til prædelegerede test eller "
-"blot et navn, som vil blive oversat til IP-adresser. Kan anføres flere gange."
-
-msgid "Name of a root hints file to override the defaults."
-msgstr ""
-"Navn på en \"root hints\"-fil for at overstyre standardindstillingerne."
-
-msgid "Name of a file to save DNS data to after running tests."
-msgstr "Filnavn indeholdende DNS-data efter udførte test."
-
-msgid "Name of a file to restore DNS data from before running test."
-msgstr "Filnavn indeholdende DNS-data som skal indlæses før afvikling af test."
-
-msgid ""
-"Flag to permit or deny queries being sent via IPv4. --ipv4 permits IPv4 "
-"traffic, --no-ipv4 forbids it."
-msgstr ""
-"Flag til angivelse af om forespørgsler må sendes via IPv4 eller ej. --ipv4 "
-"tillader IPv4 trafik, --no-ipv4 forbyder det."
-
-msgid ""
-"Flag to permit or deny queries being sent via IPv6. --ipv6 permits IPv6 "
-"traffic, --no-ipv6 forbids it."
-msgstr ""
-"Flag til angivelse af om forespørgsler må sendes via IPv6 eller ej. --ipv6 "
-"tillader IPv6 trafik, --no-ipv6 forbyder det."
-
-msgid "Instead of running a test, list all available tests."
-msgstr "I stedet for at afvikle en test, udskriv alle mulige test."
-
-msgid ""
-"Specify test to run. Should be either the name of a module, or the name of a "
-"module and the name of a method in that module separated by a \"/\" "
-"character (Example: \"Basic/basic1\"). The method specified must be one that "
-"takes a zone object as its single argument. This switch can be repeated."
-msgstr ""
-"Angiver test som skal afvikles. Skal enten være et modulnavn eller et "
-"modulnavn og navnet på en metode i modulet adskilt af en skråstreg "
-"(Eksempel: \"Basic/basic1\"). Den valgte metode skal tage en enkelt zone som "
-"argument. Dette flag kan gentages."
-
-msgid ""
-"As soon as a message at this level or higher is logged, execution will stop. "
-"Must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO or DEBUG."
-msgstr ""
-"Så snart en hændelse med dette niveau eller højere logges, vil kørslen "
-"afbrydes. Skal være enten CRITICAL, ERROR, WARNING, NOTICE, INFO eller DEBUG."
-
-msgid "Name of profile file to load. (DEFAULT)"
-msgstr "Navn på profil-fil, der skal indlæses. (STANDARD)"
-
-msgid "Strings with DS data on the form \"keytag,algorithm,type,digest\""
-msgstr "En streng med DS-data i formatet \"keytag,algorithm,type,digest\""
-
-msgid "Print a count of the number of messages at each level"
-msgstr "Udskriv antallet af registrerede beskeder på hvert niveau"
-
-msgid ""
-"Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off "
-"if it is not. Disable with --no-progress."
-msgstr ""
-"Boolsk flag til aktivitetsindikator. Aktiveret hvis STDOUT er en tty, ellers "
-"deaktiveret. Deaktiver med --no-progress."
-
-msgid "Name of the character encoding used for command line arguments"
-msgstr "Navn på tegnkodningen, der skal anvendes for kommandolinje-argumenter"
-
-msgid ""
-"At the end of a run, print a summary of the times (in milliseconds) the "
-"zone's name servers took to answer."
-msgstr ""
-"Ved afslutningen af en kørsel udskrives en oversigt over de tider (i "
-"millisekunder), det tog zonens navneservere at svare."
-
-msgid "Print the effective profile used in JSON format, then exit."
-msgstr "Udskriv den effektive profil benyttet i JSON-format, og afslut."
-
-msgid ""
-"Deprecated (planned removal: v2024.1). Use --sourceaddr4 and/or --"
-"sourceaddr6. Source IP address used to send queries. Setting an IP address "
-"not correctly configured on a local network interface causes cryptic error "
-"messages."
-msgstr ""
-"Forældet (planlagt fjernelse: v2024.1). Brug --sourceaddr4 og/eller --"
-"sourceaddr6. Kilde-IP-adresse benyttet til at sende forespørgsler. "
-"Indstilling af en IP-adresse, der ikke er korrekt konfigureret på et lokalt "
-"netværksinterface, forårsager kryptiske fejlmeddelelser."
-
-msgid ""
-"Source IPv4 address used to send queries. Setting an IPv4 address not "
-"correctly configured on a local network interface fails silently. Can not be "
-"combined with --sourceaddr."
-msgstr ""
-"Kilde IPv4-adresse benyttet til at sende forespørgsler. Indstilling af en "
-"IPv4-adresse, der ikke er konfigureret korrekt på et lokalt "
-"netværksinterface, fejler uden varsling. Kan ikke kombineres med --"
-"sourceaddr."
-
-msgid ""
-"Source IPv6 address used to send queries. Setting an IPv6 address not "
-"correctly configured on a local network interface fails silently. Can not be "
-"combined with --sourceaddr."
-msgstr ""
-"Kilde IPv6-adresse benyttet til at sende forespørgsler. Indstilling af en "
-"IPv6-adresse, der ikke er konfigureret korrekt på et lokalt "
-"netværksinterface, fejler uden varsling. Kan ikke kombineres med --"
-"sourceaddr."
-
-msgid "Print elapsed time (in seconds) at end of run."
-msgstr "Udskriv forløbet tid (i sekunder) ved slutningen af kørslen."
-
-#, perl-format
-msgid ""
-"Warning: setting locale category LC_MESSAGES to %s failed (is it installed "
-"on this system?).\n"
+"Warning: setting locale category LC_MESSAGES to {locale} failed -- is it "
+"installed on this system?\n"
 "\n"
 msgstr ""
-"Advarsel: Kunne ikke sætte locale kategori LC_MESSAGES til %s (er det "
+"Advarsel: Kunne ikke sætte locale kategori LC_MESSAGES til {locale} (er det "
 "installeret på dette system?).\n"
 "\n"
 
-#, perl-format
+#, perl-brace-format
 msgid ""
-"Warning: setting locale category LC_CTYPE to %s failed (is it installed on "
-"this system?).\n"
+"Warning: setting locale category LC_CTYPE to {locale} failed -- is it "
+"installed on this system?\n"
 "\n"
 msgstr ""
-"Advarsel: Kunne ikke sætte locale kategori LC_CTYPE til %s (er det "
+"Advarsel: Kunne ikke sætte locale kategori LC_CTYPE til {locale} (er det "
 "installeret på dette system?).\n"
 "\n"
 
-msgid ""
-"Error: --sourceaddr can't be combined with --sourceaddr4 or --sourceaddr6."
-msgstr ""
-"Fejl: --sourceaddr kan ikke kombineres med --sourceaddr4 eller --sourceaddr6."
+msgid "Warning: deprecated --encoding, simply remove it from your usage."
+msgstr "Advarsel: --encoding er forældet, fjern det blot fra din brug."
 
-msgid ""
-"Warning: --sourceaddr is deprecated (planned removal: v2024.1). Use --"
-"sourceaddr4 and/or --sourceaddr6 instead."
-msgstr ""
-"Advarsel: --sourceaddr er forældet (planlagt fjernelse: v2024.1). Brug --"
-"sourceaddr4 og/eller --sourceaddr6 i stedet."
-
-msgid "Error: --json-stream and --no-json can't be used together."
-msgstr "Fejl: --json-stream og --no-json kan ikke bruges sammen."
+msgid "Error: --json-stream and --no-json cannot be used together."
+msgstr "Fejl: --json-stream og --no-json kan ikke bruges samtidigt."
 
 msgid ""
 "Warning: --json-translate has no effect without either --json or --json-"
@@ -224,15 +55,74 @@ msgstr "Advarsel: --no-json-translate er forældet, brug --raw i stedet."
 msgid "Loading profile from {path}."
 msgstr "Indlæser profil fra {path}."
 
-msgid "Failed to recognize stop level '"
-msgstr "Kunne ikke genkende stopniveau '"
+#, perl-brace-format
+msgid "Error: invalid value for --sourceaddr4: {reason}"
+msgstr "Fejl: ugyldig værdi for --sourceaddr4: {reason}"
+
+#, perl-brace-format
+msgid "Error: invalid value for --sourceaddr6: {reason}"
+msgstr "Fejl: ugyldig værdi for --sourceaddr6: {reason}"
+
+#, perl-brace-format
+msgid ""
+"Error: Invalid input '{cli_arg}' in --test. There must be at most one slash "
+"('/') character."
+msgstr ""
+"Fejl: Ugyldigt input '{cli_arg}' i --test. Der må højst være ét skråstreg "
+"('/') tegn."
+
+#, perl-brace-format
+msgid ""
+"Error: Unrecognized test case '{testcase}' in --test. Use --list-tests for a "
+"list of valid choices."
+msgstr ""
+"Fejl: Ugenkendt test-case '{testcase}' i --test. Brug --list-tests for en "
+"liste over gyldige valg."
+
+#, perl-brace-format
+msgid ""
+"Error: Unrecognized test module '{module}' in --test. Use --list-tests for a "
+"list of valid choices."
+msgstr ""
+"Fejl: Ugenkendt testmodul '{module}' i --test. Brug --list-tests for en "
+"liste over gyldige valg."
+
+#, perl-brace-format
+msgid "Error: Invalid input '{cli_arg}' in --test."
+msgstr "Fejl: Ugyldigt input '{cli_arg}' i --test."
+
+#, perl-brace-format
+msgid ""
+"Notice: Engine does not have test case '{testcase}' enabled in the profile. "
+"Forcing..."
+msgstr ""
+"Bemærk: Motoren har ikke test-case '{testcase}' aktiveret i profilen. "
+"Tvinger..."
+
+#, perl-brace-format
+msgid "Failed to recognize stop level '{level}'."
+msgstr "Kunne ikke genkende stopniveau '{level}'."
 
 msgid ""
 "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 "
-"or DEBUG3.\n"
+"or DEBUG3."
 msgstr ""
 "--level skal være enten CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, "
-"DEBUG2 eller DEBUG3.\n"
+"DEBUG2 eller DEBUG3."
+
+msgid ""
+"Only one domain can be given for testing. Did you forget to prepend an "
+"option with '--<OPTION>'?"
+msgstr ""
+"Der kan kun angives ét domæne til test. Har du glemt at sætte '--<OPTION>' "
+"foran en indstilling?"
+
+msgid "Must give the name of a domain to test."
+msgstr "Domænenavn, der skal testes, skal angives."
+
+#, perl-brace-format
+msgid "Error loading hints file: {message}"
+msgstr "Fejl ved indlæsning af hints-fil: {message}"
 
 msgid "Seconds"
 msgstr "Sekunder"
@@ -248,19 +138,6 @@ msgstr "Testcase"
 
 msgid "Message"
 msgstr "Besked"
-
-msgid ""
-"Only one domain can be given for testing. Did you forget to prepend an "
-"option with '--<OPTION>'?\n"
-msgstr ""
-"Der kan kun angives ét domæne til test. Har du glemt at sætte '--<OPTION>' "
-"foran en indstilling?\n"
-
-msgid "Must give the name of a domain to test.\n"
-msgstr "Domænenavn, der skal testes, skal angives.\n"
-
-msgid "The domain name contains consecutive dots.\n"
-msgstr "Domænenavnet indeholder flere dots (.) efter hinanden.\n"
 
 msgid "Looks OK."
 msgstr "Ser OK ud."
@@ -281,17 +158,12 @@ msgstr "%8s\t%5d beskeder.\n"
 msgid "--ns must be a name or a name/ip pair."
 msgstr "--ns skal være et navn eller et navn/IP-adresse par."
 
-#, perl-brace-format
-msgid "The name of the nameserver '{nsname}' contains consecutive dots."
-msgstr ""
-"Navnet på navneserveren '{nsname}' indeholder flere dots (.) efter hinanden."
-
 msgid ""
-"Warning: Zonemaster::LDNS not compiled with IDN support, cannot handle non-"
-"ASCII names correctly."
+"--ds ds data must be in the form \"keytag,algorithm,type,digest\". E.g. "
+"space is not permitted anywhere in the string."
 msgstr ""
-"Advarsel: Zonemaster::LDNS er ikke kompileret med IDN-support, og kan derfor "
-"ikke håndtere ikke-ASCII navne korrekt."
+"--ds ds-data skal være i formatet \"keytag,algorithm,type,digest\". F.eks. "
+"er mellemrum ikke tilladt noget sted i strengen."
 
 msgid "DEBUG"
 msgstr "FEJLSØG"
@@ -307,6 +179,3 @@ msgstr "ADVARSEL"
 
 msgid "ERROR"
 msgstr "FEJL"
-
-msgid "CRITICAL"
-msgstr "KRITISK"
