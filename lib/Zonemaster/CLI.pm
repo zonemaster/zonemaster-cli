@@ -26,6 +26,7 @@ use Pod::Usage;
 use POSIX qw[setlocale LC_MESSAGES LC_CTYPE];
 use Readonly;
 use Scalar::Util qw[blessed];
+use Time::HiRes;
 use Try::Tiny;
 use Zonemaster::LDNS;
 use Zonemaster::Engine;
@@ -400,9 +401,11 @@ sub run {
 
             print_spinner() if $show_progress;
 
-            $counter{ uc $entry->level } += 1;
+            my $entry_level = $entry->level;
 
-            if ( $numeric{ uc $entry->level } >= $numeric{$opt_level} ) {
+            $counter{ uc $entry_level } += 1;
+
+            if ( $numeric{ uc $entry_level } >= $numeric{$opt_level} ) {
                 $printed_something = 1;
 
                 if ( $opt_json and $opt_json_stream ) {
@@ -412,7 +415,7 @@ sub run {
                     $r{module}    = $entry->module    if $opt_show_module;
                     $r{testcase}  = $entry->testcase  if $opt_show_testcase;
                     $r{tag}       = $entry->tag;
-                    $r{level}     = $entry->level if $opt_show_level;
+                    $r{level}     = $entry_level if $opt_show_level;
                     $r{args}      = $entry->args  if $entry->args;
                     $r{message}   = $translator->translate_tag( $entry ) unless $opt_raw;
 
@@ -428,9 +431,9 @@ sub run {
                     }
 
                     if ( $opt_show_level ) {
-                        $prefix .= $opt_raw ? $entry->level : translate_severity( $entry->level );
+                        $prefix .= $opt_raw ? $entry_level : translate_severity( $entry->level );
                         my $space_l10n =
-                          ${ field_width { level } } - length( decode_utf8( translate_severity( $entry->level ) ) ) + 1;
+                          ${ field_width { level } } - length( decode_utf8( translate_severity( $entry_level ) ) ) + 1;
                         $prefix .= ' ' x $space_l10n;
                     }
 
@@ -454,7 +457,7 @@ sub run {
                         }
                     }
                     else {
-                        if ( $entry->level eq q{DEBUG3} and scalar( keys %{$entry->args} ) == 1 and defined $entry->args->{packet} ) {
+                        if ( $entry_level eq q{DEBUG3} and scalar( keys %{$entry->args} ) == 1 and defined $entry->args->{packet} ) {
                             my $packet = $entry->args->{packet};
                             my $padding = q{ } x length $prefix;
                             $entry->args->{packet} = q{};
@@ -469,8 +472,8 @@ sub run {
                     }
                 }
             }
-            if ( $opt_stop_level and $numeric{ uc $entry->level } >= $numeric{$opt_stop_level} ) {
-                die( Zonemaster::Engine::Exception::NormalExit->new( { message => "Saw message at level " . $entry->level } ) );
+            if ( $opt_stop_level and $numeric{ uc $entry_level } >= $numeric{$opt_stop_level} ) {
+                die( Zonemaster::Engine::Exception::NormalExit->new( { message => "Saw message at level " . $entry_level } ) );
             }
         }
     );
@@ -842,10 +845,13 @@ my @spinner_strings = ( '  | ', '  / ', '  - ', '  \\ ' );
 
 sub print_spinner {
     state $counter = 0;
+    state $last_spin = [0, 0];
 
-    printf "%s\r", $spinner_strings[ $counter++ % 4 ];
-
-    return;
+    my $time = [Time::HiRes::gettimeofday()];
+    if ( Time::HiRes::tv_interval($last_spin, $time) > 0.1 ) {
+        $last_spin = $time;
+        printf "%s\r", $spinner_strings[ $counter++ % 4 ];
+    }
 }
 
 sub print_test_list {
