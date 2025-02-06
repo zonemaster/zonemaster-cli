@@ -617,14 +617,6 @@ sub run {
         print $header;
     }
 
-    if ( @opt_ns ) {
-        add_fake_delegation( $domain, @opt_ns );
-    }
-
-    if ( @opt_ds ) {
-        add_fake_ds( $domain, @opt_ds );
-    }
-
     # Now we are ready to actually print messages, including those that are
     # currently in the hold queue.
     while (my $entry = pop @held_messages) {
