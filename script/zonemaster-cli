@@ -255,8 +255,8 @@ level that were logged during the run.
 
 =item B<--[no-]nstimes>
 
-Print a summary, at the end of a run, of the times (in milliseconds) the zone's
-name servers took to answer.
+Print a summary, at the end of a run, of the times (in milliseconds) the name servers
+took to answer, as well as the number of sent queries.
 (default: disabled)
 
 =item B<--[no-]elapsed>
