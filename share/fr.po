@@ -2,232 +2,39 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-22 07:23+0200\n"
+"POT-Creation-Date: 2025-02-18 10:20+0100\n"
 "PO-Revision-Date: 2023-05-22 07:44+0200\n"
-"Last-Translator: pion@afnic.fr\n"
+"Last-Translator: thomas.green@afnic.fr\n"
 "Language-Team: Zonemaster Team\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Print version information and exit."
-msgstr ""
-"Affichage des informations sur les versions de l'outil et des modules de "
-"tests."
-
+#, perl-brace-format
 msgid ""
-"The minimum severity level to display. Must be one of CRITICAL, ERROR, "
-"WARNING, NOTICE, INFO or DEBUG."
-msgstr ""
-"Option avec comme argument le niveau de gravité minimum qui sera affiché. "
-"Doit avoir pour valeur CRITICAL, ERROR, WARNING, NOTICE, INFO ou DEBUG."
-
-msgid "The locale to use for messages translation."
-msgstr "La \"locale\" à utiliser pour la traduction des messages."
-
-msgid "Flag indicating if output should be in JSON or not."
-msgstr "Option signalant que le format de sortie utilisé sera du JSON ou non."
-
-msgid "Flag indicating if output should be streaming JSON or not."
-msgstr ""
-"Option signalant que le format de sortie utilisé sera du flux JSON ou non."
-
-msgid ""
-"Deprecated. Flag indicating if JSON output should include the translated "
-"message of the tag or not."
-msgstr ""
-"Déprécié. Option indiquant si la sortie JSON doit inclure les messages "
-"traduits en langage humain ou uniquement le format brut."
-
-msgid ""
-"Flag indicating if output should be translated to human language or dumped "
-"raw."
-msgstr ""
-"Option signalant que le format de sortie sera traduit en langage humain ou "
-"affiché en mode brut."
-
-msgid "Print timestamp on entries."
-msgstr ""
-"Affichage de l'horodatage (en secondes) pour suivre l'état de l'avancement "
-"de l'analyse."
-
-msgid "Print level on entries."
-msgstr "Affichage du niveau de gravité pour chaque résultat de test."
-
-msgid "Print the name of the module on entries."
-msgstr ""
-"Pour chaque résultat de test, affichage du nom du module qui en est à "
-"l'origine."
-
-msgid "Print the name of the test case on entries."
-msgstr ""
-"Pour chaque résultat de test, affichage du nom du plan de test qui en est à "
-"l'origine."
-
-msgid ""
-"A name/ip string giving a nameserver for undelegated tests, or just a name "
-"which will be looked up for IP addresses. Can be given multiple times."
-msgstr ""
-"Un nom ou une adresse IP correspondant à un serveur de noms pour les tests "
-"sur des zones non déléguées. Peut être utilisée plusieurs fois."
-
-msgid "Name of a root hints file to override the defaults."
-msgstr ""
-"Chemin du fichier d'indications de la racine remplaçant le fichier par "
-"défaut."
-
-msgid "Name of a file to save DNS data to after running tests."
-msgstr ""
-"Option avec comme argument le nom du fichier dans lequel seront sauvegardés "
-"les résultats des requêtes DNS nécessaires à l'analyse de la zone."
-
-msgid "Name of a file to restore DNS data from before running test."
-msgstr ""
-"Option avec comme argument le nom du fichier à partir duquel seront "
-"restaurés les résultats des requêtes DNS nécessaires à l'analyse de la zone."
-
-msgid ""
-"Flag to permit or deny queries being sent via IPv4. --ipv4 permits IPv4 "
-"traffic, --no-ipv4 forbids it."
-msgstr ""
-"Option signalant que les requêtes pourront ou non être transmises en IPv4. --"
-"ipv4 autorise l'usage d'IPv4, alors que --no-ipv4 l'interdit."
-
-msgid ""
-"Flag to permit or deny queries being sent via IPv6. --ipv6 permits IPv6 "
-"traffic, --no-ipv6 forbids it."
-msgstr ""
-"Option signalant que les requêtes pourront ou non être transmises en IPv6. --"
-"ipv6 autorise l'usage d'IPv6, alors que --no-ipv6 l'interdit."
-
-msgid "Instead of running a test, list all available tests."
-msgstr ""
-"Cette option permet d'afficher la liste de tous les tests disponibles. Ceux-"
-"ci ne seront pas exécutés."
-
-msgid ""
-"Specify test to run. Should be either the name of a module, or the name of a "
-"module and the name of a method in that module separated by a \"/\" "
-"character (Example: \"Basic/basic1\"). The method specified must be one that "
-"takes a zone object as its single argument. This switch can be repeated."
-msgstr ""
-"Permet d'indiquer quel test doit être exécuté. Peut être un nom de module "
-"seul, ou celui-ci associé à un nom de test, les deux étant séparés par le "
-"caractère \"/\" (Exemple: \"Basic/basic1\"). Cette option peut être répétée "
-"plusieurs fois."
-
-msgid ""
-"As soon as a message at this level or higher is logged, execution will stop. "
-"Must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO or DEBUG."
-msgstr ""
-"Dès qu'un résultat de test avec ce niveau de gravité ou supérieur sera "
-"rencontré, l'exécution s'arrêtera. Doit avoir pour valeur CRITICAL, ERROR, "
-"WARNING, NOTICE, INFO ou DEBUG."
-
-msgid "Name of profile file to load. (DEFAULT)"
-msgstr ""
-"Option avec comme argument le nom du fichier profile à charger. (DEFAULT)"
-
-msgid "Strings with DS data on the form \"keytag,algorithm,type,digest\""
-msgstr ""
-"Option avec comme argument les informations pour le traitement de la DS. Le "
-"format à utiliser est \"keytag,algorithm,type,digest\"."
-
-msgid "Print a count of the number of messages at each level"
-msgstr ""
-"Affichage du nombre total de résultats, pour chaque niveau de gravité, "
-"présents dans le journal (log)."
-
-msgid ""
-"Boolean flag for activity indicator. Defaults to on if STDOUT is a tty, off "
-"if it is not. Disable with --no-progress."
-msgstr ""
-"Cette option permet d'activer ou non l'indicateur de progression "
-"(défaut=activé si STDOUT est un terminal). Désactiver avec --no-progress."
-
-msgid "Name of the character encoding used for command line arguments"
-msgstr ""
-"Nom de l'encodage de caractères utilisé pour les arguments de la ligne de "
-"commande."
-
-msgid ""
-"At the end of a run, print a summary of the times (in milliseconds) the "
-"zone's name servers took to answer."
-msgstr ""
-"À la fin de l'exécution, affichage d'un récapitulatif sur les temps de "
-"réponse (en millisecondes) des serveurs de noms de la zone interrogés au "
-"cours de l'analyse."
-
-msgid "Print the effective profile used in JSON format, then exit."
-msgstr "Affichage du \"profile\" réellement utilisé au format JSON."
-
-msgid ""
-"Deprecated (planned removal: v2024.1). Use --sourceaddr4 and/or --"
-"sourceaddr6. Source IP address used to send queries. Setting an IP address "
-"not correctly configured on a local network interface causes cryptic error "
-"messages."
-msgstr ""
-"Déprécié (suppression prévue : v2024.1). Utilisez --sourceaddr4 et/ou --"
-"sourceaddr6. Adresse IP source à utiliser pour l'envoi des requêtes. "
-"Indiquer une adresse mal configurée sur une interface réseau locale peut "
-"conduire à des messages d'erreur peu compréhensibles."
-
-msgid ""
-"Source IPv4 address used to send queries. Setting an IPv4 address not "
-"correctly configured on a local network interface fails silently. Can not be "
-"combined with --sourceaddr."
-msgstr ""
-"Adresse IPv4 source à utiliser pour l'envoi des requêtes. Indiquer une "
-"adresse IPv4 mal configurée sur une interface réseau locale échoue en "
-"silence. Ne peut pas être combinée avec --sourceaddr."
-
-msgid ""
-"Source IPv6 address used to send queries. Setting an IPv6 address not "
-"correctly configured on a local network interface fails silently. Can not be "
-"combined with --sourceaddr."
-msgstr ""
-"Adresse IPv6 source à utiliser pour l'envoi des requêtes. Indiquer une "
-"adresse IPv6 mal configurée sur une interface réseau locale échoue en "
-"silence. Ne peut pas être combinée avec --sourceaddr."
-
-msgid "Print elapsed time (in seconds) at end of run."
-msgstr "Affiche le temps écoulé (en secondes) à la fin de l'exécution."
-
-#, perl-format
-msgid ""
-"Warning: setting locale category LC_MESSAGES to %s failed (is it installed "
-"on this system?).\n"
+"Warning: setting locale category LC_MESSAGES to {locale} failed -- is it "
+"installed on this system?\n"
 "\n"
 msgstr ""
-"Attention: La \"locale\" positionnée %s n'est pas correctement prise en "
-"compte (Est-elle installée sur votre système ?).\n"
+"Attention : positionner la catégorie de localisation LC_MESSAGES pour "
+"{locale} a échoué -- est-elle installée sur ce système ?\n"
 "\n"
 
-#, perl-format
+#, perl-brace-format
 msgid ""
-"Warning: setting locale category LC_CTYPE to %s failed (is it installed on "
-"this system?).\n"
+"Warning: setting locale category LC_CTYPE to {locale} failed -- is it "
+"installed on this system?\n"
 "\n"
 msgstr ""
-"Attention: La \"locale\" positionnée %s n'est pas correctement prise en "
-"compte (Est-elle installée sur votre système ?).\n"
+"Attention : positionner la catégorie de localisation LC_TYPE pour {locale} a "
+"échoué -- est-elle installée sur ce système ?\n"
 "\n"
 
-msgid ""
-"Error: --sourceaddr can't be combined with --sourceaddr4 or --sourceaddr6."
-msgstr ""
-"Erreur : --sourceaddr ne peut pas être combinée avec --sourceaddr4 ou --"
-"sourceaddr6."
+msgid "Warning: deprecated --encoding, simply remove it from your usage."
+msgstr "Attention : --encoding est dépréciée, merci de ne plus l'utiliser."
 
-msgid ""
-"Warning: --sourceaddr is deprecated (planned removal: v2024.1). Use --"
-"sourceaddr4 and/or --sourceaddr6 instead."
-msgstr ""
-"Avertissement : --sourceaddr est dépréciée (suppression prévue : v2024.1). "
-"Utilisez plutôt --sourceaddr4 et/ou --sourceaddr6."
-
-msgid "Error: --json-stream and --no-json can't be used together."
+msgid "Error: --json-stream and --no-json cannot be used together."
 msgstr ""
 "Erreur : --json-stream et --no-json ne peuvent pas être utilisés "
 "simultanément."
@@ -236,7 +43,7 @@ msgid ""
 "Warning: --json-translate has no effect without either --json or --json-"
 "stream."
 msgstr ""
-"Avertissement : --json-translate n'a pas d'effet sans --json ni --json-"
+"Avertissement : --json-translate n'a pas d'effet sans --json ou --json-"
 "stream."
 
 msgid "Warning: deprecated --json-translate, use --no-raw instead."
@@ -249,19 +56,76 @@ msgstr ""
 
 #, perl-brace-format
 msgid "Loading profile from {path}."
-msgstr "Chargement de la politique de tests depuis le fichier {path}."
+msgstr "Chargement du profil depuis le fichier {path}."
 
-msgid "Failed to recognize stop level '"
+#, perl-brace-format
+msgid "Error: invalid value for --sourceaddr4: {reason}"
+msgstr "Erreur : valeur incorrecte pour --sourceaddr4: {reason}"
+
+#, perl-brace-format
+msgid "Error: invalid value for --sourceaddr6: {reason}"
+msgstr "Erreur : valeur incorrecte pour --sourceaddr6: {reason}"
+
+#, perl-brace-format
+msgid ""
+"Error: Invalid input '{cli_arg}' in --test. There must be at most one slash "
+"('/') character."
 msgstr ""
-"Impossible de reconnaître le niveau de gravité provoquant l'arrêt de "
-"l'analyse '"
+"Erreur : Valeur de saisie incorrecte '{cli_arg}' pour --test. Il doit y "
+"avoir au plus un caractère slash ('/')."
+
+#, perl-brace-format
+msgid ""
+"Error: Unrecognized test case '{testcase}' in --test. Use --list-tests for a "
+"list of valid choices."
+msgstr ""
+"Erreur : Cas de test non reconnu '{testcase}' pour --test. Utiliser --list-"
+"tests pour voir la liste de choix valides."
+
+#, perl-brace-format
+msgid ""
+"Error: Unrecognized test module '{module}' in --test. Use --list-tests for a "
+"list of valid choices."
+msgstr ""
+"Erreur : Module de test non reconnu '{module}' pour --test. Utiliser --list-"
+"tests pour voir la liste de choix valides."
+
+#, perl-brace-format
+msgid "Error: Invalid input '{cli_arg}' in --test."
+msgstr "Erreur : Valeur de saisie incorrecte '{cli_arg}' pour --test."
+
+#, perl-brace-format
+msgid ""
+"Notice: Engine does not have test case '{testcase}' enabled in the profile. "
+"Forcing..."
+msgstr ""
+"Note : Engine n'a pas le cas de test '{testcase}' d'activé dans le profil. "
+"Activation..."
+
+#, perl-brace-format
+msgid "Failed to recognize stop level '{level}'."
+msgstr "Impossible de reconnaître le niveau de gravité d'arrêt '{level}'."
 
 msgid ""
 "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 "
-"or DEBUG3.\n"
+"or DEBUG3."
 msgstr ""
 "--level doit avoir pour valeur CRITICAL, ERROR, WARNING, NOTICE, INFO, "
-"DEBUG, DEBUG2 ou DEBUG3.\n"
+"DEBUG, DEBUG2 ou DEBUG3."
+
+msgid ""
+"Only one domain can be given for testing. Did you forget to prepend an "
+"option with '--<OPTION>'?"
+msgstr ""
+"Seul un domaine peut être soumis à un test. Auriez-vous oublié de préfixer "
+"une option avec '--<OPTION>'?"
+
+msgid "Must give the name of a domain to test."
+msgstr "Il est nécessaire d'indiquer un nom de domaine à tester."
+
+#, perl-brace-format
+msgid "Error loading hints file: {message}"
+msgstr "Erreur de chargement du fichier d'indication de la racine : {message}"
 
 msgid "Seconds"
 msgstr "Durée"
@@ -273,26 +137,13 @@ msgid "Module"
 msgstr "Module"
 
 msgid "Testcase"
-msgstr "Plan de test"
+msgstr "Cas de test"
 
 msgid "Message"
 msgstr "Message"
 
-msgid ""
-"Only one domain can be given for testing. Did you forget to prepend an "
-"option with '--<OPTION>'?\n"
-msgstr ""
-"Seul un domaine peut être soumis à un test. Auriez-vous oublié de préfixer "
-"une option avec `--<OPTION>` ?\n"
-
-msgid "Must give the name of a domain to test.\n"
-msgstr "Il est nécessaire d'indiquer un nom de domaine à tester.\n"
-
-msgid "The domain name contains consecutive dots.\n"
-msgstr "Le nom de domaine contient des points consécutifs.\n"
-
 msgid "Looks OK."
-msgstr "Le résultat semble concluant."
+msgstr "Rien de particulier à signaler."
 
 msgid ""
 "\n"
@@ -301,7 +152,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"   Niveau\tOccurences dans le log"
+"   Niveau\tNombre d'entrées journal"
 
 #, perl-format
 msgid "%8s\t%5d entries.\n"
@@ -310,31 +161,27 @@ msgstr "%8s\t%5d entrées.\n"
 msgid "--ns must be a name or a name/ip pair."
 msgstr "--ns doit être un nom ou un couple nom/ip."
 
-#, perl-brace-format
-msgid "The name of the nameserver '{nsname}' contains consecutive dots."
-msgstr "Le nom du serveur de noms '{nsname}' contient des points consécutifs."
-
 msgid ""
-"Warning: Zonemaster::LDNS not compiled with IDN support, cannot handle non-"
-"ASCII names correctly."
+"--ds ds data must be in the form \"keytag,algorithm,type,digest\". E.g. "
+"space is not permitted anywhere in the string."
 msgstr ""
-"Attention: Zonemaster::LDNS n'est pas compilé avec le support IDN, "
-"impossible de traiter correctement les noms non ASCII."
+"les données passées à --ds doivent être de la forme \"keytag,algorithm,type,"
+"digest\". Par exemple, un espace n'est pas permis dans cette chaîne."
 
 msgid "DEBUG"
-msgstr "DEBUG"
+msgstr "DEBOGUE"
 
 msgid "INFO"
 msgstr "INFO"
 
 msgid "NOTICE"
-msgstr "NOTICE"
+msgstr "NOTE"
 
 msgid "WARNING"
-msgstr "WARNING"
+msgstr "AVERTISSEMENT"
 
 msgid "ERROR"
-msgstr "ERROR"
+msgstr "ERREUR"
 
 msgid "CRITICAL"
-msgstr "CRITICAL"
+msgstr "CRITIQUE"
