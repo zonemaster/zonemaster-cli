@@ -32,7 +32,8 @@ msgstr ""
 "\n"
 
 msgid "Warning: deprecated --encoding, simply remove it from your usage."
-msgstr "Attention : --encoding est dépréciée, merci de ne plus l'utiliser."
+msgstr "Attention : --encoding est dépréciée, retirez-le simplement de "
+"votre ligne de commande."
 
 msgid "Error: --json-stream and --no-json cannot be used together."
 msgstr ""
@@ -71,35 +72,35 @@ msgid ""
 "Error: Invalid input '{cli_arg}' in --test. There must be at most one slash "
 "('/') character."
 msgstr ""
-"Erreur : Valeur de saisie incorrecte '{cli_arg}' pour --test. Il doit y "
-"avoir au plus un caractère slash ('/')."
+"Erreur : Saisie incorrecte '{cli_arg}' pour --test. Il doit y avoir au "
+"plus un caractère slash ('/')."
 
 #, perl-brace-format
 msgid ""
 "Error: Unrecognized test case '{testcase}' in --test. Use --list-tests for a "
 "list of valid choices."
 msgstr ""
-"Erreur : Cas de test non reconnu '{testcase}' pour --test. Utiliser --list-"
-"tests pour voir la liste de choix valides."
+"Erreur : Cas de test '{testcase}' non reconnu pour --test. Utiliser --list-"
+"tests pour voir la liste de choix valables."
 
 #, perl-brace-format
 msgid ""
 "Error: Unrecognized test module '{module}' in --test. Use --list-tests for a "
 "list of valid choices."
 msgstr ""
-"Erreur : Module de test non reconnu '{module}' pour --test. Utiliser --list-"
-"tests pour voir la liste de choix valides."
+"Erreur : Module de test '{module}' non reconnu pour --test. Utiliser --list-"
+"tests pour voir la liste de choix valables."
 
 #, perl-brace-format
 msgid "Error: Invalid input '{cli_arg}' in --test."
-msgstr "Erreur : Valeur de saisie incorrecte '{cli_arg}' pour --test."
+msgstr "Erreur : Saisie '{cli_arg}' incorrecte pour --test."
 
 #, perl-brace-format
 msgid ""
 "Notice: Engine does not have test case '{testcase}' enabled in the profile. "
 "Forcing..."
 msgstr ""
-"Note : Engine n'a pas le cas de test '{testcase}' d'activé dans le profil. "
+"Note : Engine n'a pas le cas de test '{testcase}' activé dans le profil. "
 "Activation..."
 
 #, perl-brace-format
@@ -165,8 +166,8 @@ msgid ""
 "--ds ds data must be in the form \"keytag,algorithm,type,digest\". E.g. "
 "space is not permitted anywhere in the string."
 msgstr ""
-"les données passées à --ds doivent être de la forme \"keytag,algorithm,type,"
-"digest\". Par exemple, un espace n'est pas permis dans cette chaîne."
+"Les données passées à --ds doivent être de la forme \"keytag,algorithme,type,"
+"condensat\". Par exemple, un espace n'est pas permis dans cette chaîne."
 
 msgid "DEBUG"
 msgstr "DEBOGUE"
