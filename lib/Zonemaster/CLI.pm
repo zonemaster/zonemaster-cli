@@ -662,7 +662,25 @@ sub run {
             say __( "\n\n   Level\tNumber of log entries" );
             say "   =====\t=====================";
             foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
-                printf __( "%8s\t%5d entries.\n" ), translate_severity( $level ), $counter{$level};
+                printf __( "%8s\t%21d\n" ), translate_severity( $level ), $counter{$level};
+            }
+
+            my %entries;
+            my $max = 1;
+            foreach my $e ( @{ Zonemaster::Engine->logger->entries } ) {
+                $entries{$e->level}{$e->tag} += 1;
+                $max = length $e->tag if length $e->tag > $max;
+            }
+
+            print "\n";
+            printf __("%s \t%${max}s %s\n"), '   Level', 'Message tag', '   Count';
+            printf "%s \t%${max}s %s\n", '   =====', '=' x $max, '   =====';
+            foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %entries ) {
+                foreach my $tag ( sort keys %{ $entries{$level} } ) {
+                    printf "%8s\t", $level;
+                    printf "%${max}s ", $tag;
+                    printf "%8s\n", $entries{$level}{$tag};
+                }
             }
         }
     }

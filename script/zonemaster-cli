@@ -250,7 +250,7 @@ Print the name of the test case (test case identifier) which produced the messag
 =item B<--[no-]count>
 
 Print a summary, at the end of a run, of the numbers of messages for each severity
-level that were logged during the run.
+level that were logged during the run, as well as a count of each message tag.
 (default: disabled)
 
 =item B<--[no-]nstimes>
