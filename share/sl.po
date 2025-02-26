@@ -95,15 +95,15 @@ msgid ""
 "or DEBUG3."
 msgstr ""
 "--level mora biti eden izmed KRITIČNO, NAPAKA, OPOZORILO, OBVESTILO, INFO, "
-"DEBUG, DEBUG2 ali DEBUG3.\n"
+"DEBUG, DEBUG2 ali DEBUG3."
 
 msgid ""
 "Only one domain can be given for testing. Did you forget to prepend an "
 "option with '--<OPTION>'?"
-msgstr "Lahko se preverja le ena domena. Ste pozabili dodati `--<OPTION>` ?\n"
+msgstr "Lahko se preverja le ena domena. Ste pozabili dodati `--<OPTION>` ?"
 
 msgid "Must give the name of a domain to test."
-msgstr "Vnesite ime domene za preverjanje.\n"
+msgstr "Vnesite ime domene za preverjanje."
 
 msgid "Error loading hints file: {message}"
 msgstr "Napaka pri nalaganju hint datoteke: {message}"
