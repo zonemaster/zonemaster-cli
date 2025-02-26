@@ -32,8 +32,9 @@ msgstr ""
 "\n"
 
 msgid "Warning: deprecated --encoding, simply remove it from your usage."
-msgstr "Attention : --encoding est dépréciée, retirez-le simplement de "
-"votre ligne de commande."
+msgstr ""
+"Attention : --encoding est dépréciée, retirez-le simplement de votre ligne "
+"de commande."
 
 msgid "Error: --json-stream and --no-json cannot be used together."
 msgstr ""
@@ -72,8 +73,8 @@ msgid ""
 "Error: Invalid input '{cli_arg}' in --test. There must be at most one slash "
 "('/') character."
 msgstr ""
-"Erreur : Saisie incorrecte '{cli_arg}' pour --test. Il doit y avoir au "
-"plus un caractère slash ('/')."
+"Erreur : Saisie incorrecte '{cli_arg}' pour --test. Il doit y avoir au plus "
+"un caractère slash ('/')."
 
 #, perl-brace-format
 msgid ""
