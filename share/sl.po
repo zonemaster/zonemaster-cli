@@ -1,0 +1,180 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-26 15:58+0100\n"
+"PO-Revision-Date: 2025-02-26 14:58+0200\n"
+"Last-Translator: milijan@arnes.si\n"
+"Language-Team: register.si\n"
+"Language: sl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.5\n"
+
+#, perl-brace-format
+msgid ""
+"Warning: setting locale category LC_MESSAGES to {locale} failed -- is it "
+"installed on this system?\n"
+"\n"
+msgstr ""
+"Opozorilo: Neuspešno nastavljanje jezika {locale} za LC_MESSAGES(Je jezik "
+"nameščen na sistemu?).\n"
+"\n"
+
+#, perl-brace-format
+msgid ""
+"Warning: setting locale category LC_CTYPE to {locale} failed -- is it "
+"installed on this system?\n"
+"\n"
+msgstr ""
+"Opozorilo: Neuspešno nastavljanje jezika {locale} za LC_CTYPE (Je jezik "
+"nameščen na sistemu?).\n"
+"\n"
+
+msgid "Warning: deprecated --encoding, simply remove it from your usage."
+msgstr ""
+
+msgid "Error: --json-stream and --no-json cannot be used together."
+msgstr "Napaka : --json-stream in --no-json ne možno uporabiti hkrati."
+
+msgid ""
+"Warning: --json-translate has no effect without either --json or --json-"
+"stream."
+msgstr "Opozorilo: --json-translate nima učinka brez --json ali --json-stream."
+
+msgid "Warning: deprecated --json-translate, use --no-raw instead."
+msgstr "Opozorilo: --json-translate je zastarelo, uporabi --no-raw."
+
+msgid "Warning: deprecated --no-json-translate, use --raw instead."
+msgstr "Opozorilo: --no-json-translate je zastarelo, uporabi --raw."
+
+#, perl-brace-format
+msgid "Loading profile from {path}."
+msgstr "Nalagam profil iz {path}."
+
+#, perl-brace-format
+msgid "Error: invalid value for --sourceaddr4: {reason}"
+msgstr "Napačna vrednost za --sourceaddr4: {reason}"
+
+#, perl-brace-format
+msgid "Error: invalid value for --sourceaddr6: {reason}"
+msgstr "Napačna vrednost za --sourceaddr6: {reason}"
+
+#, perl-brace-format
+msgid ""
+"Error: Invalid input '{cli_arg}' in --test. There must be at most one slash "
+"('/') character."
+msgstr ""
+"Napaka: Napačen vnos '{cli_arg}' v --test. Zahtevana je najmanj ena "
+"poševnica znak ('/')."
+
+#, perl-brace-format
+msgid ""
+"Error: Unrecognized test case '{testcase}' in --test. Use --list-tests for a "
+"list of valid choices."
+msgstr ""
+"Napaka: Test '{testcase}' v --test ni prepoznan, Uporabite --list-tests za  "
+"spisek veljavnih izbir."
+
+#, perl-brace-format
+msgid ""
+"Error: Unrecognized test module '{module}' in --test. Use --list-tests for a "
+"list of valid choices."
+msgstr ""
+"Napaka: Modul  '{module}' v --test ni prepoznan. Uporabite --list-tests za  "
+"spisek veljavnih izbir."
+
+#, perl-brace-format
+msgid "Error: Invalid input '{cli_arg}' in --test."
+msgstr "Napaka: Napačen vnos '{cli_arg}' v --test."
+
+#, perl-brace-format
+msgid ""
+"Notice: Engine does not have test case '{testcase}' enabled in the profile. "
+"Forcing..."
+msgstr ""
+"Pozor: Orodje ne podpira testa '{testcase}', ki je omogočeno v profilu. "
+"Vklopljen..."
+
+#, perl-brace-format
+msgid "Failed to recognize stop level '{level}'."
+msgstr "Ni mogoče prepoznati stopnjo resnosti {level}, ki povzroči ustavitev '"
+
+msgid ""
+"--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 "
+"or DEBUG3."
+msgstr ""
+"--level mora biti eden izmed KRITIČNO, NAPAKA, OPOZORILO, OBVESTILO, INFO, "
+"DEBUG, DEBUG2 ali DEBUG3."
+
+msgid ""
+"Only one domain can be given for testing. Did you forget to prepend an "
+"option with '--<OPTION>'?"
+msgstr "Lahko se preverja le ena domena. Ste pozabili dodati '--<OPTION>'?"
+
+msgid "Must give the name of a domain to test."
+msgstr "Vnesite ime domene za preverjanje."
+
+#, perl-brace-format
+msgid "Error loading hints file: {message}"
+msgstr "Napaka pri nalaganju hint datoteke: {message}"
+
+msgid "Seconds"
+msgstr "Sekund"
+
+msgid "Level"
+msgstr "Stopnja"
+
+msgid "Module"
+msgstr "Modul"
+
+msgid "Testcase"
+msgstr "Vrsta testa"
+
+msgid "Message"
+msgstr "Sporočilo"
+
+msgid "Looks OK."
+msgstr "Videti je v redu."
+
+msgid ""
+"\n"
+"\n"
+"   Level\tNumber of log entries"
+msgstr ""
+"\n"
+"\n"
+"   Stopnja\tŠtevilo dnevniških vnosov"
+
+#, perl-format
+msgid "%8s\t%5d entries.\n"
+msgstr "%8s\t%5d vnosov.\n"
+
+msgid "--ns must be a name or a name/ip pair."
+msgstr "--ns mora biti ime ali ime/IP."
+
+msgid ""
+"--ds ds data must be in the form \"keytag,algorithm,type,digest\". E.g. "
+"space is not permitted anywhere in the string."
+msgstr ""
+"--ds ds mora biti v formatu \"keytag,algorithm,type,digest\". Npr. presledek "
+"ni dovoljen nikjer v nizu."
+
+msgid "DEBUG"
+msgstr "DEBUG"
+
+msgid "INFO"
+msgstr "INFO"
+
+msgid "NOTICE"
+msgstr "OBVESTILO"
+
+msgid "WARNING"
+msgstr "OPOZORILO"
+
+msgid "ERROR"
+msgstr "NAPAKA"
+
+msgid "CRITICAL"
+msgstr "KRITIČNO"
