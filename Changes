@@ -12,7 +12,7 @@ v7.2.0 2025-03-04 (part of Zonemaster v2024.2.1 release)
 
  [Fixes]
 - Updates translations (#418, #425, #415, #422, #414)
-- Removes duplicate function calls (#420)
+- Minor code cleanup (#420)
 
 
 v7.1.0 2024-12-09 (part of Zonemaster v2024.2 release)
