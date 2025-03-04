@@ -1,6 +1,21 @@
 Release history for Zonemaster component Zonemaster-CLI
 
 
+v7.2.0 2025-03-04 (part of Zonemaster v2024.2.1 release)
+
+ [Release information]
+ - Translations have not been fully updated in this release. They will
+   be updated in an upcoming extra release.
+
+ [Features]
+- Adds translation to Slovenian language (#384)
+
+ [Fixes]
+- Updates translations (#418, #425, #415, #422, #414)
+- Minor code cleanup (#420)
+- Fixes to make early messages not to be lost (#416)
+
+
 v7.1.0 2024-12-09 (part of Zonemaster v2024.2 release)
 
  [Release information]
