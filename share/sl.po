@@ -2,15 +2,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-26 17:21+0100\n"
-"PO-Revision-Date: 2023-06-02 11:12+0200\n"
-"Last-Translator: haarbo@dk-hostmaster.dk\n"
-"Language-Team: Zonemaster Team\n"
-"Language: da\n"
+"POT-Creation-Date: 2025-02-26 15:58+0100\n"
+"PO-Revision-Date: 2025-02-26 14:58+0200\n"
+"Last-Translator: milijan@arnes.si\n"
+"Language-Team: register.si\n"
+"Language: sl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.3.1\n"
+"X-Generator: Poedit 3.5\n"
 
 #, perl-brace-format
 msgid ""
@@ -18,8 +18,8 @@ msgid ""
 "installed on this system?\n"
 "\n"
 msgstr ""
-"Advarsel: Kunne ikke sætte locale kategori LC_MESSAGES til {locale} (er det "
-"installeret på dette system?).\n"
+"Opozorilo: Neuspešno nastavljanje jezika {locale} za LC_MESSAGES(Je jezik "
+"nameščen na sistemu?).\n"
 "\n"
 
 #, perl-brace-format
@@ -28,119 +28,115 @@ msgid ""
 "installed on this system?\n"
 "\n"
 msgstr ""
-"Advarsel: Kunne ikke sætte locale kategori LC_CTYPE til {locale} (er det "
-"installeret på dette system?).\n"
+"Opozorilo: Neuspešno nastavljanje jezika {locale} za LC_CTYPE (Je jezik "
+"nameščen na sistemu?).\n"
 "\n"
 
 msgid "Warning: deprecated --encoding, simply remove it from your usage."
-msgstr "Advarsel: --encoding er forældet, fjern det blot fra din brug."
+msgstr ""
 
 msgid "Error: --json-stream and --no-json cannot be used together."
-msgstr "Fejl: --json-stream og --no-json kan ikke bruges samtidigt."
+msgstr "Napaka : --json-stream in --no-json ne možno uporabiti hkrati."
 
 msgid ""
 "Warning: --json-translate has no effect without either --json or --json-"
 "stream."
-msgstr ""
-"Advarsel: --json-translate har ingen virkning uden enten --json eller --json-"
-"stream."
+msgstr "Opozorilo: --json-translate nima učinka brez --json ali --json-stream."
 
 msgid "Warning: deprecated --json-translate, use --no-raw instead."
-msgstr "Advarsel: --json-translate er forældet, brug --no-raw i stedet."
+msgstr "Opozorilo: --json-translate je zastarelo, uporabi --no-raw."
 
 msgid "Warning: deprecated --no-json-translate, use --raw instead."
-msgstr "Advarsel: --no-json-translate er forældet, brug --raw i stedet."
+msgstr "Opozorilo: --no-json-translate je zastarelo, uporabi --raw."
 
 #, perl-brace-format
 msgid "Loading profile from {path}."
-msgstr "Indlæser profil fra {path}."
+msgstr "Nalagam profil iz {path}."
 
 #, perl-brace-format
 msgid "Error: invalid value for --sourceaddr4: {reason}"
-msgstr "Fejl: ugyldig værdi for --sourceaddr4: {reason}"
+msgstr "Napačna vrednost za --sourceaddr4: {reason}"
 
 #, perl-brace-format
 msgid "Error: invalid value for --sourceaddr6: {reason}"
-msgstr "Fejl: ugyldig værdi for --sourceaddr6: {reason}"
+msgstr "Napačna vrednost za --sourceaddr6: {reason}"
 
 #, perl-brace-format
 msgid ""
 "Error: Invalid input '{cli_arg}' in --test. There must be at most one slash "
 "('/') character."
 msgstr ""
-"Fejl: Ugyldigt input '{cli_arg}' i --test. Der må højst være ét skråstreg "
-"('/') tegn."
+"Napaka: Napačen vnos '{cli_arg}' v --test. Zahtevana je najmanj ena "
+"poševnica znak ('/')."
 
 #, perl-brace-format
 msgid ""
 "Error: Unrecognized test case '{testcase}' in --test. Use --list-tests for a "
 "list of valid choices."
 msgstr ""
-"Fejl: Ugenkendt test-case '{testcase}' i --test. Brug --list-tests for en "
-"liste over gyldige valg."
+"Napaka: Test '{testcase}' v --test ni prepoznan, Uporabite --list-tests za  "
+"spisek veljavnih izbir."
 
 #, perl-brace-format
 msgid ""
 "Error: Unrecognized test module '{module}' in --test. Use --list-tests for a "
 "list of valid choices."
 msgstr ""
-"Fejl: Ugenkendt testmodul '{module}' i --test. Brug --list-tests for en "
-"liste over gyldige valg."
+"Napaka: Modul  '{module}' v --test ni prepoznan. Uporabite --list-tests za  "
+"spisek veljavnih izbir."
 
 #, perl-brace-format
 msgid "Error: Invalid input '{cli_arg}' in --test."
-msgstr "Fejl: Ugyldigt input '{cli_arg}' i --test."
+msgstr "Napaka: Napačen vnos '{cli_arg}' v --test."
 
 #, perl-brace-format
 msgid ""
 "Notice: Engine does not have test case '{testcase}' enabled in the profile. "
 "Forcing..."
 msgstr ""
-"Bemærk: Motoren har ikke test-case '{testcase}' aktiveret i profilen. "
-"Tvinger..."
+"Pozor: Orodje ne podpira testa '{testcase}', ki je omogočeno v profilu. "
+"Vklopljen..."
 
 #, perl-brace-format
 msgid "Failed to recognize stop level '{level}'."
-msgstr "Kunne ikke genkende stopniveau '{level}'."
+msgstr "Ni mogoče prepoznati stopnjo resnosti {level}, ki povzroči ustavitev '"
 
 msgid ""
 "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 "
 "or DEBUG3."
 msgstr ""
-"--level skal være enten CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, "
-"DEBUG2 eller DEBUG3."
+"--level mora biti eden izmed KRITIČNO, NAPAKA, OPOZORILO, OBVESTILO, INFO, "
+"DEBUG, DEBUG2 ali DEBUG3."
 
 msgid ""
 "Only one domain can be given for testing. Did you forget to prepend an "
 "option with '--<OPTION>'?"
-msgstr ""
-"Der kan kun angives ét domæne til test. Har du glemt at sætte '--<OPTION>' "
-"foran en indstilling?"
+msgstr "Lahko se preverja le ena domena. Ste pozabili dodati '--<OPTION>'?"
 
 msgid "Must give the name of a domain to test."
-msgstr "Domænenavn, der skal testes, skal angives."
+msgstr "Vnesite ime domene za preverjanje."
 
 #, perl-brace-format
 msgid "Error loading hints file: {message}"
-msgstr "Fejl ved indlæsning af hints-fil: {message}"
+msgstr "Napaka pri nalaganju hint datoteke: {message}"
 
 msgid "Seconds"
-msgstr "Sekunder"
+msgstr "Sekund"
 
 msgid "Level"
-msgstr "Niveau"
+msgstr "Stopnja"
 
 msgid "Module"
 msgstr "Modul"
 
 msgid "Testcase"
-msgstr "Testcase"
+msgstr "Vrsta testa"
 
 msgid "Message"
-msgstr "Besked"
+msgstr "Sporočilo"
 
 msgid "Looks OK."
-msgstr "Ser OK ud."
+msgstr "Videti je v redu."
 
 msgid ""
 "\n"
@@ -149,36 +145,36 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"   Niveau\tAntal logbeskeder"
+"   Stopnja\tŠtevilo dnevniških vnosov"
 
 #, perl-format
 msgid "%8s\t%5d entries.\n"
-msgstr "%8s\t%5d beskeder.\n"
+msgstr "%8s\t%5d vnosov.\n"
 
 msgid "--ns must be a name or a name/ip pair."
-msgstr "--ns skal være et navn eller et navn/IP-adresse par."
+msgstr "--ns mora biti ime ali ime/IP."
 
 msgid ""
 "--ds ds data must be in the form \"keytag,algorithm,type,digest\". E.g. "
 "space is not permitted anywhere in the string."
 msgstr ""
-"--ds ds-data skal være i formatet \"keytag,algorithm,type,digest\". F.eks. "
-"er mellemrum ikke tilladt noget sted i strengen."
+"--ds ds mora biti v formatu \"keytag,algorithm,type,digest\". Npr. presledek "
+"ni dovoljen nikjer v nizu."
 
 msgid "DEBUG"
-msgstr "FEJLSØG"
+msgstr "DEBUG"
 
 msgid "INFO"
 msgstr "INFO"
 
 msgid "NOTICE"
-msgstr "NOTER"
+msgstr "OBVESTILO"
 
 msgid "WARNING"
-msgstr "ADVARSEL"
+msgstr "OPOZORILO"
 
 msgid "ERROR"
-msgstr "FEJL"
+msgstr "NAPAKA"
 
 msgid "CRITICAL"
-msgstr "KRITISK"
+msgstr "KRITIČNO"
