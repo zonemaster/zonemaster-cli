@@ -34,7 +34,7 @@ use Zonemaster::Engine::Exception;
 use Zonemaster::Engine::Normalization qw[normalize_name];
 use Zonemaster::Engine::Logger::Entry;
 use Zonemaster::Engine::Translator;
-use Zonemaster::Engine::Util qw[parse_hints];
+use Zonemaster::Engine::Util       qw[parse_hints];
 use Zonemaster::Engine::Validation qw[validate_ipv4 validate_ipv6];
 
 our %numeric = Zonemaster::Engine::Logger::Entry->levels;
@@ -142,10 +142,11 @@ sub run {
             'test=s'          => \@opt_test,
             'time!'           => \$opt_time,
             'version!'        => \$opt_version,
-        ) or do {
+          )
+          or do {
             my_pod2usage( verbosity => 0, output => \*STDERR );
             return 2;
-        };
+          };
     }
 
     if ( $opt_help ) {
@@ -168,17 +169,19 @@ sub run {
         $ENV{LC_ALL} = $opt_locale;
     }
 
-    # Set LC_MESSAGES and LC_CTYPE separately (https://www.gnu.org/software/gettext/manual/html_node/Triggering.html#Triggering)
+# Set LC_MESSAGES and LC_CTYPE separately (https://www.gnu.org/software/gettext/manual/html_node/Triggering.html#Triggering)
     if ( not defined setlocale( LC_MESSAGES, "" ) ) {
-        my $locale = ($ENV{LANGUAGE} || $ENV{LC_ALL} || $ENV{LC_MESSAGES});
-        say STDERR __x( "Warning: setting locale category LC_MESSAGES to {locale} failed -- is it installed on this system?\n\n",
-                        locale => $locale)
+        my $locale = ( $ENV{LANGUAGE} || $ENV{LC_ALL} || $ENV{LC_MESSAGES} );
+        say STDERR __x(
+            "Warning: setting locale category LC_MESSAGES to {locale} failed -- is it installed on this system?\n\n",
+            locale => $locale );
     }
-    
+
     if ( not defined setlocale( LC_CTYPE, "" ) ) {
-        my $locale = ($ENV{LC_ALL} || $ENV{LC_CTYPE});
-        say STDERR __x( "Warning: setting locale category LC_CTYPE to {locale} failed -- is it installed on this system?\n\n",
-                       locale => $locale)
+        my $locale = ( $ENV{LC_ALL} || $ENV{LC_CTYPE} );
+        say STDERR __x(
+            "Warning: setting locale category LC_CTYPE to {locale} failed -- is it installed on this system?\n\n",
+            locale => $locale );
     }
 
     if ( $opt_version ) {
@@ -203,7 +206,8 @@ sub run {
 
     if ( defined $opt_json_translate ) {
         unless ( $opt_json or $opt_json_stream ) {
-            printf STDERR __( "Warning: --json-translate has no effect without either --json or --json-stream." ) . "\n";
+            printf STDERR __( "Warning: --json-translate has no effect without either --json or --json-stream." )
+              . "\n";
         }
         if ( $opt_json_translate ) {
             printf STDERR __( "Warning: deprecated --json-translate, use --no-raw instead." ) . "\n";
@@ -257,15 +261,16 @@ sub run {
 
     my @testing_suite;
     if ( @opt_test ) {
-        my %existing_tests = Zonemaster::Engine->all_methods;
+        my %existing_tests        = Zonemaster::Engine->all_methods;
         my @existing_test_modules = keys %existing_tests;
-        my @existing_test_cases = map { @{ $existing_tests{$_} } } @existing_test_modules;
+        my @existing_test_cases   = map { @{ $existing_tests{$_} } } @existing_test_modules;
 
         foreach my $t ( @opt_test ) {
             # There should be at most one slash character
             if ( $t =~ tr/\/// > 1 ) {
-                say STDERR __x( "Error: Invalid input '{cli_arg}' in --test. There must be at most one slash ('/') character.",
-                                cli_arg => $t);
+                say STDERR __x(
+                    "Error: Invalid input '{cli_arg}' in --test. There must be at most one slash ('/') character.",
+                    cli_arg => $t );
                 return $EXIT_USAGE_ERROR;
             }
 
@@ -273,43 +278,45 @@ sub run {
             $t = lc( $t );
 
             my ( $module, $method );
-            # Fully qualified module and test case (e.g. Example/example12), or just a test case (e.g. example12). Note the different capturing order.
-            if ( ( ($module, $method) = $t =~ m#^ ( [a-z]+ ) / ( [a-z]+[0-9]{2} ) $#ix )
-                or
-                 ( ($method, $module) = $t =~ m#^ ( ( [a-z]+ ) [0-9]{2} ) $#ix ) )
+# Fully qualified module and test case (e.g. Example/example12), or just a test case (e.g. example12). Note the different capturing order.
+            if (   ( ( $module, $method ) = $t =~ m#^ ( [a-z]+ ) / ( [a-z]+[0-9]{2} ) $#ix )
+                or ( ( $method, $module ) = $t =~ m#^ ( ( [a-z]+ ) [0-9]{2} ) $#ix ) )
             {
                 # Check that test module exists
-                if ( grep( /^$module$/,  map { lc($_) } @existing_test_modules ) ) {
+                if ( grep( /^$module$/, map { lc( $_ ) } @existing_test_modules ) ) {
                     # Check that test case exists
                     if ( grep( /^$method$/, @existing_test_cases ) ) {
                         push @testing_suite, "$module/$method";
                     }
                     else {
-                        say STDERR __x( "Error: Unrecognized test case '{testcase}' in --test. Use --list-tests for a list of valid choices.",
-                                        testcase => $method );
+                        say STDERR __x(
+"Error: Unrecognized test case '{testcase}' in --test. Use --list-tests for a list of valid choices.",
+                            testcase => $method
+                        );
                         return $EXIT_USAGE_ERROR;
                     }
                 }
                 else {
-                    say STDERR __x( "Error: Unrecognized test module '{module}' in --test. Use --list-tests for a list of valid choices.",
-                                    module => $module );
+                    say STDERR __x(
+"Error: Unrecognized test module '{module}' in --test. Use --list-tests for a list of valid choices.",
+                        module => $module
+                    );
                     return $EXIT_USAGE_ERROR;
                 }
-            }
+            } ## end if ( ( ( $module, $method...)))
             # Just a module name (e.g. Example) or something invalid.
             else {
                 $t =~ s{/$}{};
                 # Check that test module exists
-                if ( grep( /^$t$/,  map { lc($_) } @existing_test_modules ) ) {
+                if ( grep( /^$t$/, map { lc( $_ ) } @existing_test_modules ) ) {
                     push @testing_suite, $t;
                 }
                 else {
-                    say STDERR __x( "Error: Invalid input '{cli_arg}' in --test.",
-                                    cli_arg => $t);
+                    say STDERR __x( "Error: Invalid input '{cli_arg}' in --test.", cli_arg => $t );
                     return $EXIT_USAGE_ERROR;
                 }
             }
-        }
+        } ## end foreach my $t ( @opt_test )
 
         # Start with all profile-enabled test cases
         my @actual_test_cases = @{ Zonemaster::Engine::Profile->effective->get( 'test_cases' ) };
@@ -324,11 +331,12 @@ sub run {
         # Check if more test cases need to be included in the profile
         foreach my $t ( @testing_suite ) {
             # Either a module/method, or just a module
-            my ( $module, $method ) = split('/', $t);
+            my ( $module, $method ) = split( '/', $t );
             if ( $method ) {
                 # Test case in not already in the profile, we add it explicitly and notify the user
                 if ( not grep( /^$method$/, @actual_test_cases ) ) {
-                    say $fh_diag __x( "Notice: Engine does not have test case '{testcase}' enabled in the profile. Forcing...",
+                    say $fh_diag __x(
+                        "Notice: Engine does not have test case '{testcase}' enabled in the profile. Forcing...",
                         testcase => $method );
                     push @actual_test_cases, $method;
                 }
@@ -342,11 +350,11 @@ sub run {
                     push @actual_test_cases, @{ $existing_tests{$module} };
                 }
             }
-        }
+        } ## end foreach my $t ( @testing_suite)
 
         # Configure Engine to include all of the required test cases in the profile
         Zonemaster::Engine::Profile->effective->set( 'test_cases', [ uniq sort @actual_test_cases ] );
-    }
+    } ## end if ( @opt_test )
 
     # These two must come after any profile from command line has been loaded
     # to make any IPv4/IPv6 option override the profile setting.
@@ -391,7 +399,7 @@ sub run {
         module   => 12,
         testcase => 14
     );
-    my %header_names = ();
+    my %header_names    = ();
     my %remaining_space = ();
 
     # Callback defined here so it closes over the setup above.
@@ -427,29 +435,29 @@ sub run {
             else {
                 my $prefix = q{};
                 if ( $opt_time ) {
-                    $prefix .= sprintf "%*.2f ", ${field_width{seconds}}, $entry->timestamp;
+                    $prefix .= sprintf "%*.2f ", ${ field_width { seconds } }, $entry->timestamp;
                 }
 
                 if ( $opt_show_level ) {
                     $prefix .= $opt_raw ? $entry->level : translate_severity( $entry->level );
                     my $space_l10n =
-                        ${ field_width { level } } - length( decode_utf8( translate_severity( $entry_level ) ) ) + 1;
+                      ${ field_width { level } } - length( decode_utf8( translate_severity( $entry_level ) ) ) + 1;
                     $prefix .= ' ' x $space_l10n;
                 }
 
                 if ( $opt_show_module ) {
-                    $prefix .= sprintf "%-*s ", ${field_width{module}}, $entry->module;
+                    $prefix .= sprintf "%-*s ", ${ field_width { module } }, $entry->module;
                 }
 
                 if ( $opt_show_testcase ) {
-                    $prefix .= sprintf "%-*s ", ${field_width{testcase}}, $entry->testcase;
+                    $prefix .= sprintf "%-*s ", ${ field_width { testcase } }, $entry->testcase;
                 }
 
                 if ( $opt_raw ) {
                     $prefix .= $entry->tag;
 
                     my $message = $entry->argstr;
-                    my @lines = split /\n/, $message;
+                    my @lines   = split /\n/, $message;
 
                     printf "%s%s %s\n", $prefix, ' ', @lines ? shift @lines : '';
                     for my $line ( @lines ) {
@@ -457,8 +465,11 @@ sub run {
                     }
                 }
                 else {
-                    if ( $entry_level eq q{DEBUG3} and scalar( keys %{$entry->args} ) == 1 and defined $entry->args->{packet} ) {
-                        my $packet = $entry->args->{packet};
+                    if (    $entry_level eq q{DEBUG3}
+                        and scalar( keys %{ $entry->args } ) == 1
+                        and defined $entry->args->{packet} )
+                    {
+                        my $packet  = $entry->args->{packet};
                         my $padding = q{ } x length $prefix;
                         $entry->args->{packet} = q{};
                         printf "%s%s\n", $prefix, $translator->translate_tag( $entry );
@@ -470,10 +481,14 @@ sub run {
                         printf "%s%s\n", $prefix, $translator->translate_tag( $entry );
                     }
                 }
-            }
-        }
+            } ## end else [ if ( $opt_json and $opt_json_stream)]
+        } ## end if ( $numeric{ uc $entry_level...})
         if ( $opt_stop_level and $numeric{ uc $entry->level } >= $numeric{$opt_stop_level} ) {
-            die( Zonemaster::Engine::Exception::NormalExit->new( { message => "Saw message at level " . $entry->level } ) );
+            die(
+                Zonemaster::Engine::Exception::NormalExit->new(
+                    { message => "Saw message at level " . $entry->level }
+                )
+            );
         }
     };
 
@@ -486,7 +501,6 @@ sub run {
             push @held_messages, @_;
         }
     );
-
 
     if ( @argv > 1 ) {
         say STDERR __(
@@ -545,7 +559,7 @@ sub run {
 
         Zonemaster::Engine::Recursor->remove_fake_addresses( '.' );
         Zonemaster::Engine::Recursor->add_fake_addresses( '.', $hints_data );
-    }
+    } ## end if ( defined $opt_hints)
 
     # This can generate early log messages.
     if ( @opt_ns ) {
@@ -618,21 +632,21 @@ sub run {
         $header .= sprintf "%s\n", "=" x $field_width{message};
 
         print $header;
-    }
+    } ## end if ( not $opt_raw and ...)
 
     # Now we are ready to actually print messages, including those that are
     # currently in the hold queue.
-    while (my $entry = pop @held_messages) {
-        $message_printer->($entry);
+    while ( my $entry = pop @held_messages ) {
+        $message_printer->( $entry );
     }
-    Zonemaster::Engine->logger->callback($message_printer);
+    Zonemaster::Engine->logger->callback( $message_printer );
 
     # Actually run tests!
     eval {
         if ( @opt_test ) {
             foreach my $t ( @testing_suite ) {
                 # Either a module/method, or just a module
-                my ( $module, $method ) = split('/', $t);
+                my ( $module, $method ) = split( '/', $t );
                 if ( $method ) {
                     Zonemaster::Engine->test_method( $module, $method, $domain );
                 }
@@ -717,12 +731,13 @@ sub run {
 
     if ( $opt_nstimes ) {
         my $zone = Zonemaster::Engine->zone( $domain );
-        my $max = max map { length( "$_" ) } ( @{ $zone->ns }, q{Server} );
+        my $max  = max map { length( "$_" ) } ( @{ $zone->ns }, q{Server} );
 
         if ( $opt_json ) {
             my @times = ();
             foreach my $ns ( @{ $zone->ns } ) {
-                push @times, {
+                push @times,
+                  {
                     'ns'     => $ns->string,
                     'max'    => 1000 * $ns->max_time,
                     'min'    => 1000 * $ns->min_time,
@@ -730,13 +745,13 @@ sub run {
                     'stddev' => 1000 * $ns->stddev_time,
                     'median' => 1000 * $ns->median_time,
                     'total'  => 1000 * $ns->sum_time
-                };
+                  };
             }
             $json_output->{nstimes} = \@times;
         }
         else {
             print "\n";
-            printf "%${max}s %s\n", 'Server', '      Max      Min      Avg   Stddev   Median     Total';
+            printf "%${max}s %s\n", 'Server',   '      Max      Min      Avg   Stddev   Median     Total';
             printf "%${max}s %s\n", '=' x $max, ' ======== ======== ======== ======== ======== =========';
 
             foreach my $ns ( @{ $zone->ns } ) {
@@ -749,7 +764,7 @@ sub run {
                 printf "%9.2f\n",   1000 * $ns->sum_time;
             }
         }
-    }
+    } ## end if ( $opt_nstimes )
 
     if ( $opt_elapsed ) {
         my $last = Zonemaster::Engine->logger->entries->[-1];
@@ -767,7 +782,7 @@ sub run {
         $res = $JSON->decode( $res );
         foreach ( @$res ) {
             unless ( $opt_raw ) {
-                my %e = %$_;
+                my %e     = %$_;
                 my $entry = Zonemaster::Engine::Logger::Entry->new( \%e );
                 $_->{message} = $translator->translate_tag( $entry );
             }
@@ -788,7 +803,7 @@ sub run {
     }
 
     return $EXIT_SUCCESS;
-}
+} ## end sub run
 
 sub check_fake_delegation {
     my ( $domain, @ns ) = @_;
@@ -803,7 +818,7 @@ sub check_fake_delegation {
         ( my $errors, $name ) = normalize_name( decode( 'utf8', $name ) );
 
         if ( scalar @$errors > 0 ) {
-            my $error_message = "Invalid name in --ns argument:\n" ;
+            my $error_message = "Invalid name in --ns argument:\n";
             foreach my $err ( @$errors ) {
                 $error_message .= "\t" . $err->string . "\n";
             }
@@ -812,22 +827,25 @@ sub check_fake_delegation {
 
         if ( $ip ) {
             my $net_ip = Net::IP::XS->new( $ip );
-	    unless( validate_ipv4( $ip ) or validate_ipv6( $ip ) )
-	    {
-                die Net::IP::XS::Error() ? "Invalid IP address in --ns argument:\n\t". Net::IP::XS::Error() ."\n" : "Invalid IP address in --ns argument.\n";
+            unless ( validate_ipv4( $ip ) or validate_ipv6( $ip ) ) {
+                die Net::IP::XS::Error()
+                  ? "Invalid IP address in --ns argument:\n\t" . Net::IP::XS::Error() . "\n"
+                  : "Invalid IP address in --ns argument.\n";
             }
         }
-    }
+    } ## end foreach my $pair ( @ns )
 
     return;
-}
+} ## end sub check_fake_delegation
 
 sub check_fake_ds {
     my ( @ds ) = @_;
 
     foreach my $str ( @ds ) {
         unless ( $str =~ /$DS_RE/ ) {
-            say STDERR __( "--ds ds data must be in the form \"keytag,algorithm,type,digest\". E.g. space is not permitted anywhere in the string.");
+            say STDERR __(
+"--ds ds data must be in the form \"keytag,algorithm,type,digest\". E.g. space is not permitted anywhere in the string."
+            );
             exit( 1 );
         }
     }
@@ -846,7 +864,7 @@ sub add_fake_delegation {
         ( my $errors, $name ) = normalize_name( decode( 'utf8', $name ) );
 
         if ( $ip ) {
-            push @{ $data{ $name } }, $ip;
+            push @{ $data{$name} }, $ip;
         }
         else {
             push @ns_with_no_ip, $name;
@@ -854,14 +872,14 @@ sub add_fake_delegation {
     }
 
     foreach my $ns ( @ns_with_no_ip ) {
-        if ( not exists $data{ $ns } ) {
-            $data{ $ns } = undef;
+        if ( not exists $data{$ns} ) {
+            $data{$ns} = undef;
         }
     }
 
     return Zonemaster::Engine->add_fake_delegation( $domain => \%data );
 
-}
+} ## end sub add_fake_delegation
 
 sub add_fake_ds {
     my ( $domain, @ds ) = @_;
@@ -889,11 +907,11 @@ sub print_versions {
 my @spinner_strings = ( '  | ', '  / ', '  - ', '  \\ ' );
 
 sub print_spinner {
-    state $counter = 0;
-    state $last_spin = [0, 0];
+    state $counter   = 0;
+    state $last_spin = [ 0, 0 ];
 
-    my $time = [Time::HiRes::gettimeofday()];
-    if ( Time::HiRes::tv_interval($last_spin, $time) > 0.1 ) {
+    my $time = [ Time::HiRes::gettimeofday() ];
+    if ( Time::HiRes::tv_interval( $last_spin, $time ) > 0.1 ) {
         $last_spin = $time;
         printf "%s\r", $spinner_strings[ $counter++ % 4 ];
     }
@@ -920,7 +938,7 @@ sub print_test_list {
 sub do_dump_profile {
     my $json = JSON::XS->new->canonical->pretty;
 
-    print $json->encode( Zonemaster::Engine::Profile->effective->{ q{profile} } );
+    print $json->encode( Zonemaster::Engine::Profile->effective->{q{profile}} );
 
     return;
 }
@@ -948,13 +966,13 @@ sub translate_severity {
     else {
         return $severity;
     }
-}
+} ## end sub translate_severity
 
 sub _max {
     my ( $a, $b ) = @_;
     $a //= 0;
     $b //= 0;
-    return ( $a > $b ? $a : $b ) ;
+    return ( $a > $b ? $a : $b );
 }
 
 1;
