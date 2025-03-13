@@ -7,14 +7,14 @@ use Carp qw( croak );
 
 =head1 NAME
 
-    Zonemaster::CLI::TestCaseSet - A mutable set of test methods names.
+    Zonemaster::CLI::TestCaseSet - A mutable set of test case names.
 
 =head1 SYNOPSIS
 
     use Zonemaster::CLI::TestCaseSet;
 
-    # Construct a working subset of test methods {alpha01, alpha02, alpha03,
-    # beta01} of test methods out of the full set {alpha01, alpha02, alpha03,
+    # Construct a working subset of test cases {alpha01, alpha02, alpha03,
+    # beta01} of test cases out of the full set {alpha01, alpha02, alpha03,
     # beta01, beta02} distributed across the test modules {alpha, beta}.
     my $working_set = Zonemaster::CLI::TestCaseSet->new(
         \qw( alpha01 alpha02 alpha03 beta01 ),
@@ -45,8 +45,8 @@ use Carp qw( croak );
 
 =head1 DESCRIPTION
 
-A TestCaseSet primarily represents an immutable full set of test methods and a
-mutable subset thereof. The full set of test methods is distributed across the
+A TestCaseSet primarily represents an immutable full set of test cases and a
+mutable subset thereof. The full set of test cases is distributed across the
 set of test modules.
 
 =head2 TERM EXPANSION
@@ -55,18 +55,18 @@ Terms are expanded in one of three ways.
 
 =over 4
 
-=item The full set of all test methods.
+=item The full set of test cases.
 
-The term matching the string C<'all'>.
+Terms matching the string C<'all'>.
 
-=item The set of all test methods inside one test module.
+=item The set of all test cases inside one test module.
 
 Terms matching the name of a test module.
 
-=item The singleton set of a single test methods
+=item The singleton set of a single test cases
 
-Terms matching the name of a test methods or the concatenation of a test module,
-a slash and a test methods belonging to that test module.
+Terms matching the name of a test case or the concatenation of a test module,
+a slash and a test cases belonging to that test module.
 
 =back
 
@@ -94,8 +94,8 @@ sub parse_modifier_expr {
 
 =head2 new()
 
-In the full set of test methods, methods names must not share the same name as
-other test methods or test modules.
+In the full set of test cases, methods names must not share the same name as
+other test cases or test modules.
 
 =cut
 
@@ -128,7 +128,7 @@ Update the working subset.
 The given operator is applied to two operands and the result is assigned to the
 working subset. The left hand side operand is the current value of the working
 subset. The right hand side operand is calculated by L<expanding|/"TERM
-EXPANSION"> the given term to a subset of test methods.
+EXPANSION"> the given term to a subset of test cases.
 
 Three operators are supported.
 

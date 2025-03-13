@@ -118,14 +118,15 @@ For details, see C<man zonemaster-cli>.
 =begin :man
 
 An EXPR starting with a term (e.g., C<all>, C<nameserver01>) completely replaces
-the current value of C<test_cases>.
-An EXPR starting with C<+> or C<-> modifies the existing C<test_cases>.
-An empty EXPR (C<--test=>) leaves C<test_cases> unchanged.
+the selection (i.e., the value of the C<test_cases> profile property).
+An EXPR starting with an operator applies a delta to the selection.
+An empty EXPR (C<--test=>) leaves the selection unchanged (formally, it is
+updated by applying the identity transformation).
 
 Multiple C<--test> options may be provided; they are applied sequentially.
 When used with C<--profile>, that option is applied first.
 
-Use C<--list-tests> to list all available test cases and test modules in the default profile.
+Use C<--list-tests> to list all test cases and test modules in the default profile.
 
 Examples:
 
@@ -133,7 +134,7 @@ Examples:
 
 =item --test=B<all>
 
-selects all available test cases.
+selects all test cases in the default profile.
 
 =item --test=B<nameserver>
 
@@ -154,15 +155,15 @@ Nameserver03.
 
 =item --test=B<-dnssec>
 
-removes all DNSSEC test cases.
+removes all DNSSEC test cases from the selection.
 
 =item --test=B<+syntax01+syntax02>
 
-adds Syntax01 and Syntax02 test cases.
+adds the Syntax01 and Syntax02 test cases to the selection.
 
 =item --test=
 
-leaves the existing C<test_cases> unmodified.
+leaves the selection unchanged.
 
 =back
 
