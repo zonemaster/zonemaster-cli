@@ -125,7 +125,7 @@ An empty EXPR (C<--test=>) leaves C<test_cases> unchanged.
 Multiple C<--test> options may be provided; they are applied sequentially.
 When used with C<--profile>, that option is applied first.
 
-Use C<--list-tests> to list all available test cases and test modules.
+Use C<--list-tests> to list all available test cases and test modules in the default profile.
 
 Examples:
 
