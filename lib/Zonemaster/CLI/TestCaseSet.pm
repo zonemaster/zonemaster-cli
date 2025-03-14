@@ -55,7 +55,7 @@ Terms are expanded in one of three ways.
 
 =over 4
 
-=item The full set of test cases.
+=item The full set of test cases as provided to the TestCaseSet constructor for the current object.
 
 Terms matching the string C<'all'>.
 
