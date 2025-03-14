@@ -262,9 +262,10 @@ sub run {
     }
 
     {
-        my $cases = Zonemaster::CLI::TestCaseSet->new(
+        my %all_methods = Zonemaster::Engine->all_methods;
+        my $cases       = Zonemaster::CLI::TestCaseSet->new(    #
             Zonemaster::Engine::Profile->effective->get( q{test_cases} ),
-            Zonemaster::Engine->all_methods,
+            \%all_methods,
         );
 
         for my $test ( @opt_test ) {

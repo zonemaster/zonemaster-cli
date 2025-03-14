@@ -7,72 +7,149 @@ use Carp qw( croak );
 
 =head1 NAME
 
-    Zonemaster::CLI::TestCaseSet - A mutable set of test case names.
+    Zonemaster::CLI::TestCaseSet - Manage and modify Zonemaster test case selections
 
 =head1 SYNOPSIS
 
     use Zonemaster::CLI::TestCaseSet;
 
-    # Construct a working subset of test cases {alpha01, alpha02, alpha03,
-    # beta01} of test cases out of the full set {alpha01, alpha02, alpha03,
-    # beta01, beta02} distributed across the test modules {alpha, beta}.
-    my $working_set = Zonemaster::CLI::TestCaseSet->new(
-        \qw( alpha01 alpha02 alpha03 beta01 ),
-        {
-            alpha => \qw( alpha01 alpha02 alpha03 ),
-            beta  => \qw( beta01 beta02 ),
-        },
+    # Define the names of the available test modules and their test cases
+    my $schema = {
+        alpha => [qw( alpha01 alpha02 alpha03 )],
+        beta  => [qw( beta01 beta02 )],
+    };
+
+    # Construct an initial selection of test cases
+    my $selection = Zonemaster::CLI::TestCaseSet->new(
+        [qw( alpha01 alpha02 alpha03 beta01 )],
+        $schema,
     );
 
-    # Parse a modifier expression into a list of modifiers.
+    # Parse and apply a modifier expression
     my @modifiers = Zonemaster::CLI::TestCaseSet->parse_modifier_expr( '-alpha+alpha02' );
-
-    # Traverse the list of modifiers, chunked into (operator, term) pairs.
     while ( @modifiers ) {
-        my $op   = shift @modifiers;
-        my $term = shift @modifiers;
-
-        # Modify the working subset by applying each operator and term.
-        if ( !$working_set->apply_modifier( $op, $term ) ) {
-            die "Error: Unrecognized term '$term'.\n";
-        }
+        my ( $op, $term ) = splice @modifiers, 0, 2;
+        $selection->apply_modifier( $op, $term )
+          or die "Error: Unrecognized term '$term'.\n";
     }
 
-    # Make sure the working subset ends up in the expected state.
-    if ( join(' ', $working_set->to_list) ne 'alpha02 beta01' ) {
-        die;
-    }
+    # Output final test case selection
+    print join( ' ', $selection->to_list );    # alpha02 beta01
 
 =head1 DESCRIPTION
 
-A TestCaseSet primarily represents an immutable full set of test cases and a
-mutable subset thereof. The full set of test cases is distributed across the
-set of test modules.
+Zonemaster::CLI::TestCaseSet represents a mutable selection of test cases,
+together with an immutable schema defining available test modules and their
+associated test cases.
 
-=head2 TERM EXPANSION
+The schema is defined as a mapping of test module names to their associated test
+case names.
 
-Terms are expanded in one of three ways.
+The selection can be adjusted using modifier expressions.
+
+=head2 MODIFIER EXPRESSIONS
+
+A modifier expression describes a change to the current selection.
+Expressions combine terms using operators, e.g., C<'-alpha+alpha02'>.
+
+These operators are supported:
 
 =over 4
 
-=item The full set of test cases as provided to the TestCaseSet constructor for the current object.
+=item C<'+'> (union)
 
-Terms matching the string C<'all'>.
+Add test cases expanded from C<$term> to the current selection.
 
-=item The set of all test cases inside one test module.
+=item C<'-'> (difference)
 
-Terms matching the name of a test module.
+Remove test cases expanded C<$term> from the current selection.
 
-=item The singleton set of a single test cases
+=item C<''> (replace)
 
-Terms matching the name of a test case (e.g. "Case10") or the concatenation of a test module,
-a slash and a test cases belonging to that test module (e.g. "Case/Case10").
+Replace the entire current selection with the test cases expanded from C<$term>.
 
 =back
 
-Term names are matched case insensitively.
+Terms expand into sets of test cases in one of three ways:
 
-=head1 SUBROUTINES
+=over 4
+
+=item C<all>
+
+Expands to all available test cases defined by the schema.
+
+=item Test module name
+
+Expands to all test cases associated with the test module.
+
+=item Test case name
+
+Expands directly to the specified test case itself.
+Test cases may be specified plainly (e.g., C<Case10>) or fully qualified
+(module/testcase, e.g., C<Case/Case10>).
+
+=back
+
+Term matching is case-insensitive.
+
+=cut
+
+=head1 CONSTRUCTORS
+
+=head2 new( $selection, $schema )
+
+Construct a new TestCaseSet object.
+
+=over 4
+
+=item C<$selection> (arrayref)
+
+Initial selection of test case names.
+
+=item C<$schema> (hashref)
+
+A hash mapping test module names to arrays of their associated test case names.
+
+=back
+
+Dies if:
+- Any test case name in C<$schema> is repeated.
+- C<$selection> contains names not found in C<$schema>.
+
+=cut
+
+sub new {
+    my ( $class, $selection, $schema ) = @_;
+
+    my %cases = map { lc $_ => 1 } map { @{$_} } values %$schema;
+    for my $case ( @$selection ) {
+        if ( !exists $cases{ lc $case } ) {
+            croak "Unrecognized initial test case '$case'";
+        }
+    }
+
+    my $obj = {
+        _selection => { map { lc $_ => 1 } @$selection },
+        _terms     => _get_schema_terms( $schema ),
+    };
+
+    bless $obj, $class;
+
+    return $obj;
+}
+
+=head1 CLASS METHODS
+
+parse_modifier_expr( $modifier_expr )
+
+Parse a string containing a modifier expression and returns a list of
+alternating operators and terms.
+
+The returned list always starts with an operator.
+
+For example, parsing C<'-alpha+beta02'> returns:
+
+    ('-', 'alpha', '+', 'beta02')
 
 =cut
 
@@ -90,94 +167,46 @@ sub parse_modifier_expr {
     return @modifiers;
 }
 
-=head1 CONSTRUCTORS
-
-=head2 new()
-
-In the full set of test cases, methods names must not share the same name as
-other test cases or test modules.
-
-=cut
-
-sub new {
-    my ( $class, $initial_methods, %all_methods ) = @_;
-
-    my %flattened_methods = map { $_ => 1 } map { @{$_} } values %all_methods;
-    for my $method ( @$initial_methods ) {
-        if ( !exists $flattened_methods{$method} ) {
-            croak "Unrecognized initial method '$method'";
-        }
-    }
-
-    my $obj = {
-        _cur_methods      => { map { $_ => 1 } @$initial_methods },
-        _all_term_methods => _get_all_term_methods( \%all_methods ),
-    };
-
-    bless $obj, $class;
-
-    return $obj;
-}
-
 =head1 INSTANCE METHODS
 
-=head2 apply_modifier()
+=head2 apply_modifier( $operator, $term )
 
-Update the working subset.
+Update the selection using the given operator and term.
 
-The given operator is applied to two operands and the result is assigned to the
-working subset. The left hand side operand is the current value of the working
-subset. The right hand side operand is calculated by L<expanding|/"TERM
-EXPANSION"> the given term to a subset of test cases.
+Returns true if successful, or false if the term could not be expanded based on
+the schema.
 
-Three operators are supported.
+Dies if the operator is invalid.
 
-=over 4
+=head3 Example:
 
-=item C<'+'>
-
-Returns the union of the left and right hand side operands
-
-=item C<'-'>
-
-Returns the set difference of the left and right hand side operands
-
-=item C<''>
-
-Ignores the left hand side operand and returns the right hand side operand.
-
-=back
-
-Returns true if the operation is successful.
-
-Returns false if the term could not be expanded.
-
-Dies if the operator is not recognized.
+    $selection->apply_modifier('+', 'beta') 
+        or die "Unrecognized term";
 
 =cut
 
 sub apply_modifier {
     my ( $self, $op, $term ) = @_;
 
-    my $methods_ref = $self->{_all_term_methods}{ lc $term };
+    my $cases_ref = $self->{_terms}{ lc $term };
 
-    if ( !defined $methods_ref ) {
+    if ( !defined $cases_ref ) {
         return 0;
     }
 
     if ( $op eq '' ) {
-        $self->{_cur_methods} = {};
+        $self->{_selection} = {};
         $op = '+';
     }
 
     if ( $op eq '-' ) {
-        for my $method ( @$methods_ref ) {
-            delete $self->{_cur_methods}{$method};
+        for my $case ( @$cases_ref ) {
+            delete $self->{_selection}{$case};
         }
     }
     elsif ( $op eq '+' ) {
-        for my $method ( @$methods_ref ) {
-            $self->{_cur_methods}{$method} = 1;
+        for my $case ( @$cases_ref ) {
+            $self->{_selection}{$case} = 1;
         }
     }
     else {
@@ -187,47 +216,53 @@ sub apply_modifier {
     return 1;
 } ## end sub apply_modifier
 
+=head2 to_list
+
+Return a lowercase list of the currently selected test case names.
+
+=cut
+
 sub to_list {
     my ( $self ) = @_;
 
-    return sort keys %{ $self->{_cur_methods} };
+    return sort keys %{ $self->{_selection} };
 }
 
-sub _get_all_term_methods {
-    my ( $all_methods ) = @_;
+sub _get_schema_terms {
+    my ( $schema ) = @_;
 
     my $terms = {};
     $terms->{all} = [];
 
-    for my $module ( keys %$all_methods ) {
+    for my $module ( keys %$schema ) {
         if ( lc $module eq 'all' ) {
-            croak "module name must not be 'all'";
+            croak "test module name must not be 'all'";
         }
         if ( $module =~ qr{/} ) {
-            croak "module name contains forbidden character '/': '$module'";
+            croak "test module name contains forbidden character '/': '$module'";
         }
         if ( exists $terms->{ lc $module } ) {
-            croak "found module with same name as another method or module: '$module'";
+            croak "found test module with same name as another test case or test module: '$module'";
         }
         $terms->{ lc $module } = [];
-        for my $method ( @{ $all_methods->{$module} } ) {
-            if ( lc $method eq 'all' ) {
-                croak "method name must not be 'all'";
+        for my $case ( @{ $schema->{$module} } ) {
+            if ( lc $case eq 'all' ) {
+                croak "test case name must not be 'all'";
             }
-            if ( $method =~ qr{/} ) {
-                croak "method name contains forbidden character '/': '$method'";
+            if ( $case =~ qr{/} ) {
+                croak "test case name contains forbidden character '/': '$case'";
             }
-            if ( exists $terms->{ lc $method } ) {
-                croak "found method with same name as another method or module: '$method'";
+            if ( exists $terms->{ lc $case } ) {
+                croak "found test case with same name as another test case or test module: '$case'";
             }
-            $terms->{ lc $method } = [$method];
-            $terms->{ lc "$module/$method" } = [$method];
-            push @{ $terms->{ lc $module } }, $method;
-            push @{ $terms->{all} },          $method;
+            $terms->{ lc $case } = [$case];
+            $terms->{ lc "$module/$case" } = [$case];
+            push @{ $terms->{ lc $module } }, $case;
+            push @{ $terms->{all} },          $case;
         }
-    } ## end for my $module ( keys %$all_methods)
+    } ## end for my $module ( keys %$schema)
 
     return $terms;
-} ## end sub _get_all_term_methods
+} ## end sub _get_schema_terms
 
 1;

@@ -60,19 +60,19 @@ lives_ok {    # Make sure we get to print log messages in case of errors.
     subtest 'new' => sub {
         my @cases = (
             {
-                name               => 'empty',
-                all_methods        => {},
-                initial_test_cases => [],
-                expect_ok          => {
+                name      => 'empty',
+                schema    => {},
+                selection => [],
+                expect_ok => {
                     terms   => ['all'],
                     methods => [],
                 },
             },
             {
-                name               => 'multiple test modules and test cases',
-                all_methods        => { 'alpha' => [ 'bravo', 'charlie' ], 'delta' => ['echo'] },
-                initial_test_cases => [ 'bravo', 'echo' ],
-                expect_ok          => {
+                name      => 'multiple test modules and test cases',
+                schema    => { 'alpha' => [ 'bravo', 'charlie' ], 'delta' => ['echo'] },
+                selection => [ 'bravo', 'echo' ],
+                expect_ok => {
                     terms => [
                         'all',   'alpha',   'alpha/bravo', 'alpha/charlie',
                         'bravo', 'charlie', 'delta',       'delta/echo',
@@ -82,74 +82,107 @@ lives_ok {    # Make sure we get to print log messages in case of errors.
                 },
             },
             {
-                name               => 'illegal test module name 1',
-                all_methods        => { 'all' => [] },
-                initial_test_cases => [],
-                expect_err         => qr/must not be 'all'/i,
+                name      => 'mixed cases',
+                schema    => { 'alpha' => [ 'BRAVO', 'charlie' ] },
+                selection => [ 'bravo', 'CHARLIE' ],
+                expect_ok => {
+                    terms   => [ 'all',   'alpha', 'alpha/bravo', 'alpha/charlie', 'bravo', 'charlie' ],
+                    methods => [ 'bravo', 'charlie' ],
+                },
             },
             {
-                name               => 'illegal test module name 2',
-                all_methods        => { 'alpha/bravo' => [] },
-                initial_test_cases => [],
-                expect_err         => qr{contains forbidden character '/'}i,
+                name       => 'illegal test module name 1',
+                schema     => { 'all' => [] },
+                selection  => [],
+                expect_err => qr/must not be 'all'/i,
             },
             {
-                name               => 'illegal test case name 1',
-                all_methods        => { 'alpha' => ['all'] },
-                initial_test_cases => [],
-                expect_err         => qr/must not be 'all'/i,
+                name       => 'illegal test module name 2',
+                schema     => { 'ALL' => [] },
+                selection  => [],
+                expect_err => qr/must not be 'all'/i,
             },
             {
-                name               => 'illegal test case name 2',
-                all_methods        => { 'alpha' => ['bravo/charlie'] },
-                initial_test_cases => [],
-                expect_err         => qr{contains forbidden character '/'}i,
+                name       => 'illegal test module name 3',
+                schema     => { 'alpha/bravo' => [] },
+                selection  => [],
+                expect_err => qr{contains forbidden character '/'}i,
             },
             {
-                name               => 'duplicate term 1',
-                all_methods        => { 'alpha' => ['alpha'] },
-                initial_test_cases => [],
-                expect_err         => qr/same name/i,
+                name       => 'illegal test case name 1',
+                schema     => { 'alpha' => ['all'] },
+                selection  => [],
+                expect_err => qr/must not be 'all'/i,
             },
             {
-                name               => 'duplicate term 2',
-                all_methods        => { 'alpha' => [], 'bravo' => ['alpha'] },
-                initial_test_cases => [],
-                expect_err         => qr/same name/i,
+                name       => 'illegal test case name 2',
+                schema     => { 'alpha' => ['ALL'] },
+                selection  => [],
+                expect_err => qr/must not be 'all'/i,
             },
             {
-                name               => 'duplicate term 3',
-                all_methods        => { 'alpha' => [ 'bravo', 'bravo' ] },
-                initial_test_cases => [],
-                expect_err         => qr/same name/i,
+                name       => 'illegal test case name 3',
+                schema     => { 'alpha' => ['bravo/charlie'] },
+                selection  => [],
+                expect_err => qr{contains forbidden character '/'}i,
             },
             {
-                name               => 'duplicate term 4',
-                all_methods        => { 'alpha' => ['bravo'], 'charlie' => ['bravo'] },
-                initial_test_cases => [],
-                expect_err         => qr/same name/i,
+                name       => 'duplicate term 1',
+                schema     => { 'alpha' => ['alpha'] },
+                selection  => [],
+                expect_err => qr/same name/i,
             },
             {
-                name               => 'unrecognized test case 1',
-                all_methods        => { 'alpha' => [] },
-                initial_test_cases => ['all'],
-                expect_err         => qr/unrecognized/i,
+                name       => 'duplicate term 2',
+                schema     => { 'alpha' => ['ALPHA'] },
+                selection  => [],
+                expect_err => qr/same name/i,
             },
             {
-                name               => 'unrecognized test case 2',
-                all_methods        => { 'alpha' => [] },
-                initial_test_cases => ['alpha'],
-                expect_err         => qr/unrecognized/i,
+                name       => 'duplicate term 3',
+                schema     => { 'ALPHA' => ['alpha'] },
+                selection  => [],
+                expect_err => qr/same name/i,
+            },
+            {
+                name       => 'duplicate term 4',
+                schema     => { 'alpha' => [], 'bravo' => ['alpha'] },
+                selection  => [],
+                expect_err => qr/same name/i,
+            },
+            {
+                name       => 'duplicate term 5',
+                schema     => { 'alpha' => [ 'bravo', 'bravo' ] },
+                selection  => [],
+                expect_err => qr/same name/i,
+            },
+            {
+                name       => 'duplicate term 6',
+                schema     => { 'alpha' => ['bravo'], 'charlie' => ['bravo'] },
+                selection  => [],
+                expect_err => qr/same name/i,
+            },
+            {
+                name       => 'unrecognized test case 1',
+                schema     => { 'alpha' => [] },
+                selection  => ['all'],
+                expect_err => qr/unrecognized/i,
+            },
+            {
+                name       => 'unrecognized test case 2',
+                schema     => { 'alpha' => [] },
+                selection  => ['alpha'],
+                expect_err => qr/unrecognized/i,
             },
         );
         for my $case ( @cases ) {
             subtest $case->{name} => sub {
-                my $test_cases;
+                my $test_case_set;
                 local $@;
                 eval {
-                    $test_cases = Zonemaster::CLI::TestCaseSet->new(    #
-                        $case->{initial_test_cases},
-                        %{ $case->{all_methods} },
+                    $test_case_set = Zonemaster::CLI::TestCaseSet->new(    #
+                        $case->{selection},
+                        $case->{schema},
                     );
                 };
 
@@ -157,98 +190,100 @@ lives_ok {    # Make sure we get to print log messages in case of errors.
                 my $actual;
                 if ( !$err ) {
                     $actual = {
-                        terms   => [ sort keys %{ $test_cases->{_all_term_methods} } ],
-                        methods => [ $test_cases->to_list ],
+                        terms   => [ sort keys %{ $test_case_set->{_terms} } ],
+                        methods => [ $test_case_set->to_list ],
                     };
                 }
 
                 if ( defined $case->{expect_err} ) {
                     like $err, $case->{expect_err}, "error";
-                } else {
+                }
+                else {
                     is $err, "", "no error";
                 }
                 if ( defined $case->{expect_ok} ) {
                     eq_or_diff $actual, $case->{expect_ok}, "result";
-                } else {
+                }
+                else {
                     eq_or_diff $actual, undef, "no result";
                 }
-            }; ## end sub
+            };    ## end sub
         } ## end for my $case ( @cases )
-    }; ## end 'new' => sub
+    };    ## end 'new' => sub
 
     subtest 'apply_modifier' => sub {
         my @cases = (
             {
-                name               => 'empty',
-                all_methods        => {},
-                initial_test_cases => [],
-                modifiers          => [],
-                expected           => [],
+                name      => 'empty',
+                schema    => {},
+                selection => [],
+                modifiers => [],
+                expected  => [],
             },
             {
-                name               => 'no modifiers',
-                all_methods        => { basic => [ 'basic01', 'basic02' ] },
-                initial_test_cases => [ 'basic01' ],
-                modifiers          => [],
-                expected           => [ 'basic01' ],
+                name      => 'no modifiers',
+                schema    => { basic => [ 'basic01', 'basic02' ] },
+                selection => ['basic01'],
+                modifiers => [],
+                expected  => ['basic01'],
             },
             {
-                name               => 'add a new case',
-                all_methods        => { basic => [ 'basic01', 'basic02' ] },
-                initial_test_cases => [ 'basic01' ],
-                modifiers          => [ '+', 'basic02' ],
-                expected           => [ 'basic01', 'basic02' ],
+                name      => 'add a new case',
+                schema    => { basic => [ 'basic01', 'basic02' ] },
+                selection => ['basic01'],
+                modifiers => [ '+',       'basic02' ],
+                expected  => [ 'basic01', 'basic02' ],
             },
             {
-                name               => 'add the same case',
-                all_methods        => { basic => [ 'basic01', 'basic02' ] },
-                initial_test_cases => [ 'basic01' ],
-                modifiers          => [ '+', 'basic01' ],
-                expected           => [ 'basic01' ],
+                name      => 'add the same case',
+                schema    => { basic => [ 'basic01', 'basic02' ] },
+                selection => ['basic01'],
+                modifiers => [ '+', 'basic01' ],
+                expected  => ['basic01'],
             },
             {
-                name               => 'replace',
-                all_methods        => { basic => [ 'basic01', 'basic02' ] },
-                initial_test_cases => [ 'basic01' ],
-                modifiers          => [ '', 'basic02' ],
-                expected           => [ 'basic02' ],
+                name      => 'replace',
+                schema    => { basic => [ 'basic01', 'basic02' ] },
+                selection => ['basic01'],
+                modifiers => [ '', 'basic02' ],
+                expected  => ['basic02'],
             },
             {
-                name               => 'module expansion',
-                all_methods        => { basic => [ 'basic01' ], extra => ['extra01', 'extra02'] },
-                initial_test_cases => [ 'basic01' ],
-                modifiers          => [ '', 'extra' ],
-                expected           => [ 'extra01', 'extra02' ],
+                name      => 'module expansion',
+                schema    => { basic => ['basic01'], extra => [ 'extra01', 'extra02' ] },
+                selection => ['basic01'],
+                modifiers => [ '',        'extra' ],
+                expected  => [ 'extra01', 'extra02' ],
             },
             {
-                name               => 'all',
-                all_methods        => { basic => [ 'basic01' ], extra => ['extra01', 'extra02'] },
-                initial_test_cases => [ 'basic01' ],
-                modifiers          => [ '', 'all' ],
-                expected           => [ 'basic01', 'extra01', 'extra02' ],
+                name      => 'all',
+                schema    => { basic => ['basic01'], extra => [ 'extra01', 'extra02' ] },
+                selection => ['basic01'],
+                modifiers => [ '', 'all' ],
+                expected  => [ 'basic01', 'extra01', 'extra02' ],
             },
             {
-                name               => 'multiple modifiers',
-                all_methods        => { basic => [ 'basic01' ], extra => ['extra01', 'extra02'] },
-                initial_test_cases => [ 'basic01' ],
-                modifiers          => [ '', 'all', '-', 'basic' ],
-                expected           => [ 'extra01', 'extra02' ],
+                name      => 'multiple modifiers',
+                schema    => { basic => ['basic01'], extra => [ 'extra01', 'extra02' ] },
+                selection => ['basic01'],
+                modifiers => [ '', 'all', '-', 'basic' ],
+                expected  => [ 'extra01', 'extra02' ],
             },
         );
         for my $case ( @cases ) {
             subtest $case->{name} => sub {
-                my $test_cases = Zonemaster::CLI::TestCaseSet->new(    #
-                    $case->{initial_test_cases},
-                    %{ $case->{all_methods} },
+                my $test_case_set = Zonemaster::CLI::TestCaseSet->new(    #
+                    $case->{selection},
+                    $case->{schema},
                 );
 
                 while ( @{ $case->{modifiers} } ) {
                     my $op   = shift @{ $case->{modifiers} };
                     my $term = shift @{ $case->{modifiers} };
-                    $test_cases->apply_modifier( $op, $term );
+                    $test_case_set->apply_modifier( $op, $term );
                 }
 
-                eq_or_diff [ $test_cases->to_list ], $case->{expected};
+                eq_or_diff [ $test_case_set->to_list ], $case->{expected};
             };
         }
     };
