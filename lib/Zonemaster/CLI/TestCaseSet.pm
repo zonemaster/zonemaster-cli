@@ -65,8 +65,8 @@ Terms matching the name of a test module.
 
 =item The singleton set of a single test cases
 
-Terms matching the name of a test case or the concatenation of a test module,
-a slash and a test cases belonging to that test module.
+Terms matching the name of a test case (e.g. "Case10") or the concatenation of a test module,
+a slash and a test cases belonging to that test module (e.g. "Case/Case10").
 
 =back
 
