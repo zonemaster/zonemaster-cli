@@ -671,22 +671,19 @@ sub run {
                     'stddev'  => 1000 * $ns->stddev_time,
                     'median'  => 1000 * $ns->median_time,
                     'total'   => 1000 * $ns->sum_time,
-                    'count' => scalar @{ $ns->times } };
+                    'count'   => scalar @{ $ns->times }
+                };
             }
 
-            if ( @child_nss ) {
-                my @entries = map { json_nstimes( $_ ) } sort @child_nss;
-                push @times, { 'zone' => \@entries };
-            }
+            my %section_mapping = (
+                'child' => \@child_nss,
+                'parent' => \@parent_nss,
+                'other' => \@other_nss
+            );
 
-            if ( @parent_nss ) {
-                my @entries = map { json_nstimes( $_ ) } sort @parent_nss;
-                push @times, { 'parent' => \@entries };
-            }
-
-            if ( @other_nss ) {
-                my @entries = map { json_nstimes( $_ ) } sort @other_nss;
-                push @times, { 'other' => \@entries };
+            foreach my $section_name ( sort keys %section_mapping ) {
+                my @entries = map { json_nstimes( $_ ) } sort @{ $section_mapping{$section_name} };
+                push @times, { $section_name => \@entries };
             }
 
             $json_output->{nstimes} = \@times;
@@ -694,8 +691,7 @@ sub run {
         else {
             my $header = __( 'Name servers' );
             my $max = max map { length( "$_" ) } ( ( @child_nss, @parent_nss, @nss ), $header );
-            print "\n";
-            printf "%${max}s %s\n", $header, '        Max        Min        Avg     Stddev     Median       Total       Count';
+            printf "\n%${max}s %s\n", $header, '        Max        Min        Avg     Stddev     Median       Total       Count';
             printf "%${max}s %s\n", '=' x $max, ' ========== ========== ========== ========== ========== =========== ===========';
 
             my $total_queries_count = 0;
@@ -706,7 +702,7 @@ sub run {
                 my ( $ns, $max, $total_queries_count, $total_queries_times, $nss_already_processed_ref ) = @_;
                 my %nss_already_processed = %{ $nss_already_processed_ref };
 
-                printf "%${max}s ", $ns->string;
+                printf "%${max}s ",  $ns->string;
                 printf "%11.2f ",    1000 * $ns->max_time;
                 printf "%10.2f ",    1000 * $ns->min_time;
                 printf "%10.2f ",    1000 * $ns->average_time;
@@ -729,6 +725,7 @@ sub run {
             foreach my $section_order ( sort keys %section_mapping ) {
                 foreach my $section_header ( keys % { $section_mapping{$section_order} } ) {
                     printf "%s %s\n", $section_header, '-' x ( ( $max - length $section_header ) - 1 );
+
                     foreach my $section_nss ( sort @{ $section_mapping{$section_order}{$section_header} } ) {
                         ( $total_queries_count, $total_queries_times ) =
                             print_nstimes( $section_nss, $max, $total_queries_count, $total_queries_times, \%nss_already_processed );
