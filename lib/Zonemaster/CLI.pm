@@ -665,16 +665,27 @@ sub run {
     my $json_output = {};
 
     if ( $opt_count ) {
+        my %entries;
+        foreach my $e ( @{ Zonemaster::Engine->logger->entries } ) {
+            $entries{$e->level}{$e->tag} += 1;
+        }
+
         if ( $opt_json ) {
             $json_output->{count} = {};
             foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
-                $json_output->{count}{$level} = $counter{$level};
+                $json_output->{count}{by_level}{$level} = $counter{$level};
+            }
+
+            foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %entries ) {
+                foreach my $tag ( sort keys %{ $entries{$level} } ) {
+                    $json_output->{count}{by_message_tag}{$level}{$tag} = $entries{$level}{$tag};
+                }
             }
         }
         else {
             my $header1 = __( 'Level' );
-            my $header2 = __( 'Number of log entries' );
             my $max1 = length $header1;
+            my $header2 = __( 'Number of log entries' );
             my $max2 = length $header2;
 
             foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
@@ -690,15 +701,7 @@ sub run {
             }
 
             my $header3 = __( 'Message tag' );
-            my $max3 = length $header3;
-
-            my %entries;
-            foreach my $e ( @{ Zonemaster::Engine->logger->entries } ) {
-                $entries{$e->level}{$e->tag} += 1;
-                my $len = length $e->tag;
-                $max3 = $len if $len > $max3;
-            }
-
+            my $max3 = max map { length "$_" } ( ( map { keys %{ $_ } } ( values %entries ) ), $header3 );;
             my $header4 = __( 'Count' );
             my $max4 = max map { length "$_" } ( ( map { values %{ $_ } } ( values %entries ) ), $header4 );
 
