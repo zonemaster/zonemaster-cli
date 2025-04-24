@@ -644,22 +644,22 @@ sub run {
     if ( $opt_nstimes ) {
         my $zone = Zonemaster::Engine->zone( $domain );
         my %all_nss = %{ Zonemaster::Engine::Nameserver::object_cache };
-        my @zone_nss = @{ $zone->ns };
+        my @child_nss = @{ $zone->ns };
         my @parent_nss = @{ $zone->parent->ns };
         my @nss;
 
-        foreach my $keys ( keys %all_nss ) {
-            foreach my $val ( values %{ $all_nss{$keys} } ) {
-                push @nss, $val if scalar @{ $val->times } > 0;
+        foreach my $ns_name ( keys %all_nss ) {
+            foreach my $ns ( values %{ $all_nss{$ns_name} } ) {
+                push @nss, $ns if scalar @{ $ns->times } > 0;
             }
         }
 
         my %nss_filter;
-        @nss_filter{ ( @zone_nss, @parent_nss ) } = ();
-        my @filtered_nss = grep { ! exists $nss_filter{$_} } @nss;
+        @nss_filter{ ( @child_nss, @parent_nss ) } = undef;
+        my @other_nss = grep { ! exists $nss_filter{$_} } @nss;
 
         if ( $opt_json ) {
-            my ( @times, @items ) = ();
+            my @times;
 
             sub json_nstimes {
                 my ( $ns ) = @_;
@@ -674,75 +674,71 @@ sub run {
                     'count' => scalar @{ $ns->times } };
             }
 
-            foreach my $ns ( sort @zone_nss ) {
-                push @items, json_nstimes( $ns );
+            if ( @child_nss ) {
+                my @entries = map { json_nstimes( $_ ) } sort @child_nss;
+                push @times, { 'zone' => \@entries };
             }
-            push @times, { 'zone' => \@items } if scalar @items;
-            @items = ();
 
-            foreach my $ns ( sort @parent_nss ) {
-                push @items, json_nstimes( $ns );
+            if ( @parent_nss ) {
+                my @entries = map { json_nstimes( $_ ) } sort @parent_nss;
+                push @times, { 'parent' => \@entries };
             }
-            push @times, { 'parent' => \@items } if scalar @items;
-            @items = ();
 
-            foreach my $ns ( sort @filtered_nss ) {
-                push @items, json_nstimes( $ns );
+            if ( @other_nss ) {
+                my @entries = map { json_nstimes( $_ ) } sort @other_nss;
+                push @times, { 'other' => \@entries };
             }
-            push @times, { 'other' => \@items } if scalar @items;
 
             $json_output->{nstimes} = \@times;
         }
         else {
-            my $max = max map { length( "$_" ) } ( uniq ( @zone_nss, @parent_nss, @nss ), q{Server} );
+            my $header = __( 'Name servers' );
+            my $max = max map { length( "$_" ) } ( ( @child_nss, @parent_nss, @nss ), $header );
             print "\n";
-            printf __("%${max}s %s\n"), 'Server', '      Max      Min      Avg   Stddev   Median     Total     Count';
-            printf "%${max}s %s\n", '=' x $max, ' ======== ======== ======== ======== ======== ========= =========';
+            printf "%${max}s %s\n", $header, '        Max        Min        Avg     Stddev     Median       Total       Count';
+            printf "%${max}s %s\n", '=' x $max, ' ========== ========== ========== ========== ========== =========== ===========';
 
             my $total_queries_count = 0;
             my $total_queries_times = 0;
             my %nss_already_processed;
 
             sub print_nstimes {
-                my ( $ns, $max, $total_queries_count, $total_queries_times, %nss_already_processed ) = @_;
+                my ( $ns, $max, $total_queries_count, $total_queries_times, $nss_already_processed_ref ) = @_;
+                my %nss_already_processed = %{ $nss_already_processed_ref };
 
                 printf "%${max}s ", $ns->string;
-                printf "%9.2f ",    1000 * $ns->max_time;
-                printf "%8.2f ",    1000 * $ns->min_time;
-                printf "%8.2f ",    1000 * $ns->average_time;
-                printf "%8.2f ",    1000 * $ns->stddev_time;
-                printf "%8.2f ",    1000 * $ns->median_time;
-                printf "%9.2f ",    1000 * $ns->sum_time;
-                printf "%9d\n",     scalar @{ $ns->times };
+                printf "%11.2f ",    1000 * $ns->max_time;
+                printf "%10.2f ",    1000 * $ns->min_time;
+                printf "%10.2f ",    1000 * $ns->average_time;
+                printf "%10.2f ",    1000 * $ns->stddev_time;
+                printf "%10.2f ",    1000 * $ns->median_time;
+                printf "%11.2f ",    1000 * $ns->sum_time;
+                printf "%11d\n",     scalar @{ $ns->times };
                 $total_queries_count += scalar @{ $ns->times } unless $nss_already_processed{$ns};
                 $total_queries_times += ( 1000 * $ns->sum_time ) unless $nss_already_processed{$ns};
 
-                return $total_queries_count, $total_queries_times, %nss_already_processed;
+                return $total_queries_count, $total_queries_times;
             }
 
-            printf __("%s %s\n"), 'Child', '-' x ( ( $max - length 'Child' ) - 1 );
-            foreach my $ns ( sort @zone_nss ) {
-                ( $total_queries_count, $total_queries_times, %nss_already_processed ) =
-                    print_nstimes( $ns, $max, $total_queries_count, $total_queries_times, %nss_already_processed );
-                $nss_already_processed{$ns} = 1;
+            my %section_mapping = (
+                1 => { __( 'Child zone' ) => \@child_nss },
+                2 => { __( 'Parent zone' ) => \@parent_nss },
+                3 => { __( 'Other' ) => \@other_nss }
+            );
+
+            foreach my $section_order ( sort keys %section_mapping ) {
+                foreach my $section_header ( keys % { $section_mapping{$section_order} } ) {
+                    printf "%s %s\n", $section_header, '-' x ( ( $max - length $section_header ) - 1 );
+                    foreach my $section_nss ( sort @{ $section_mapping{$section_order}{$section_header} } ) {
+                        ( $total_queries_count, $total_queries_times ) =
+                            print_nstimes( $section_nss, $max, $total_queries_count, $total_queries_times, \%nss_already_processed );
+                        $nss_already_processed{$section_nss} = 1;
+                    }
+                }
             }
 
-            printf __("%s %s\n"), 'Parent', '-' x ( ( $max - length 'Parent' ) - 1 );
-            foreach my $ns ( sort @parent_nss ) {
-                ( $total_queries_count, $total_queries_times, %nss_already_processed ) =
-                    print_nstimes( $ns, $max, $total_queries_count, $total_queries_times, %nss_already_processed );
-                $nss_already_processed{$ns} = 1;
-            }
-
-            printf __("%s %s\n"), 'Other', '-' x ( ( $max - length 'Other' ) - 1 );
-            foreach my $ns ( sort @filtered_nss ) {
-                ( $total_queries_count, $total_queries_times, %nss_already_processed ) =
-                    print_nstimes( $ns, $max, $total_queries_count, $total_queries_times, %nss_already_processed );
-                $nss_already_processed{$ns} = 1;
-            }
-
-            printf "%${max}s %s\n", '=' x $max, ' ======== ======== ======== ======== ======== ========= =========';
-            printf __("%${max}s %55.2f %9s\n"), 'Total', $total_queries_times, $total_queries_count;
+            printf "%${max}s %s\n", '=' x $max, ' ========== ========== ========== ========== ========== =========== ===========';
+            printf "%${max}s %67.2f %11s\n", __( 'Grand total' ), $total_queries_times, $total_queries_count;
         }
     } ## end if ( $opt_nstimes )
 
