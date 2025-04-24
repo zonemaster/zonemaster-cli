@@ -672,27 +672,41 @@ sub run {
             }
         }
         else {
-            say __( "\n\n   Level\tNumber of log entries" );
-            say "   =====\t=====================";
+            my $header1 = __( 'Level' );
+            my $header2 = __( 'Number of log entries' );
+            my $max1 = length $header1;
+            my $max2 = length $header2;
+
             foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
-                printf __( "%8s\t%21d\n" ), translate_severity( $level ), $counter{$level};
+                my $len = length translate_severity( $level );
+                $max1 = $len if $len > $max1;
             }
+
+            printf "\n\n%${max1}s\t%${max2}s", $header1, $header2;
+            printf "\n%s\t%s\n", '=' x $max1, '=' x $max2;
+
+            foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
+                printf "%${max1}s\t%${max2}d\n", translate_severity( $level ), $counter{$level};
+            }
+
+            my $header3 = __( 'Message tag' );
+            my $max3 = length $header3;
 
             my %entries;
-            my $max = 1;
             foreach my $e ( @{ Zonemaster::Engine->logger->entries } ) {
                 $entries{$e->level}{$e->tag} += 1;
-                $max = length $e->tag if length $e->tag > $max;
+                my $len = length $e->tag;
+                $max3 = $len if $len > $max3;
             }
 
-            print "\n";
-            printf __("%s \t%${max}s %s\n"), '   Level', 'Message tag', '   Count';
-            printf "%s \t%${max}s %s\n", '   =====', '=' x $max, '   =====';
+            my $header4 = __( 'Count' );
+            my $max4 = max map { length "$_" } ( ( map { values %{ $_ } } ( values %entries ) ), $header4 );
+
+            printf "\n%${max1}s\t%${max3}s\t%${max4}s", $header1, $header3, $header4;
+            printf "\n%${max1}s\t%${max3}s\t%${max4}s\n", '=' x $max1, '=' x $max3, '=' x $max4;
             foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %entries ) {
                 foreach my $tag ( sort keys %{ $entries{$level} } ) {
-                    printf "%8s\t", $level;
-                    printf "%${max}s ", $tag;
-                    printf "%8s\n", $entries{$level}{$tag};
+                    printf "%${max1}s\t%${max3}s\t%${max4}s\n", $level, $tag, $entries{$level}{$tag};
                 }
             }
         }
