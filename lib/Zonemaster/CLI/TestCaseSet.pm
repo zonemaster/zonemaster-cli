@@ -58,15 +58,18 @@ These operators are supported:
 
 =item C<'+'> (union)
 
-Add test cases expanded from C<$term> to the current selection.
+Add test cases to the current selection.
+The set of test cases to add is the expansion of C<$term>.
 
 =item C<'-'> (difference)
 
-Remove test cases expanded C<$term> from the current selection.
+Remove test cases from the current selection.
+The set of test cases to remove is the expansion of C<$term>.
 
 =item C<''> (replace)
 
-Replace the entire current selection with the test cases expanded from C<$term>.
+Replace the current selection.
+The new selection is the set of test cases expanded from C<$term>.
 
 =back
 

@@ -110,21 +110,20 @@ Print the effective profile used in JSON format, then exit.
 
 =item B<--test>=EXPR
 
-Select test cases to run (sets the C<test_cases> profile property).
-EXPR is composed of terms (individual test cases, test modules, or C<all>) and
-operators (C<+> to add, C<-> to remove).
+Specify which test cases to run by setting the C<test_cases> property in the profile.
+The EXPR is a flexible expression consisting of terms (individual test cases, test
+modules, or all) and operators (C<+> to add, C<-> to remove).
 For details, see C<man zonemaster-cli>.
 
 =begin :man
 
-An EXPR starting with a term (e.g., C<all>, C<nameserver01>) completely replaces
-the selection (i.e., the value of the C<test_cases> profile property).
-An EXPR starting with an operator applies a delta to the selection.
-An empty EXPR (C<--test=>) leaves the selection unchanged (formally, it is
-updated by applying the identity transformation).
+An EXPR starting with a term (e.g., C<all>, C<nameserver01>) I<replaces>
+the current selection.
+An EXPR starting with an operator (C<+> or C<->) I<modifies> the current selection.
+An empty EXPR (C<--test=>) keeps the current selection unchanged (i.e., it is a no-op).
 
-Multiple C<--test> options may be provided; they are applied sequentially.
-When used with C<--profile>, that option is applied first.
+Multiple C<--test> options may be specified; they are applied in the order they are given.
+When used together with the C<--profile>, that option is applied first.
 
 Use C<--list-tests> to list all test cases and test modules in the default profile.
 
@@ -164,6 +163,8 @@ adds the Syntax01 and Syntax02 test cases to the selection.
 =item --test=
 
 leaves the selection unchanged.
+Specifying C<--test=> without an argument is a no-op.
+Having this possibility may come in handy when invoking zonemaster-cli from scripts.
 
 =back
 
