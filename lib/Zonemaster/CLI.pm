@@ -701,7 +701,7 @@ sub run {
             }
 
             my $header3 = __( 'Message tag' );
-            my $max3 = max map { length "$_" } ( ( map { keys %{ $_ } } ( values %entries ) ), $header3 );;
+            my $max3 = max map { length "$_" } ( ( map { keys %{ $_ } } ( values %entries ) ), $header3 );
             my $header4 = __( 'Count' );
             my $max4 = max map { length "$_" } ( ( map { values %{ $_ } } ( values %entries ) ), $header4 );
 
