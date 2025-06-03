@@ -390,9 +390,15 @@ do {
         text => qr{
             \QLooks OK.\E
             .*
-            Server \s+ Max \s+ Min \s+ Avg \s+ Stddev \s+ Median \s+ Total
+            \QName servers\E \s+ Max \s+ Min \s+ Avg \s+ Stddev \s+ Median \s+ Total \s+ Count
             .*
-            \Qa.root-servers.net/\E
+            \QChild zone\E
+            .*
+            \QParent zone\E
+            .*
+            Other
+            .*
+            \QGrand total\E \s+ \d+
         }msx,
         json => {
             type       => "object",
@@ -401,8 +407,30 @@ do {
                 nstimes => {
                     type  => "array",
                     items => {
-                        type     => "object",
-                        required => [qw( avg max median min ns stddev total)],
+                        type       => "object",
+                        properties => {
+                            child => {
+                                type  => "array",
+                                items => {
+                                    type     => "object",
+                                    required => [qw( avg max median min ns stddev total count)],
+                                },
+                            },
+                            parent => {
+                                type  => "array",
+                                items => {
+                                    type     => "object",
+                                    required => [qw( avg max median min ns stddev total count)],
+                                },
+                            },
+                            other => {
+                                type  => "array",
+                                items => {
+                                    type     => "object",
+                                    required => [qw( avg max median min ns stddev total count)],
+                                },
+                            },
+                        },
                     },
                 },
             },

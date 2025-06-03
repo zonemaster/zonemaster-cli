@@ -1,13 +1,13 @@
 # Brief help module to define the exception we use for early exits.
 package Zonemaster::Engine::Exception::NormalExit;
-use 5.014002;
+use v5.26;
 use warnings;
 use parent 'Zonemaster::Engine::Exception';
 
 # The actual interesting module.
 package Zonemaster::CLI;
 
-use 5.014002;
+use v5.26;
 
 use strict;
 use warnings;
@@ -661,7 +661,7 @@ sub run {
         if ( $opt_json ) {
             my @times;
 
-            sub json_nstimes {
+            my sub json_nstimes {
                 my ( $ns ) = @_;
                 return {
                     'ns'      => $ns->string,
@@ -698,7 +698,7 @@ sub run {
             my $total_queries_times = 0;
             my %nss_already_processed;
 
-            sub print_nstimes {
+            my sub print_nstimes {
                 my ( $ns, $max, $total_queries_count, $total_queries_times, $nss_already_processed_ref ) = @_;
                 my %nss_already_processed = %{ $nss_already_processed_ref };
 
