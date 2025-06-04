@@ -369,6 +369,11 @@ do {
             INFO \s+ \d+
             .*
             DEBUG \s+ \d+
+            .*
+            Level \s+ \QMessage tag\E \s+ \QCount\E
+            .*
+            INFO \s+ \w+ \s+ \d+
+            .*
         }msx,
         json => {
             type       => "object",

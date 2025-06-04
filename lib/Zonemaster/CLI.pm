@@ -665,17 +665,52 @@ sub run {
     my $json_output = {};
 
     if ( $opt_count ) {
+        my %entries;
+        foreach my $e ( @{ Zonemaster::Engine->logger->entries } ) {
+            $entries{$e->level}{$e->tag} += 1;
+        }
+
         if ( $opt_json ) {
             $json_output->{count} = {};
             foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
-                $json_output->{count}{$level} = $counter{$level};
+                $json_output->{count}{by_level}{$level} = $counter{$level};
+            }
+
+            foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %entries ) {
+                foreach my $tag ( sort keys %{ $entries{$level} } ) {
+                    $json_output->{count}{by_message_tag}{$level}{$tag} = $entries{$level}{$tag};
+                }
             }
         }
         else {
-            say __( "\n\n   Level\tNumber of log entries" );
-            say "   =====\t=====================";
+            my $header1 = __( 'Level' );
+            my $max1 = length $header1;
+            my $header2 = __( 'Number of log entries' );
+            my $max2 = length $header2;
+
             foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
-                printf __( "%8s\t%5d entries.\n" ), translate_severity( $level ), $counter{$level};
+                my $len = length translate_severity( $level );
+                $max1 = $len if $len > $max1;
+            }
+
+            printf "\n\n%${max1}s\t%${max2}s", $header1, $header2;
+            printf "\n%s\t%s\n", '=' x $max1, '=' x $max2;
+
+            foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %counter ) {
+                printf "%${max1}s\t%${max2}d\n", translate_severity( $level ), $counter{$level};
+            }
+
+            my $header3 = __( 'Message tag' );
+            my $max3 = max map { length "$_" } ( ( map { keys %{ $_ } } ( values %entries ) ), $header3 );
+            my $header4 = __( 'Count' );
+            my $max4 = max map { length "$_" } ( ( map { values %{ $_ } } ( values %entries ) ), $header4 );
+
+            printf "\n%${max1}s\t%${max3}s\t%${max4}s", $header1, $header3, $header4;
+            printf "\n%${max1}s\t%${max3}s\t%${max4}s\n", '=' x $max1, '=' x $max3, '=' x $max4;
+            foreach my $level ( sort { $numeric{$b} <=> $numeric{$a} } keys %entries ) {
+                foreach my $tag ( sort keys %{ $entries{$level} } ) {
+                    printf "%${max1}s\t%${max3}s\t%${max4}s\n", $level, $tag, $entries{$level}{$tag};
+                }
             }
         }
     }
