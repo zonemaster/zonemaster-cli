@@ -120,7 +120,7 @@ For details, see C<man zonemaster-cli>.
 An EXPR starting with a term (e.g., C<all>, C<nameserver01>) I<replaces>
 the current selection.
 An EXPR starting with an operator (C<+> or C<->) I<modifies> the current selection.
-An empty EXPR (C<--test=>) keeps the current selection unchanged (i.e., it is a no-op).
+An empty EXPR (C<--test=>) does not modify the selection (i.e., it is a no-op).
 
 Multiple C<--test> options may be specified; they are applied in the order they are given.
 When used together with the C<--profile>, the profile option is applied first.
