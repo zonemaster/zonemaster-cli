@@ -123,7 +123,7 @@ An EXPR starting with an operator (C<+> or C<->) I<modifies> the current selecti
 An empty EXPR (C<--test=>) keeps the current selection unchanged (i.e., it is a no-op).
 
 Multiple C<--test> options may be specified; they are applied in the order they are given.
-When used together with the C<--profile>, that option is applied first.
+When used together with the C<--profile>, the profile option is applied first.
 
 Use C<--list-tests> to list all test cases and test modules in the default profile.
 
@@ -133,11 +133,11 @@ Examples:
 
 =item --test=B<all>
 
-selects all test cases in the default profile.
+selects all test cases in the default profile, i.e. overrides any custom profile.
 
 =item --test=B<nameserver>
 
-selects all test cases in the Nameserver test module.
+selects all test cases in the Nameserver test module in the default profile.
 
 =item --test=B<nameserver01>
 
@@ -162,7 +162,7 @@ adds the Syntax01 and Syntax02 test cases to the selection.
 
 =item --test=
 
-leaves the selection unchanged.
+empty value is valid, but does not change the selection of test cases
 Specifying C<--test=> without an argument is a no-op.
 Having this possibility may come in handy when invoking zonemaster-cli from scripts.
 
