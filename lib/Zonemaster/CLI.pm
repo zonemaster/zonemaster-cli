@@ -9,7 +9,6 @@ package Zonemaster::CLI;
 
 use v5.26;
 
-use strict;
 use warnings;
 
 use version; our $VERSION = version->declare( "v7.2.0" );
@@ -646,17 +645,16 @@ sub run {
         my %all_nss = %{ Zonemaster::Engine::Nameserver::object_cache };
         my @child_nss = @{ $zone->ns };
         my @parent_nss = @{ $zone->parent->ns };
-        my @nss;
+        my @all_responded_nss;
 
         foreach my $ns_name ( keys %all_nss ) {
             foreach my $ns ( values %{ $all_nss{$ns_name} } ) {
-                push @nss, $ns if scalar @{ $ns->times } > 0;
+                push @all_responded_nss, $ns if scalar @{ $ns->times } > 0;
             }
         }
 
-        my %nss_filter;
-        @nss_filter{ ( @child_nss, @parent_nss ) } = undef;
-        my @other_nss = grep { ! exists $nss_filter{$_} } @nss;
+        my %nss_filter = map { $_ => undef } ( @child_nss, @parent_nss );
+        my @other_nss = grep { ! exists $nss_filter{$_} } @all_responded_nss;
 
         if ( $opt_json ) {
             my @times;
@@ -690,7 +688,7 @@ sub run {
         }
         else {
             my $header = __( 'Name servers' );
-            my $max = max map { length( "$_" ) } ( ( @child_nss, @parent_nss, @nss ), $header );
+            my $max = max map { length( "$_" ) } ( ( @child_nss, @parent_nss, @all_responded_nss ), $header );
             printf "\n%${max}s %s\n", $header, '        Max        Min        Avg     Stddev     Median       Total       Count';
             printf "%${max}s %s\n", '=' x $max, ' ========== ========== ========== ========== ========== =========== ===========';
 
