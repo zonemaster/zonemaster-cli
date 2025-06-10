@@ -1,15 +1,14 @@
 # Brief help module to define the exception we use for early exits.
 package Zonemaster::Engine::Exception::NormalExit;
-use 5.014002;
+use v5.26;
 use warnings;
 use parent 'Zonemaster::Engine::Exception';
 
 # The actual interesting module.
 package Zonemaster::CLI;
 
-use 5.014002;
+use v5.26;
 
-use strict;
 use warnings;
 
 use version; our $VERSION = version->declare( "v7.2.0" );
@@ -643,38 +642,98 @@ sub run {
 
     if ( $opt_nstimes ) {
         my $zone = Zonemaster::Engine->zone( $domain );
-        my $max  = max map { length( "$_" ) } ( @{ $zone->ns }, q{Server} );
+        my %all_nss = %{ Zonemaster::Engine::Nameserver::object_cache };
+        my @child_nss = @{ $zone->ns };
+        my @parent_nss = @{ $zone->parent->ns };
+        my @all_responded_nss;
+
+        foreach my $ns_name ( keys %all_nss ) {
+            foreach my $ns ( values %{ $all_nss{$ns_name} } ) {
+                push @all_responded_nss, $ns if scalar @{ $ns->times } > 0;
+            }
+        }
+
+        my %nss_filter = map { $_ => undef } ( @child_nss, @parent_nss );
+        my @other_nss = grep { ! exists $nss_filter{$_} } @all_responded_nss;
 
         if ( $opt_json ) {
-            my @times = ();
-            foreach my $ns ( @{ $zone->ns } ) {
-                push @times,
-                  {
-                    'ns'     => $ns->string,
-                    'max'    => 1000 * $ns->max_time,
-                    'min'    => 1000 * $ns->min_time,
-                    'avg'    => 1000 * $ns->average_time,
-                    'stddev' => 1000 * $ns->stddev_time,
-                    'median' => 1000 * $ns->median_time,
-                    'total'  => 1000 * $ns->sum_time
-                  };
+            my @times;
+
+            my sub json_nstimes {
+                my ( $ns ) = @_;
+                return {
+                    'ns'      => $ns->string,
+                    'max'     => 1000 * $ns->max_time,
+                    'min'     => 1000 * $ns->min_time,
+                    'avg'     => 1000 * $ns->average_time,
+                    'stddev'  => 1000 * $ns->stddev_time,
+                    'median'  => 1000 * $ns->median_time,
+                    'total'   => 1000 * $ns->sum_time,
+                    'count'   => scalar @{ $ns->times }
+                };
             }
+
+            my %section_mapping = (
+                'child' => \@child_nss,
+                'parent' => \@parent_nss,
+                'other' => \@other_nss
+            );
+
+            foreach my $section_name ( sort keys %section_mapping ) {
+                my @entries = map { json_nstimes( $_ ) } sort @{ $section_mapping{$section_name} };
+                push @times, { $section_name => \@entries };
+            }
+
             $json_output->{nstimes} = \@times;
         }
         else {
-            print "\n";
-            printf "%${max}s %s\n", 'Server',   '      Max      Min      Avg   Stddev   Median     Total';
-            printf "%${max}s %s\n", '=' x $max, ' ======== ======== ======== ======== ======== =========';
+            my $header = __( 'Name servers' );
+            my $max = max map { length( "$_" ) } ( ( @child_nss, @parent_nss, @all_responded_nss ), $header );
+            printf "\n%${max}s %s\n", $header, '        Max        Min        Avg     Stddev     Median       Total       Count';
+            printf "%${max}s %s\n", '=' x $max, ' ========== ========== ========== ========== ========== =========== ===========';
 
-            foreach my $ns ( @{ $zone->ns } ) {
-                printf "%${max}s ", $ns->string;
-                printf "%9.2f ",    1000 * $ns->max_time;
-                printf "%8.2f ",    1000 * $ns->min_time;
-                printf "%8.2f ",    1000 * $ns->average_time;
-                printf "%8.2f ",    1000 * $ns->stddev_time;
-                printf "%8.2f ",    1000 * $ns->median_time;
-                printf "%9.2f\n",   1000 * $ns->sum_time;
+            my $total_queries_count = 0;
+            my $total_queries_times = 0;
+            my %nss_already_processed;
+
+            my sub print_nstimes {
+                my ( $ns, $max, $total_queries_count, $total_queries_times, $nss_already_processed_ref ) = @_;
+                my %nss_already_processed = %{ $nss_already_processed_ref };
+
+                printf "%${max}s ",  $ns->string;
+                printf "%11.2f ",    1000 * $ns->max_time;
+                printf "%10.2f ",    1000 * $ns->min_time;
+                printf "%10.2f ",    1000 * $ns->average_time;
+                printf "%10.2f ",    1000 * $ns->stddev_time;
+                printf "%10.2f ",    1000 * $ns->median_time;
+                printf "%11.2f ",    1000 * $ns->sum_time;
+                printf "%11d\n",     scalar @{ $ns->times };
+                $total_queries_count += scalar @{ $ns->times } unless $nss_already_processed{$ns};
+                $total_queries_times += ( 1000 * $ns->sum_time ) unless $nss_already_processed{$ns};
+
+                return $total_queries_count, $total_queries_times;
             }
+
+            my %section_mapping = (
+                1 => { __( 'Child zone' ) => \@child_nss },
+                2 => { __( 'Parent zone' ) => \@parent_nss },
+                3 => { __( 'Other' ) => \@other_nss }
+            );
+
+            foreach my $section_order ( sort keys %section_mapping ) {
+                foreach my $section_header ( keys % { $section_mapping{$section_order} } ) {
+                    printf "%s %s\n", $section_header, '-' x ( ( $max - length $section_header ) - 1 );
+
+                    foreach my $section_nss ( sort @{ $section_mapping{$section_order}{$section_header} } ) {
+                        ( $total_queries_count, $total_queries_times ) =
+                            print_nstimes( $section_nss, $max, $total_queries_count, $total_queries_times, \%nss_already_processed );
+                        $nss_already_processed{$section_nss} = 1;
+                    }
+                }
+            }
+
+            printf "%${max}s %s\n", '=' x $max, ' ========== ========== ========== ========== ========== =========== ===========';
+            printf "%${max}s %67.2f %11s\n", __( 'Grand total' ), $total_queries_times, $total_queries_count;
         }
     } ## end if ( $opt_nstimes )
 
@@ -685,7 +744,7 @@ sub run {
             $json_output->{elapsed} = $last->timestamp;
         }
         else {
-            printf "Total test run time: %0.1f seconds.\n", $last->timestamp;
+            printf "\nTotal test run time: %0.1f seconds.\n", $last->timestamp;
         }
     }
 
