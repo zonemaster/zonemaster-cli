@@ -269,6 +269,13 @@ lives_ok {    # Make sure we get to print log messages in case of errors.
                 modifiers => [ '', 'all', '-', 'basic' ],
                 expected  => [ 'extra01', 'extra02' ],
             },
+            {
+                name      => 'invalid operator',
+                schema    => { basic => [ 'basic01', 'basic02' ] },
+                selection => ['basic01'],
+                modifiers => [ '*', 'basic02' ],
+                error     => qr{unrecognized operator}i,
+            },
         );
         for my $case ( @cases ) {
             subtest $case->{name} => sub {
@@ -277,15 +284,25 @@ lives_ok {    # Make sure we get to print log messages in case of errors.
                     $case->{schema},
                 );
 
-                while ( @{ $case->{modifiers} } ) {
-                    my $op   = shift @{ $case->{modifiers} };
-                    my $term = shift @{ $case->{modifiers} };
-                    $test_case_set->apply_modifier( $op, $term );
-                }
+                local $@ = '';
+                eval {
+                    while ( @{ $case->{modifiers} } ) {
+                        my $op   = shift @{ $case->{modifiers} };
+                        my $term = shift @{ $case->{modifiers} };
+                        $test_case_set->apply_modifier( $op, $term );
+                    }
+                };
+                my $error = $@;
 
-                eq_or_diff [ $test_case_set->to_list ], $case->{expected};
+                if ( exists $case->{expected} ) {
+                    is $error, '';
+                    eq_or_diff [ $test_case_set->to_list ], $case->{expected};
+                }
+                else {
+                    like $error, $case->{error};
+                }
             };
-        }
+        } ## end for my $case ( @cases )
     };
 };
 
