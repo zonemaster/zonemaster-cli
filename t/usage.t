@@ -19,6 +19,14 @@ use Test::Differences;
 use Zonemaster::CLI;
 use JSON::Validator;
 
+# Force locale C for these unit tests. They depend on the print outs not being
+# translated. See zonemaster/zonemaster-cli/issues/438 and
+# https://github.com/zonemaster/zonemaster-cli/issues/438#issuecomment-2996235684
+$ENV{LC_ALL} = "C.UTF-8";
+delete $ENV{LANG};
+delete $ENV{LANGUAGE};
+
+
 # CONSTANTS
 
 Readonly::Array my @SIG_NAMES => do {
