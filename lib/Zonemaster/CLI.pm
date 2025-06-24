@@ -174,15 +174,15 @@ sub run {
     if ( not defined setlocale( LC_MESSAGES, "" ) ) {
         my $locale = ( $ENV{LANGUAGE} || $ENV{LC_ALL} || $ENV{LC_MESSAGES} );
         say STDERR __x(
-            "Warning: setting locale category LC_MESSAGES to {locale} failed -- is it installed on this system?\n\n",
-            locale => $locale );
+            "Warning: setting locale category LC_MESSAGES to {locale} failed -- is it installed on this system?",
+            locale => $locale ) . "\n\n";
     }
 
     if ( not defined setlocale( LC_CTYPE, "" ) ) {
         my $locale = ( $ENV{LC_ALL} || $ENV{LC_CTYPE} );
         say STDERR __x(
-            "Warning: setting locale category LC_CTYPE to {locale} failed -- is it installed on this system?\n\n",
-            locale => $locale );
+            "Warning: setting locale category LC_CTYPE to {locale} failed -- is it installed on this system?",
+            locale => $locale ) . "\n\n";
     }
 
     if ( $opt_version ) {
@@ -274,7 +274,7 @@ sub run {
                 my $term = shift @modifiers;
 
                 if ( !$cases->apply_modifier( $op, $term ) ) {
-                    say STDERR __x( "Error: Unrecognized term '$term' in --test.\n" );
+                    say STDERR __x( "Error: unrecognized term '{term}' in --test.", term => $term ) . "\n";
                     return $EXIT_USAGE_ERROR;
                 }
             }
