@@ -1,9 +1,9 @@
 Release history for Zonemaster component Zonemaster-CLI
 
 
-v8.0.0 2025-06-25 (part of Zonemaster v2025.1 release)
+v8.0.0 2025-06-26 (part of Zonemaster v2025.1 release)
 
- [Breaking change]
+ [Breaking changes]
 - Makes the --test option more flexible #359
 
  [Features]
