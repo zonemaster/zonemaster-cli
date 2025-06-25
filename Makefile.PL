@@ -23,8 +23,8 @@ requires(
     'JSON::XS'           => 0,
     'Locale::TextDomain' => 1.23,
     'Try::Tiny'          => 0,
-    'Zonemaster::LDNS'   => 4.001000,  # v4.1.0
-    'Zonemaster::Engine' => 7.001000,  # v7.1.0
+    'Zonemaster::LDNS'   => 4.001001,  # v4.1.1
+    'Zonemaster::Engine' => 8.000000,  # v8.0.0
 );
 
 test_requires(
