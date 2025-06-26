@@ -9,37 +9,34 @@ use autodie;
 
 sub read_conf_file {
     # Returns list of command line parameters. List can be empty.
-    my ($conf_file) = @_;
+    my ( $conf_file ) = @_;
     my @lines;
     open my $fh, '<', $conf_file;
-    while (<$fh>) {
+    while ( <$fh> ) {
         chomp;
         next if /^\s*$/;
         next if /^\s*#/;
         push @lines, $_;
-    };
+    }
     return @lines;
 }
 
 # Load default arguments from file in home directory, if any
 # This must be loaded before any global file to make the local
 # file take precedence
-my $home_dir  = ((getpwuid($<))[7]) || $ENV{HOME};
-my $home_conf_file = File::Spec->catfile($home_dir, '.zonemaster', 'cli.args');
+my $home_dir       = ( ( getpwuid( $< ) )[7] ) || $ENV{HOME};
+my $home_conf_file = File::Spec->catfile( $home_dir, '.zonemaster', 'cli.args' );
 
-if (-r $home_conf_file) {
-    my @lines = read_conf_file ($home_conf_file);
+if ( -r $home_conf_file ) {
+    my @lines = read_conf_file( $home_conf_file );
     unshift @ARGV, @lines;
 }
 
 # Load default arguments from global file, if any
-my @global_conf = (
-    '/etc/zonemaster/cli.args',
-    '/usr/local/etc/zonemaster/cli.args'
-    ); # Order is significant.
+my @global_conf = ( '/etc/zonemaster/cli.args', '/usr/local/etc/zonemaster/cli.args' );    # Order is significant.
 my $global_conf_file;
 
-for my $p (@global_conf) {
+for my $p ( @global_conf ) {
     if ( -e $p and -r $p ) {
         $global_conf_file = $p;
         last;
@@ -47,7 +44,7 @@ for my $p (@global_conf) {
 }
 
 if ( defined $global_conf_file ) {
-    my @lines = read_conf_file ($global_conf_file);
+    my @lines = read_conf_file( $global_conf_file );
     unshift @ARGV, @lines;
 
 }
@@ -111,17 +108,67 @@ Print the effective profile used in JSON format, then exit.
 
 =over 4
 
-=item B<--test>=TESTCASE, B<--test>=TESTMODULE
+=item B<--test>=EXPR
 
-Limit the testing suite to run only the specified tests.
-Can be specified multiple times.
-(default: all test cases)
+Specify which test cases to run by setting the C<test_cases> property in the profile.
+The EXPR is a flexible expression consisting of terms (individual test cases, test
+modules, or all) and operators (C<+> to add, C<-> to remove).
+For details, see C<man zonemaster-cli>.
 
-=for :man This can be the name of a testing module, in which case all test cases from
-that module will be run, or the name of a module followed by a slash and the
-name of a test case (test case identifier) in that module, or the name of the
-test case.
-This option is case-insensitive.
+=begin :man
+
+An EXPR starting with a term (e.g., C<all>, C<nameserver01>) I<replaces>
+the current selection.
+An EXPR starting with an operator (C<+> or C<->) I<modifies> the current selection.
+An empty EXPR (C<--test=>) does not modify the selection (i.e., it is a no-op).
+
+Multiple C<--test> options may be specified; they are applied in the order they are given.
+When used together with the C<--profile>, the profile option is applied first.
+
+Use C<--list-tests> to list all test cases and test modules in the default profile.
+
+Examples:
+
+=over 4
+
+=item --test=B<all>
+
+selects all test cases in the default profile, i.e. overrides any custom profile.
+
+=item --test=B<nameserver>
+
+selects all test cases in the Nameserver test module in the default profile.
+
+=item --test=B<nameserver01>
+
+selects only the Nameserver01 test case.
+
+=item --test=B<dnssec-dnssec05>
+
+selects all DNSSEC test cases except DNSSEC05.
+
+=item --test=B<all-nameserver+nameserver03>
+
+selects all test cases, excludes the Nameserver test cases, and adds back
+Nameserver03.
+
+=item --test=B<-dnssec>
+
+removes all DNSSEC test cases from the selection.
+
+=item --test=B<+syntax01+syntax02>
+
+adds the Syntax01 and Syntax02 test cases to the selection.
+
+=item --test=
+
+empty value is valid, but does not change the selection of test cases
+Specifying C<--test=> without an argument is a no-op.
+Having this possibility may come in handy when invoking zonemaster-cli from scripts.
+
+=back
+
+=end :man
 
 =item B<--level>=LEVEL
 
@@ -250,13 +297,14 @@ Print the name of the test case (test case identifier) which produced the messag
 =item B<--[no-]count>
 
 Print a summary, at the end of a run, of the numbers of messages for each severity
-level that were logged during the run.
+level that were logged during the run, as well as a count of each message tag.
 (default: disabled)
 
 =item B<--[no-]nstimes>
 
-Print a summary, at the end of a run, of the times (in milliseconds) the zone's
-name servers took to answer.
+Print a summary, at the end of a run, of various metrics related to the times
+(in milliseconds) each name server took to answer, as well as a count of the
+number of sent queries per name server.
 (default: disabled)
 
 =item B<--[no-]elapsed>

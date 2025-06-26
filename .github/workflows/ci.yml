@@ -1,0 +1,112 @@
+---
+name: CI
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+      - 'release/**'
+  pull_request:
+    branches:
+      - develop
+      - master
+      - 'release/**'
+
+jobs:
+  run-tests:
+    strategy:
+      matrix:
+        compatibility:
+          - develop
+          # - latest
+        perl:
+          - '5.40'
+          - '5.36'
+          - '5.26'
+        runner:
+          - ubuntu-22.04
+
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: ${{ matrix.perl }}
+
+      - name: Install binary dependencies
+        run: |
+          # * These were taken from the installation instruction.
+          # * Gettext was added so we can run cpanm . on the Engine sources.
+          # * The Perl modules were left out because I couldn't get all of them
+          #   to work with custom Perl versions.
+          # * Cpanminus was left out because actions-setup-perl installs it.
+          sudo apt-get install -y \
+            autoconf \
+            automake \
+            build-essential \
+            gettext \
+            libidn2-dev \
+            libssl-dev \
+            libtool \
+            m4 \
+
+      - name: Install Zonemaster dependencies (latest)
+        if: ${{ matrix.compatibility == 'latest' }}
+        run: |
+          cpanm --sudo --notest \
+            Module::Install \
+            ExtUtils::PkgConfig \
+            Zonemaster::Engine
+
+      - name: Install Zonemaster dependencies (develop)
+        if: ${{ matrix.compatibility == 'develop' }}
+        run: |
+          cpanm --sudo --notest \
+            Devel::CheckLib \
+            Module::Install \
+            ExtUtils::PkgConfig \
+            Module::Install::XSUtil
+          git clone --branch=develop --depth=1 \
+            https://github.com/zonemaster/zonemaster-ldns.git
+          perl Makefile.PL  # Generate MYMETA.yml to appease cpanm .
+          ( cd zonemaster-ldns ; cpanm --sudo --notest . )
+          rm -rf zonemaster-ldns
+          git clone --branch=develop --depth=1 \
+            https://github.com/zonemaster/zonemaster-engine.git
+          perl Makefile.PL  # Generate MYMETA.yml to appease cpanm .
+          ( cd zonemaster-engine ; cpanm --sudo --notest . )
+          rm -rf zonemaster-engine
+
+        # Installing Zonemaster::Engine requires root privileges, because of a
+        # bug in Mail::SPF preventing normal installation with cpanm as
+        # non-root user (see link below [1]).
+        #
+        # The alternative, if one still wishes to install Zonemaster::Engine
+        # as non-root user, is to install Mail::SPF first with a command like:
+        #
+        #  % cpanm --notest \
+        #        --install-args="--install_path sbin=$HOME/.local/sbin" \
+        #        Mail::SPF
+        #
+        # For the sake of consistency, other Perl packages installed from CPAN
+        # are also installed as root.
+        #
+        # [1]: https://rt.cpan.org/Public/Bug/Display.html?id=34768
+      - name: Install remaining dependencies
+        run: |
+          cpanm --sudo --verbose --notest --installdeps .
+
+      - name: Install Zonemaster::CLI
+        run: |
+          cpanm --sudo --verbose --notest .
+
+      - name: Show content of log files
+        if: ${{ failure() }}
+        run: cat /home/runner/.cpanm/work/*/build.log
+
+      - name: Test
+        run: |
+          prove -lv t

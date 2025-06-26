@@ -1,6 +1,20 @@
 Release history for Zonemaster component Zonemaster-CLI
 
 
+v8.0.0 2025-06-26 (part of Zonemaster v2025.1 release)
+
+ [Breaking changes]
+- Makes the --test option more flexible #359
+
+ [Features]
+- Expands the --nstimes option #421
+- Expands the --count option #424
+
+ [Fixes]
+- Updates translations #444, #445
+- Slows down the spinner a bit #419
+
+
 v7.2.0 2025-03-04 (part of Zonemaster v2024.2.1 release)
 
  [Release information]
