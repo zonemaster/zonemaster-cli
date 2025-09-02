@@ -15,6 +15,9 @@ tidy-po:
 	trap 'rm -rf "$$tmpdir"' EXIT ;\
 	for f in $(POFILES) ; do msgcat $$f -o $$tmpdir/$$f && mv -f $$tmpdir/$$f $$f  ; done
 
+.PHONY: mo
+mo: $(MOFILES)
+
 update-po: extract-pot
 	@for f in $(POFILES) ; do msgmerge --update --backup=none --quiet --no-location $(MSGMERGE_OPTS) $$f $(POTFILE) ; done
 

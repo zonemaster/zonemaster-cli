@@ -54,6 +54,11 @@ sub MY::postamble {
 
     my $docker = <<'END_DOCKER';
 
+.PHONY: mydist
+mydist:
+	$(MAKE) -C share mo
+	$(MAKE) tardist
+
 docker-build:
 	docker build --tag zonemaster/cli:local --build-arg version=$(VERSION) .
 
@@ -72,5 +77,7 @@ END_DOCKER
 
 install_script 'zonemaster-cli';
 install_share;
+
+makemaker_args( macro => { DIST_DEFAULT => 'mydist' } );
 
 WriteAll;
