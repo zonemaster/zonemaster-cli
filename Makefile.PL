@@ -23,8 +23,8 @@ requires(
     'JSON::XS'           => 0,
     'Locale::TextDomain' => 1.23,
     'Try::Tiny'          => 0,
-    'Zonemaster::LDNS'   => 5.000000,  # v5.0.0
-    'Zonemaster::Engine' => 8.000000,  # v8.0.0
+    'Zonemaster::LDNS'   => 5.000000,    # v5.0.0
+    'Zonemaster::Engine' => 8.000000,    # v8.0.0
 );
 
 test_requires(
@@ -34,46 +34,35 @@ test_requires(
 
 # Make all platforms include inc/Module/Install/External.pm
 requires_external_bin 'find';
-if ($^O eq "freebsd") {
+if ( $^O eq "freebsd" ) {
     requires_external_bin 'gmake';
-};
+}
 
 sub MY::postamble {
-    my $pure_all;
-    my $sharemakefile = 'share/GNUmakefile';
-    if ($^O eq "freebsd") {
-        # Make FreeBSD use gmake for share
-        $pure_all = "GMAKE ?= \"gmake\"\n"
-            . "pure_all :: $sharemakefile\n"
-            . "\tcd share && \$(GMAKE) all\n";
-    } else {
-        # Here Linux and GNU Make is assumed
-        $pure_all = "pure_all :: $sharemakefile\n"
-            . "\tcd share && \$(MAKE) all\n";
-    };
+    return <<'MAKE_END';
 
-    my $docker = <<'END_DOCKER';
+pure_all :: share/GNUmakefile
+	$(MAKE) -C share all
+
+.PHONY: docker-build
+docker-build:
+	docker build --tag zonemaster/cli:local --build-arg version=$(VERSION) .
+
+.PHONY: docker-tag-version
+docker-tag-version:
+	docker tag zonemaster/cli:local zonemaster/cli:$(VERSION)
+
+.PHONY: docker-tag-latest
+docker-tag-latest:
+	docker tag zonemaster/cli:local zonemaster/cli:latest
 
 .PHONY: mydist
 mydist:
 	$(MAKE) -C share mo
 	$(MAKE) tardist
 
-docker-build:
-	docker build --tag zonemaster/cli:local --build-arg version=$(VERSION) .
-
-docker-tag-version:
-	docker tag zonemaster/cli:local zonemaster/cli:$(VERSION)
-
-docker-tag-latest:
-	docker tag zonemaster/cli:local zonemaster/cli:latest
-
-END_DOCKER
-
-    return $pure_all . $docker;
-};
-
-
+MAKE_END
+} ## end sub MY::postamble
 
 install_script 'zonemaster-cli';
 install_share;
