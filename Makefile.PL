@@ -24,7 +24,7 @@ requires(
     'Locale::TextDomain' => 1.23,
     'Try::Tiny'          => 0,
     'Zonemaster::LDNS'   => 5.000001,  # v5.0.1
-    'Zonemaster::Engine' => 8.000001,  # v8.0.1
+    'Zonemaster::Engine' => 8.001000,  # v8.1.0
 );
 
 test_requires(
