@@ -27,7 +27,7 @@ msgid ""
 "Warning: setting locale category LC_CTYPE to {locale} failed -- is it "
 "installed on this system?"
 msgstr ""
-"警告：将区类型LC_CTYPE设置为 {locale} 失败 -- 请确认该区是否已经安装在本系统"
+"警告：将区域类型LC_CTYPE设置为 {locale} 失败 -- 请确认该区是否已经安装在本系统"
 "中"
 
 #: ../lib/Zonemaster/CLI.pm:200
@@ -89,7 +89,7 @@ msgstr ""
 msgid ""
 "Only one domain can be given for testing. Did you forget to prepend an "
 "option with '--<OPTION>'?"
-msgstr "仅课输入一个待检测的域名。你是否忘记为选项添加'--<选项>'前缀"
+msgstr "只能输入一个待检测的域名。你是否忘记为选项添加'--<选项>'前缀？"
 
 #: ../lib/Zonemaster/CLI.pm:438
 msgid "Must give the name of a domain to test."
