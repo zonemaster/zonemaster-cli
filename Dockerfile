@@ -9,6 +9,9 @@ RUN apk add --no-cache \
     perl-test-deep \
     perl-test-differences \
     perl-try-tiny \
+    build-base perl-test-nowarnings perl-dev \
+ && cpanm --notest --no-wget --from https://cpan.metacpan.org/ \
+    https://cpan.metacpan.org/authors/id/E/ET/ETHER/Net-IDN-Encode-2.501-TRIAL.tar.gz \
  && cpanm --notest --no-wget --from https://cpan.metacpan.org/ \
     JSON::Validator
 
