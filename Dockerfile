@@ -1,15 +1,17 @@
 FROM zonemaster/engine:local AS build
 
 RUN apk add --no-cache \
+    build-base \
     make \
     perl-app-cpanminus \
+    perl-dev \
     perl-json-xs \
     perl-lwp-protocol-https \
     perl-mojolicious \
     perl-test-deep \
     perl-test-differences \
+    perl-test-nowarnings \
     perl-try-tiny \
-    build-base perl-test-nowarnings perl-dev \
  && cpanm --notest --no-wget --from https://cpan.metacpan.org/ \
     https://cpan.metacpan.org/authors/id/E/ET/ETHER/Net-IDN-Encode-2.501-TRIAL.tar.gz \
  && cpanm --notest --no-wget --from https://cpan.metacpan.org/ \
