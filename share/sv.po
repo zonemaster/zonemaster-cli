@@ -58,7 +58,7 @@ msgstr "Fel: otillåtet värde för \"--sourceaddr4\": {reason}"
 
 #, perl-brace-format
 msgid "Error: invalid value for --sourceaddr6: {reason}"
-msgstr "Fel: otillåtet värde för \\\"--sourceaddr6\\\": {reason}"
+msgstr "Fel: otillåtet värde för \"--sourceaddr6\": {reason}"
 
 #, perl-brace-format
 msgid "Error: unrecognized term '{term}' in --test."
@@ -66,7 +66,7 @@ msgstr "Fel: okänd term \"{term}\" för \"--test\"."
 
 #, perl-brace-format
 msgid "Failed to recognize stop level '{level}'."
-msgstr "Kände inte igen avslutsnivån '{level}'."
+msgstr "Kände inte igen avslutsnivån \"{level}\"."
 
 msgid ""
 "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 "
@@ -79,8 +79,8 @@ msgid ""
 "Only one domain can be given for testing. Did you forget to prepend an "
 "option with '--<OPTION>'?"
 msgstr ""
-"Endast ett domännamn kan anges för testning. Missade du att sätta '--"
-"<OPTION>' före en optionsparameter?"
+"Endast ett domännamn kan anges för testning. Missade du att sätta \"--"
+"<OPTION>\" före en optionsparameter?"
 
 msgid "Must give the name of a domain to test."
 msgstr "Namnet på en domän att testa måste anges."
