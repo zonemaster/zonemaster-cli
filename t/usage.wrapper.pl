@@ -46,10 +46,10 @@ if ( $opt_record && !defined $opt_datafile ) {
 
 if ( !$opt_record ) {
     Zonemaster::Engine::Profile->effective->set( q{no_network}, 1 );
-}
 
-if ( $opt_datafile ) {
-    Zonemaster::Engine::Nameserver->restore( $opt_datafile );
+    if ( $opt_datafile ) {
+        Zonemaster::Engine::Nameserver->restore( $opt_datafile );
+    }
 }
 
 our $EXIT_STATUS;
