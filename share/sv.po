@@ -2,9 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-12 10:17+0100\n"
-"PO-Revision-Date: 2023-05-31 08:42+0000\n"
-"Last-Translator: mattias.paivarinta@iis.se\n"
+"POT-Creation-Date: 2026-06-09 13:07+0000\n"
+"PO-Revision-Date: 2026-03-02 22:56+0000\n"
 "Language-Team: Zonemaster Team\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
@@ -28,7 +27,7 @@ msgstr ""
 "– finns den installerad på det här systemet?"
 
 msgid "Warning: deprecated --encoding, simply remove it from your usage."
-msgstr ""
+msgstr "Varning: föråldrat \"--encoding\", sluta att använda."
 
 msgid "Error: --json-stream and --no-json cannot be used together."
 msgstr "Fel: --json-stream och --no-json kan inte användas tillsammans."
@@ -54,43 +53,19 @@ msgstr "Laddar profil från {path}."
 
 #, perl-brace-format
 msgid "Error: invalid value for --sourceaddr4: {reason}"
-msgstr ""
+msgstr "Fel: otillåtet värde för \"--sourceaddr4\": {reason}"
 
 #, perl-brace-format
 msgid "Error: invalid value for --sourceaddr6: {reason}"
-msgstr ""
+msgstr "Fel: otillåtet värde för \"--sourceaddr6\": {reason}"
 
 #, perl-brace-format
-msgid ""
-"Error: Invalid input '{cli_arg}' in --test. There must be at most one slash "
-"('/') character."
-msgstr ""
-
-#, perl-brace-format
-msgid ""
-"Error: Unrecognized test case '{testcase}' in --test. Use --list-tests for a "
-"list of valid choices."
-msgstr ""
-
-#, perl-brace-format
-msgid ""
-"Error: Unrecognized test module '{module}' in --test. Use --list-tests for a "
-"list of valid choices."
-msgstr ""
-
-#, perl-brace-format
-msgid "Error: Invalid input '{cli_arg}' in --test."
-msgstr ""
-
-#, perl-brace-format
-msgid ""
-"Notice: Engine does not have test case '{testcase}' enabled in the profile. "
-"Forcing..."
-msgstr ""
+msgid "Error: unrecognized term '{term}' in --test."
+msgstr "Fel: okänd term \"{term}\" för \"--test\"."
 
 #, perl-brace-format
 msgid "Failed to recognize stop level '{level}'."
-msgstr "Kände inte igen avslutsnivån '{level}'."
+msgstr "Kände inte igen avslutsnivån \"{level}\"."
 
 msgid ""
 "--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 "
@@ -103,15 +78,15 @@ msgid ""
 "Only one domain can be given for testing. Did you forget to prepend an "
 "option with '--<OPTION>'?"
 msgstr ""
-"Endast ett domännamn kan anges för testning. Missade du att sätta '--"
-"<OPTION>' före en optionsparameter?"
+"Endast ett domännamn kan anges för testning. Missade du att sätta \"--"
+"<OPTION>\" före en optionsparameter?"
 
 msgid "Must give the name of a domain to test."
 msgstr "Namnet på en domän att testa måste anges."
 
 #, perl-brace-format
 msgid "Error loading hints file: {message}"
-msgstr ""
+msgstr "Fel när \"hint-filen\" skulle laddas: \"{message}\"."
 
 msgid "Seconds"
 msgstr "Sekund"
@@ -131,18 +106,29 @@ msgstr "Meddelande"
 msgid "Looks OK."
 msgstr "Ser OK ut."
 
-msgid ""
-"\n"
-"\n"
-"   Level\tNumber of log entries"
-msgstr ""
-"\n"
-"\n"
-"   Nivå \tAntal loggmeddelanden"
+msgid "Number of log entries"
+msgstr "Antal loggmeddelanden"
 
-#, perl-format
-msgid "%8s\t%5d entries.\n"
-msgstr "%8s\t%5d meddelanden.\n"
+msgid "Message tag"
+msgstr "Meddelandetagg"
+
+msgid "Count"
+msgstr "Antal"
+
+msgid "Name servers"
+msgstr "Namnservrar"
+
+msgid "Child zone"
+msgstr "Dotterzon"
+
+msgid "Parent zone"
+msgstr "Moderzon"
+
+msgid "Other"
+msgstr "Övrigt"
+
+msgid "Grand total"
+msgstr "Totalt"
 
 msgid "--ns must be a name or a name/ip pair."
 msgstr "--ns måste vara ett namn eller namn/ip i det formatet.\""
@@ -151,6 +137,8 @@ msgid ""
 "--ds ds data must be in the form \"keytag,algorithm,type,digest\". E.g. "
 "space is not permitted anywhere in the string."
 msgstr ""
+"Data till \"--ds\" måste ges i en sträng med formatet \"keytag,algoritm,typ,"
+"digest\", där t.ex. mellanslag är inte tillåtet."
 
 msgid "DEBUG"
 msgstr "DEBUG"
