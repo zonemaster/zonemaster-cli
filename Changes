@@ -1,25 +1,32 @@
 Release history for Zonemaster component Zonemaster-CLI
 
 
+v8.0.2 2026-06-29 (part of Zonemaster v2026.1 release)
+
+ [Fixes]
+ - Updates Swedish translation (#454)
+ - Creates a fix for Net-IDN-Encode in Dockerfile (#459)
+
+
 v8.0.1 2025-12-17 (part of Zonemaster v2025.2 release)
 
  [Fixes]
-- This version has no changes besides requiring updated
-  Zonemaster-LDNS and Zonemaster-Engine.
+ - This version has no changes besides requiring updated
+   Zonemaster-LDNS and Zonemaster-Engine.
 
 
 v8.0.0 2025-06-26 (part of Zonemaster v2025.1 release)
 
  [Breaking changes]
-- Makes the --test option more flexible #359
+ - Makes the --test option more flexible (#359)
 
  [Features]
-- Expands the --nstimes option #421
-- Expands the --count option #424
+ - Expands the --nstimes option (#421)
+ - Expands the --count option (#424)
 
  [Fixes]
-- Updates translations #444, #445
-- Slows down the spinner a bit #419
+ - Updates translations (#444, #445)
+ - Slows down the spinner a bit (#419)
 
 
 v7.2.0 2025-03-04 (part of Zonemaster v2024.2.1 release)
@@ -29,12 +36,12 @@ v7.2.0 2025-03-04 (part of Zonemaster v2024.2.1 release)
    be updated in an upcoming extra release.
 
  [Features]
-- Adds translation to Slovenian language (#384)
+ - Adds translation to Slovenian language (#384)
 
  [Fixes]
-- Updates translations (#418, #425, #415, #422, #414)
-- Minor code cleanup (#420)
-- Fixes to make early messages not to be lost (#416)
+ - Updates translations (#418, #425, #415, #422, #414)
+ - Minor code cleanup (#420)
+ - Fixes to make early messages not to be lost (#416)
 
 
 v7.1.0 2024-12-09 (part of Zonemaster v2024.2 release)
