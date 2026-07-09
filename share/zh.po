@@ -1,0 +1,161 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-07 18:06+0800\n"
+"PO-Revision-Date: 2026-04-07 18:06+0800\n"
+"Last-Translator: Champion Xie <xiejieling@cnnic.cn>\n"
+"Language-Team: Zonemaster Team\n"
+"Language: zh\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../lib/Zonemaster/CLI.pm:177
+#, perl-brace-format
+msgid ""
+"Warning: setting locale category LC_MESSAGES to {locale} failed -- is it "
+"installed on this system?"
+msgstr ""
+"警告：将区域类别LC_MESSAGES 设置为{locale} 失败 -- 请确认该区域是否已安装在本"
+"系统中"
+
+#: ../lib/Zonemaster/CLI.pm:184
+#, perl-brace-format
+msgid ""
+"Warning: setting locale category LC_CTYPE to {locale} failed -- is it "
+"installed on this system?"
+msgstr ""
+"警告：将区域类型LC_CTYPE设置为 {locale} 失败 -- 请确认该区是否已经安装在本系统"
+"中"
+
+#: ../lib/Zonemaster/CLI.pm:200
+msgid "Warning: deprecated --encoding, simply remove it from your usage."
+msgstr "警告：--encoding已废弃，请直接从你的参数中移除"
+
+#: ../lib/Zonemaster/CLI.pm:204
+msgid "Error: --json-stream and --no-json cannot be used together."
+msgstr "错误：--json-stream和--no-json不能同时使用"
+
+#: ../lib/Zonemaster/CLI.pm:210
+msgid ""
+"Warning: --json-translate has no effect without either --json or --json-"
+"stream."
+msgstr "警告：未使用--json或者--json-stream时，--json-translate无效"
+
+#: ../lib/Zonemaster/CLI.pm:214
+msgid "Warning: deprecated --json-translate, use --no-raw instead."
+msgstr "警告: --json-translate已废弃，用--no-raw代替"
+
+#: ../lib/Zonemaster/CLI.pm:217
+msgid "Warning: deprecated --no-json-translate, use --raw instead."
+msgstr "警告：--no-json-translate已废弃，用--raw 代替"
+
+#: ../lib/Zonemaster/CLI.pm:233
+#, perl-brace-format
+msgid "Loading profile from {path}."
+msgstr "正在从{path}加载配置文件"
+
+#: ../lib/Zonemaster/CLI.pm:247
+#, perl-brace-format
+msgid "Error: invalid value for --sourceaddr4: {reason}"
+msgstr "错误:--sourceaddr4参数值无效:{reason}"
+
+#: ../lib/Zonemaster/CLI.pm:258
+#, perl-brace-format
+msgid "Error: invalid value for --sourceaddr6: {reason}"
+msgstr "--sourceaddr6参数值无效:{reason}"
+
+#: ../lib/Zonemaster/CLI.pm:277
+#, perl-brace-format
+msgid "Error: unrecognized term '{term}' in --test."
+msgstr "错误：--test参数中包含无法识别的项{term}"
+
+#: ../lib/Zonemaster/CLI.pm:301
+#, perl-brace-format
+msgid "Failed to recognize stop level '{level}'."
+msgstr "无法识别停止级别：{level}"
+
+#: ../lib/Zonemaster/CLI.pm:306
+msgid ""
+"--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 "
+"or DEBUG3."
+msgstr ""
+"--level必须是以下值之一：CRITICAL，ERROR，WARNING，NOTICE，INFO，DEBUG，"
+"DEBUG2或者DEBUG3."
+
+#: ../lib/Zonemaster/CLI.pm:434
+msgid ""
+"Only one domain can be given for testing. Did you forget to prepend an "
+"option with '--<OPTION>'?"
+msgstr "只能输入一个待检测的域名。你是否忘记为选项添加'--<选项>'前缀？"
+
+#: ../lib/Zonemaster/CLI.pm:438
+msgid "Must give the name of a domain to test."
+msgstr "必须提供一个待检测的域名"
+
+#: ../lib/Zonemaster/CLI.pm:483
+#, perl-brace-format
+msgid "Error loading hints file: {message}"
+msgstr "加载hints文件错误：{message}"
+
+#: ../lib/Zonemaster/CLI.pm:513
+msgid "Seconds"
+msgstr "秒数"
+
+#: ../lib/Zonemaster/CLI.pm:514 ../lib/Zonemaster/CLI.pm:611
+msgid "Level"
+msgstr "级别"
+
+#: ../lib/Zonemaster/CLI.pm:515
+msgid "Module"
+msgstr "模块"
+
+#: ../lib/Zonemaster/CLI.pm:516
+msgid "Testcase"
+msgstr "测试用例"
+
+#: ../lib/Zonemaster/CLI.pm:517
+msgid "Message"
+msgstr "消息"
+
+#: ../lib/Zonemaster/CLI.pm:586
+msgid "Looks OK."
+msgstr "检测结果正常"
+
+#: ../lib/Zonemaster/CLI.pm:613
+msgid "Number of log entries"
+msgstr "日志条目数量"
+
+#: ../lib/Zonemaster/CLI.pm:628
+msgid "Message tag"
+msgstr "消息标签"
+
+#: ../lib/Zonemaster/CLI.pm:630
+msgid "Count"
+msgstr "数量"
+
+#: ../lib/Zonemaster/CLI.pm:690
+msgid "Name servers"
+msgstr "域名服务器"
+
+#: ../lib/Zonemaster/CLI.pm:718
+msgid "Child zone"
+msgstr "子区"
+
+#: ../lib/Zonemaster/CLI.pm:719
+msgid "Parent zone"
+msgstr "父区"
+
+#: ../lib/Zonemaster/CLI.pm:720
+msgid "Other"
+msgstr "其他"
+
+#: ../lib/Zonemaster/CLI.pm:736
+msgid "Grand total"
+msgstr "总计"
+
+#: ../lib/Zonemaster/CLI.pm:786
+msgid "--ns must be a name or a name/ip pair."
+msgstr "--ns 必须是一个域名，或一个域名/IP对。"
