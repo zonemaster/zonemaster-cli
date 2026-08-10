@@ -37,4 +37,5 @@ t/usage.hints
 t/usage.normal.data
 t/usage.profile
 t/usage.t
+t/usage.undel-root.data
 t/usage.wrapper.pl
