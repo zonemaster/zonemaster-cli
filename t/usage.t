@@ -35,10 +35,11 @@ Readonly::Array my @SIG_NAMES => do {
     @sig_names;
 };
 
-Readonly::Scalar my $PATH_WRAPPER            => catfile( dirname( __FILE__ ), 'usage.wrapper.pl' );
-Readonly::Scalar my $PATH_NORMAL_DATAFILE    => catfile( dirname( __FILE__ ), 'usage.normal.data' );
-Readonly::Scalar my $PATH_FAKE_DATA_DATAFILE => catfile( dirname( __FILE__ ), 'usage.fake-data.data' );
-Readonly::Scalar my $PATH_FAKE_ROOT_DATAFILE => catfile( dirname( __FILE__ ), 'usage.fake-root.data' );
+Readonly::Scalar my $PATH_WRAPPER             => catfile( dirname( __FILE__ ), 'usage.wrapper.pl' );
+Readonly::Scalar my $PATH_NORMAL_DATAFILE     => catfile( dirname( __FILE__ ), 'usage.normal.data' );
+Readonly::Scalar my $PATH_FAKE_DATA_DATAFILE  => catfile( dirname( __FILE__ ), 'usage.fake-data.data' );
+Readonly::Scalar my $PATH_FAKE_ROOT_DATAFILE  => catfile( dirname( __FILE__ ), 'usage.fake-root.data' );
+Readonly::Scalar my $PATH_UNDEL_ROOT_DATAFILE => catfile( dirname( __FILE__ ), 'usage.undel-root.data' );
 Readonly::Array my @PERL => do {
     # Detect whether Devel::Cover is running
     my $is_covering = !!( eval 'Devel::Cover::get_coverage()' );
@@ -53,9 +54,10 @@ our $test_datafile;
 # SETUP
 
 if ( $ENV{ZONEMASTER_RECORD} ) {
-    write_file $PATH_NORMAL_DATAFILE,    '';
-    write_file $PATH_FAKE_DATA_DATAFILE, '';
-    write_file $PATH_FAKE_ROOT_DATAFILE, '';
+    write_file $PATH_NORMAL_DATAFILE,     '';
+    write_file $PATH_FAKE_DATA_DATAFILE,  '';
+    write_file $PATH_FAKE_ROOT_DATAFILE,  '';
+    write_file $PATH_UNDEL_ROOT_DATAFILE, '';
 }
 
 # HELPERS
@@ -707,6 +709,36 @@ do {
 
     check_success '--restore', [ "--restore=$PATH_NORMAL_DATAFILE", '--test=basic01', '--level=INFO', '--raw', '.' ],
       qr{B01_CHILD_FOUND};
+
+    check_success 'undelegated data for root NS overrides root hints',
+      [ "--restore=$PATH_UNDEL_ROOT_DATAFILE",
+        '--test=delegation01', '--level=INFO', '--raw',
+        '--ns=ns1/127.1.0.1', '--ns=ns1/fda1:b2:c3:0:127:1:0:1',
+        '--ns=ns2/127.1.0.2', '--ns=ns2/fda1:b2:c3:0:127:1:0:2',
+        '.' ],
+      sub {
+          my $stdout = $_[0];
+
+          my $lines_found = 0;
+
+          foreach my $line ( split /\n/, $stdout ) {
+              if ( $line =~ /ENOUGH_IPV[46]_NS_CHILD/ ) {
+                  $lines_found++;
+                  if ( $line !~ /\bcount=2;/ ) {
+                      diag "\"$line\": expected 'count=2'";
+                      return 0;
+                  }
+              }
+          }
+
+          if ( $lines_found != 2 ) {
+              diag "Expected 2 lines matching ENOUGH_IPV[46]_NS_CHILD, " .
+                  "got $lines_found instead";
+              return 0;
+          }
+
+          return 1;
+      };
 };
 
 done_testing;

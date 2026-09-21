@@ -491,6 +491,10 @@ sub run {
     # This can generate early log messages.
     if ( @opt_ns ) {
         local $@;
+        if ( $domain eq '.' ) {
+            Zonemaster::Engine::Recursor->remove_fake_addresses( '.' );
+        }
+
         eval {
             add_fake_delegation( $domain, @opt_ns );
             1;
