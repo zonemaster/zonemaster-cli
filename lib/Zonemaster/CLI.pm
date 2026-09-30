@@ -11,7 +11,7 @@ use v5.26;
 
 use warnings;
 
-use version; our $VERSION = version->declare( "v8.0.2" );
+use version; our $VERSION = version->declare( "v8.0.3" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 
