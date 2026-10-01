@@ -1,6 +1,13 @@
 Release history for Zonemaster component Zonemaster-CLI
 
 
+v8.0.3 2026-09-30 (part of Zonemaster v2026.2.1 release)
+
+ [Fixes]
+ - Updates so that overrides of root hints are properly done
+   for undelegated root zone (#466)
+
+
 v8.0.2 2026-06-29 (part of Zonemaster v2026.1 release)
 
  [Fixes]

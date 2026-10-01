@@ -11,7 +11,7 @@ use v5.26;
 
 use warnings;
 
-use version; our $VERSION = version->declare( "v8.0.2" );
+use version; our $VERSION = version->declare( "v8.0.3" );
 
 use Locale::TextDomain 'Zonemaster-CLI';
 
@@ -491,6 +491,10 @@ sub run {
     # This can generate early log messages.
     if ( @opt_ns ) {
         local $@;
+        if ( $domain eq '.' ) {
+            Zonemaster::Engine::Recursor->remove_fake_addresses( '.' );
+        }
+
         eval {
             add_fake_delegation( $domain, @opt_ns );
             1;
