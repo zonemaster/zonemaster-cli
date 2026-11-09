@@ -68,12 +68,12 @@ This is free software under a 2-clause BSD license. The full text of the license
 be found in the [LICENSE](LICENSE) file included in this respository.
 
 
-[Development documentation]:         https://github.com/zonemaster/zonemaster/blob/master/docs/public/development/cli.md
+[Development documentation]:         https://doc.zonemaster.net/latest/development/cli.html
 [Docker Image Creation]:             https://github.com/zonemaster/zonemaster/blob/master/docs/internal/maintenance/ReleaseProcess-create-docker-image.md
 [Docker Hub]:                        https://hub.docker.com/u/zonemaster
-[Installation]:                      https://github.com/zonemaster/zonemaster/blob/master/docs/public/installation/zonemaster-cli.md
-[USING]:                             https://github.com/zonemaster/zonemaster/blob/master/docs/public/using/cli.md
-[Zonemaster-Engine installation]:    https://github.com/zonemaster/zonemaster/blob/master/docs/public/installation/zonemaster-engine.md
+[Installation]:                      https://doc.zonemaster.net/latest/installation/zonemaster-cli.html
+[USING]:                             https://doc.zonemaster.net/latest/using/cli.html
+[Zonemaster-Engine installation]:    https://doc.zonemaster.net/latest/installation/zonemaster-engine.html
 [Zonemaster README]:                 https://github.com/zonemaster/zonemaster/blob/master/README.md
 [Zonemaster repository]:             https://github.com/zonemaster/zonemaster
 
