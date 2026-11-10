@@ -1,0 +1,164 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-02 16:26+0300\n"
+"PO-Revision-Date: 2026-10-21 18:02+0300\n"
+"Last-Translator: nermline@hostmaster.ua\n"
+"Language-Team: Zonemaster Team\n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.9\n"
+
+#, perl-brace-format
+msgid ""
+"Warning: setting locale category LC_MESSAGES to {locale} failed -- is it "
+"installed on this system?"
+msgstr ""
+"Попередження: не вдалося встановити категорію локалі LC_MESSAGES на {locale} "
+"-- чи встановлена вона в цій системі?"
+
+#, perl-brace-format
+msgid ""
+"Warning: setting locale category LC_CTYPE to {locale} failed -- is it "
+"installed on this system?"
+msgstr ""
+"Попередження: не вдалося встановити категорію локалі LC_CTYPE на {locale} -- "
+"чи встановлена вона в цій системі?"
+
+msgid "Warning: deprecated --encoding, simply remove it from your usage."
+msgstr ""
+"Попередження: опція --encoding застаріла, просто приберіть її з команди."
+
+msgid "Error: --json-stream and --no-json cannot be used together."
+msgstr "Помилка: --json-stream та --no-json не можна використовувати разом."
+
+msgid ""
+"Warning: --json-translate has no effect without either --json or --json-"
+"stream."
+msgstr ""
+"Попередження: --json-translate не має жодного ефекту без --json або --json-"
+"stream."
+
+msgid "Warning: deprecated --json-translate, use --no-raw instead."
+msgstr ""
+"Попередження: опція --json-translate застаріла, використовуйте натомість --"
+"no-raw."
+
+msgid "Warning: deprecated --no-json-translate, use --raw instead."
+msgstr ""
+"Попередження: опція --no-json-translate застаріла, використовуйте натомість "
+"--raw."
+
+#, perl-brace-format
+msgid "Loading profile from {path}."
+msgstr "Завантаження профілю з {path}."
+
+#, perl-brace-format
+msgid "Error: invalid value for --sourceaddr4: {reason}"
+msgstr "Помилка: недійсне значення для --sourceaddr4: {reason}"
+
+#, perl-brace-format
+msgid "Error: invalid value for --sourceaddr6: {reason}"
+msgstr "Помилка: недійсне значення для --sourceaddr6: {reason}"
+
+#, perl-brace-format
+msgid "Error: unrecognized term '{term}' in --test."
+msgstr "Помилка: нерозпізнаний термін '{term}' у параметрі --test."
+
+#, perl-brace-format
+msgid "Failed to recognize stop level '{level}'."
+msgstr "Не вдалося розпізнати рівень зупинки '{level}'."
+
+msgid ""
+"--level must be one of CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, DEBUG2 "
+"or DEBUG3."
+msgstr ""
+"--level має бути одним із CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG, "
+"DEBUG2 або DEBUG3."
+
+msgid ""
+"Only one domain can be given for testing. Did you forget to prepend an "
+"option with '--<OPTION>'?"
+msgstr ""
+"Для тестування можна вказати лише один домен. Можливо, ви забули вказати "
+"перед значенням опцію '--<ОПЦІЯ>'?"
+
+msgid "Must give the name of a domain to test."
+msgstr "Необхідно вказати ім'я домену для тестування."
+
+#, perl-brace-format
+msgid "Error loading hints file: {message}"
+msgstr "Помилка завантаження файлу підказок (hints): {message}"
+
+msgid "Seconds"
+msgstr "Секунди"
+
+msgid "Level"
+msgstr "Рівень"
+
+msgid "Module"
+msgstr "Модуль"
+
+msgid "Testcase"
+msgstr "Тест"
+
+msgid "Message"
+msgstr "Повідомлення"
+
+msgid "Looks OK."
+msgstr "Схоже, все гаразд."
+
+msgid "Number of log entries"
+msgstr "Кількість записів у журналі"
+
+msgid "Message tag"
+msgstr "Тег повідомлення"
+
+msgid "Count"
+msgstr "Кількість"
+
+msgid "Name servers"
+msgstr "Сервери імен"
+
+msgid "Child zone"
+msgstr "Дочірня зона"
+
+msgid "Parent zone"
+msgstr "Батьківська зона"
+
+msgid "Other"
+msgstr "Інше"
+
+msgid "Grand total"
+msgstr "Усього"
+
+msgid "--ns must be a name or a name/ip pair."
+msgstr "--ns має бути іменем або парою ім'я/IP."
+
+msgid ""
+"--ds ds data must be in the form \"keytag,algorithm,type,digest\". E.g. "
+"space is not permitted anywhere in the string."
+msgstr ""
+"--ds: дані DS мають бути у форматі \"keytag,algorithm,type,digest\". "
+"Зокрема, пробіли в рядку не допускаються."
+
+msgid "DEBUG"
+msgstr "DEBUG"
+
+msgid "INFO"
+msgstr "ІНФО"
+
+msgid "NOTICE"
+msgstr "ПРИМІТКА"
+
+msgid "WARNING"
+msgstr "ПОПЕРЕДЖЕННЯ"
+
+msgid "ERROR"
+msgstr "ПОМИЛКА"
+
+msgid "CRITICAL"
+msgstr "КРИТИЧНО"
