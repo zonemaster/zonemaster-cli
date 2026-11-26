@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-10-02 16:26+0300\n"
-"PO-Revision-Date: 2026-10-21 18:02+0300\n"
+"PO-Revision-Date: 2026-11-26 11:53+0200\n"
 "Last-Translator: nermline@hostmaster.ua\n"
 "Language-Team: Zonemaster Team\n"
 "Language: uk\n"
@@ -17,16 +17,16 @@ msgid ""
 "Warning: setting locale category LC_MESSAGES to {locale} failed -- is it "
 "installed on this system?"
 msgstr ""
-"Попередження: не вдалося встановити категорію локалі LC_MESSAGES на {locale} "
-"-- чи встановлена вона в цій системі?"
+"Попередження: не вдалося встановити локаль {locale} для категорії "
+"LC_MESSAGES -- чи встановлена вона в цій системі?"
 
 #, perl-brace-format
 msgid ""
 "Warning: setting locale category LC_CTYPE to {locale} failed -- is it "
 "installed on this system?"
 msgstr ""
-"Попередження: не вдалося встановити категорію локалі LC_CTYPE на {locale} -- "
-"чи встановлена вона в цій системі?"
+"Попередження: не вдалося встановити локаль {locale} для категорії LC_CTYPE "
+"-- чи встановлена вона в цій системі?"
 
 msgid "Warning: deprecated --encoding, simply remove it from your usage."
 msgstr ""
@@ -39,8 +39,7 @@ msgid ""
 "Warning: --json-translate has no effect without either --json or --json-"
 "stream."
 msgstr ""
-"Попередження: --json-translate не має жодного ефекту без --json або --json-"
-"stream."
+"Попередження: --json-translate не діє без --json або --json-stream."
 
 msgid "Warning: deprecated --json-translate, use --no-raw instead."
 msgstr ""
@@ -66,7 +65,7 @@ msgstr "Помилка: недійсне значення для --sourceaddr6: 
 
 #, perl-brace-format
 msgid "Error: unrecognized term '{term}' in --test."
-msgstr "Помилка: нерозпізнаний термін '{term}' у параметрі --test."
+msgstr "Помилка: нерозпізнаний термін '{term}' в опції --test."
 
 #, perl-brace-format
 msgid "Failed to recognize stop level '{level}'."
@@ -103,7 +102,7 @@ msgid "Module"
 msgstr "Модуль"
 
 msgid "Testcase"
-msgstr "Тест"
+msgstr "Тестовий випадок"
 
 msgid "Message"
 msgstr "Повідомлення"
