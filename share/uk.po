@@ -38,8 +38,7 @@ msgstr "Помилка: --json-stream та --no-json не можна викор�
 msgid ""
 "Warning: --json-translate has no effect without either --json or --json-"
 "stream."
-msgstr ""
-"Попередження: --json-translate не діє без --json або --json-stream."
+msgstr "Попередження: --json-translate не діє без --json або --json-stream."
 
 msgid "Warning: deprecated --json-translate, use --no-raw instead."
 msgstr ""
